@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Bring!</string>
+    <string name="new_list">Новый список</string>
+    <string name="shopping_list">Список покупок</string>
+    <string name="loading_list">Загрузка списка покупок...</string>
+    <string name="create_list">Создать новый список</string>
+    <string name="create">Создать</string>
+    <string name="join_list">Присоединиться к существующему списку</string>
+    <string name="join">Присоединиться</string>
+    <string name="settings">Настройки</string>
+    <string name="favorites">Избранное</string>
+    <string name="enable_edit_mode">Включить режим редактирования</string>
+    <string name="show_unchecked_first">Показывать сначала неотмеченные элементы</string>
+    <string name="show_suggestions">Показывать предложения элементов</string>
+    <string name="show_favorite_elements">Показывать избранные элементы</string>
+    <string name="theme">Тема</string>
+    <string name="system_theme">Системная</string>
+    <string name="light_theme">Светлая</string>
+    <string name="dark_theme">Тёмная</string>
+    <string name="blue_theme">Синяя</string>
+    <string name="red_theme">Красная</string>
+    <string name="list_not_found">Список покупок не найден</string>
+    <string name="error_fetching_suggestions">Ошибка при получении предложений элементов</string>
+    <string name="error_fetching_favorite_elements">Ошибка при получении избранных элементов</string>
+    <string name="favorite_shopping_lists">Избранные списки покупок</string>
+    <string name="favorite_list_elements">Избранные элементы списка</string>
+    <string name="copied_list_id_to_clipboard">ID списка скопирован в буфер обмена</string>
+    <string name="copied_list_url_to_clipboard">URL списка скопирован в буфер обмена</string>
+</resources>

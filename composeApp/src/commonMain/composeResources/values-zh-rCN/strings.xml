@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Bring!</string>
+    <string name="new_list">新列表</string>
+    <string name="shopping_list">购物清单</string>
+    <string name="loading_list">正在加载购物清单...</string>
+    <string name="create_list">创建新列表</string>
+    <string name="create">创建</string>
+    <string name="join_list">加入现有列表</string>
+    <string name="join">加入</string>
+    <string name="settings">设置</string>
+    <string name="favorites">收藏</string>
+    <string name="enable_edit_mode">启用编辑模式</string>
+    <string name="show_unchecked_first">优先显示未勾选项目</string>
+    <string name="show_suggestions">显示项目建议</string>
+    <string name="show_favorite_elements">显示收藏元素</string>
+    <string name="theme">主题</string>
+    <string name="system_theme">系统</string>
+    <string name="light_theme">浅色</string>
+    <string name="dark_theme">深色</string>
+    <string name="blue_theme">蓝色</string>
+    <string name="red_theme">红色</string>
+    <string name="list_not_found">未找到购物清单</string>
+    <string name="error_fetching_suggestions">获取项目建议时出错</string>
+    <string name="error_fetching_favorite_elements">获取收藏元素时出错</string>
+    <string name="favorite_shopping_lists">收藏的购物清单</string>
+    <string name="favorite_list_elements">收藏的列表元素</string>
+    <string name="copied_list_id_to_clipboard">列表ID已复制到剪贴板</string>
+    <string name="copied_list_url_to_clipboard">列表URL已复制到剪贴板</string>
+</resources>

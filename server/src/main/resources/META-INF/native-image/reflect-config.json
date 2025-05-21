@@ -1,0 +1,624 @@
+[
+  {
+    "name": "kotlin.reflect.jvm.internal.ReflectionFactoryImpl",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "kotlin.KotlinVersion",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "kotlin.KotlinVersion[]"
+  },
+  {
+    "name": "kotlin.KotlinVersion$Companion"
+  },
+  {
+    "name": "kotlin.KotlinVersion$Companion[]"
+  },
+  {
+    "name": "kotlin.internal.jdk8.JDK8PlatformImplementations",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.impossibl.postgres.protocol.ssl.ConsolePasswordCallbackHandler",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "io.netty.channel.nio.NioEventLoopGroup",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "int",
+          "java.util.concurrent.ThreadFactory"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.jetbrains.exposed.sql.UUIDColumnType",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.db.ShoppingListEntity",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.db.ShoppingListItemEntity",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.db.FavoriteElementEntity",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.ShoppingListData",
+    "allDeclaredConstructors": true,
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub",
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$createNewShoppingList$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$createNewShoppingList$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$removeShoppingListItem$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$removeShoppingListItem$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$getShoppingList$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$getShoppingList$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$getUserShoppingListSuggestions$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$getUserShoppingListSuggestions$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$reorderListItems$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$reorderListItems$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$addEntryToShoppingList$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$addEntryToShoppingList$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$markItemAsChecked$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$markItemAsChecked$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$markItemAsUnchecked$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$markItemAsUnchecked$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$updateItemOrder$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$updateItemOrder$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$$rpcServiceStub",
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$$rpcServiceStub$getFavoriteElements$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$$rpcServiceStub$getFavoriteElements$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$$rpcServiceStub$addFavoriteElement$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$$rpcServiceStub$addFavoriteElement$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$$rpcServiceStub$removeFavoriteElement$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$$rpcServiceStub$removeFavoriteElement$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.ShoppingListData$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.UserShoppingListSuggestionsData",
+    "allDeclaredConstructors": true,
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.UserShoppingListSuggestionsData$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.UserFavoriteElementsData",
+    "allDeclaredConstructors": true,
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.UserFavoriteElementsData$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.FavoriteElement",
+    "allDeclaredConstructors": true,
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.FavoriteElement$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.ShoppingListItemData",
+    "allDeclaredConstructors": true,
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.ShoppingListItemData$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.ShoppingListItemData$CheckedStatusData",
+    "allDeclaredConstructors": true,
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.ShoppingListItemData$CheckedStatusData$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.ShoppingListItemData$CheckedStatusData$Unchecked",
+    "allDeclaredConstructors": true,
+    "fields": [
+      {
+        "name": "INSTANCE"
+      }
+    ],
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.ShoppingListItemData$CheckedStatusData$Checked",
+    "allDeclaredConstructors": true,
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.ShoppingListItemData$CheckedStatusData$Checked$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$CreateNewShoppingListError",
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$CreateNewShoppingListError$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$RemoveShoppingListItemError",
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$RemoveShoppingListItemError$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$GetShoppingListError",
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$GetShoppingListError$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$GetUserShoppingListSuggestionsError",
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$GetUserShoppingListSuggestionsError$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$ReorderListError",
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$ReorderListError$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$AddEntryToShoppingListError",
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$AddEntryToShoppingListError$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$UpdateItemError",
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$UpdateItemError$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$GetFavoriteElementsError",
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$GetFavoriteElementsError$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$AddFavoriteElementError",
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$AddFavoriteElementError$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$RemoveFavoriteElementError",
+    "fields": [
+      {
+        "name": "Companion"
+      }
+    ]
+  },
+  {
+    "name": "in.procyk.bring.service.FavoriteElementService$RemoveFavoriteElementError$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  }
+]

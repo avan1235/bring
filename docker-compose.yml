@@ -1,0 +1,43 @@
+services:
+  bring-dev-postgres:
+    image: postgres:alpine3.14
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  bring-dev-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_HOST=bring-dev-postgres
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - HOST=${HOST}
+      - PORT=${PORT}
+      - CORS_PORT=${CORS_PORT}
+      - CORS_HOST=${CORS_HOST}
+      - CORS_SCHEME=${CORS_SCHEME}
+    ports:
+      - "${HOST}:${PORT}:${PORT}"
+    networks:
+      - backend
+    depends_on:
+      bring-dev-postgres:
+        condition: service_healthy
+    restart: always
+
+networks:
+  backend:

@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Bring!</string>
+    <string name="new_list">Nowa lista</string>
+    <string name="shopping_list">Lista zakupów</string>
+    <string name="loading_list">Ładowanie listy zakupów...</string>
+    <string name="create_list">Utwórz nową listę</string>
+    <string name="create">Utwórz</string>
+    <string name="join_list">Dołącz do istniejącej listy</string>
+    <string name="join">Dołącz</string>
+    <string name="settings">Ustawienia</string>
+    <string name="favorites">Ulubione</string>
+    <string name="enable_edit_mode">Włącz tryb edycji</string>
+    <string name="show_unchecked_first">Pokazuj najpierw niezrealizowane</string>
+    <string name="show_suggestions">Pokazuj sugestie pozycji listy zakupów</string>
+    <string name="show_favorite_elements">Pokazuj ulubione elementy</string>
+    <string name="theme">Motyw</string>
+    <string name="system_theme">Systemowy</string>
+    <string name="light_theme">Jasny</string>
+    <string name="dark_theme">Ciemny</string>
+    <string name="blue_theme">Niebieski</string>
+    <string name="red_theme">Czerwony</string>
+    <string name="list_not_found">Nie znaleziono listy zakupów</string>
+    <string name="error_fetching_suggestions">Błąd podczas pobierania sugestii pozycji listy zakupów</string>
+    <string name="error_fetching_favorite_elements">Błąd podczas pobierania ulubionych elementów</string>
+    <string name="favorite_shopping_lists">Ulubione listy zakupów</string>
+    <string name="favorite_list_elements">Ulubione elementy listy</string>
+    <string name="copied_list_id_to_clipboard">Skopiowano ID listy do schowka</string>
+    <string name="copied_list_url_to_clipboard">Skopiowano URL listy do schowka</string>
+</resources>

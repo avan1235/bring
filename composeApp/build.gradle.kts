@@ -1,0 +1,230 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem as currentOS
+
+
+plugins {
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinxRpc)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.buildKonfig)
+    alias(libs.plugins.lumo)
+}
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xnon-local-break-continue")
+    }
+
+    androidTarget {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+    }
+    if (currentOS().isMacOsX) {
+        listOf(
+            iosX64(),
+            iosArm64(),
+            iosSimulatorArm64()
+        ).forEach { iosTarget ->
+            iosTarget.binaries.framework {
+                baseName = "ComposeApp"
+                isStatic = true
+            }
+        }
+        listOf<KotlinNativeTarget>(
+//            macosX64(),
+//            macosArm64(),
+        ).forEach { macosTarget ->
+            macosTarget.binaries.executable {
+                entryPoint = "in.procyk.bring.main"
+            }
+        }
+    }
+
+    jvm()
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        outputModuleName = "composeApp"
+        browser {
+            val rootDirPath = project.rootDir.path
+            val projectDirPath = project.projectDir.path
+            commonWebpackConfig {
+                outputFileName = "composeApp.js"
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    static = (static ?: mutableListOf()).apply {
+                        add(rootDirPath)
+                        add(projectDirPath)
+                    }
+                    port = env.CORS_PORT.value.toInt()
+                }
+            }
+        }
+        binaries.executable()
+    }
+
+    sourceSets {
+        all {
+            languageSettings.apply {
+                optIn("kotlin.uuid.ExperimentalUuidApi")
+                optIn("kotlin.time.ExperimentalTime")
+                optIn("kotlinx.serialization.ExperimentalSerializationApi")
+                optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
+                optIn("kotlinx.coroutines.FlowPreview")
+            }
+        }
+        androidMain.dependencies {
+            implementation(compose.preview)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.kstore.file)
+        }
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.ui)
+            implementation(compose.material)
+            implementation(compose.material3)
+            implementation(compose.uiUtil)
+            implementation(compose.components.resources)
+            implementation(compose.materialIconsExtended)
+            implementation(compose.components.resources)
+            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.androidx.navigation.compose)
+            implementation(libs.kstore)
+            implementation(libs.reorderable)
+            implementation(libs.compose.colorpicker)
+            implementation(libs.materialKolor)
+
+            implementation(projects.shared)
+            implementation(projects.sharedClient)
+
+            implementation(libs.kotlinx.rpc.core)
+            
+            implementation(libs.ktor.serialization.kotlinx.cbor)
+            implementation(libs.ktor.serialization.kotlinx.json)
+
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization.core)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.arrow.core)
+            implementation(libs.arrow.core.serialization)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+        }
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.kstore.file)
+            implementation(libs.appdirs)
+        }
+        if (currentOS().isMacOsX) {
+            iosMain.dependencies {
+                implementation(libs.ktor.client.darwin)
+                implementation(libs.kstore.file)
+            }
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.js)
+            implementation(libs.kstore.storage)
+        }
+//        macosMain.dependencies {
+//            implementation(libs.ktor.client.darwin)
+//            implementation(libs.kstore.file)
+//        }
+    }
+}
+
+android {
+    namespace = "in.procyk.bring"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+    defaultConfig {
+        applicationId = "in.procyk.bring"
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        versionCode = 1
+        versionName = "1.0"
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    buildTypes {
+        debug {
+            manifestPlaceholders += mapOf(
+                "cleartextTrafficEnabled" to "true",
+            )
+        }
+        release {
+            isMinifyEnabled = false
+            manifestPlaceholders += mapOf(
+                "cleartextTrafficEnabled" to "false",
+            )
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    debugImplementation(compose.uiTooling)
+}
+
+compose.desktop {
+    application {
+        mainClass = "in.procyk.bring.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "in.procyk.bring"
+            packageVersion = "1.0.0"
+        }
+    }
+}
+
+composeCompiler {
+    featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
+}
+
+buildkonfig {
+    packageName = "in.procyk.bring"
+    objectName = "ComposeAppConfig"
+    exposeObjectWithName = "ComposeAppConfig"
+
+    defaultConfigs {
+        buildConfigField(Type.STRING, "CLIENT_HOST", env.CLIENT_HOST.value)
+        buildConfigField(Type.INT, "CLIENT_PORT", env.CLIENT_PORT.value)
+        buildConfigField(Type.STRING, "CLIENT_HTTP_PROTOCOL", env.CLIENT_HTTP_PROTOCOL.value)
+        buildConfigField(Type.STRING, "CLIENT_WS_PROTOCOL", env.CLIENT_WS_PROTOCOL.value)
+        buildConfigField(Type.STRING, "VERSION", version.toString())
+        buildConfigField(Type.STRING, "PACKAGE", packageName)
+        buildConfigField(Type.STRING, "APP_NAME", "Bring!")
+        buildConfigField(Type.STRING, "AUTHOR", "Maciej Procyk")
+    }
+}
+
+tasks.withType<KotlinJsCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xwasm-kclass-fqn")
+}

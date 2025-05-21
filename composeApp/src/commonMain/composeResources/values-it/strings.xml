@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Bring!</string>
+    <string name="new_list">Nuova Lista</string>
+    <string name="shopping_list">Lista della Spesa</string>
+    <string name="loading_list">Caricamento Lista della Spesa...</string>
+    <string name="create_list">Crea Nuova Lista</string>
+    <string name="create">Crea</string>
+    <string name="join_list">Unisciti a Lista Esistente</string>
+    <string name="join">Unisciti</string>
+    <string name="settings">Impostazioni</string>
+    <string name="favorites">Preferiti</string>
+    <string name="enable_edit_mode">Abilita modalità modifica</string>
+    <string name="show_unchecked_first">Mostra prima gli articoli non spuntati</string>
+    <string name="show_suggestions">Mostra suggerimenti articoli</string>
+    <string name="show_favorite_elements">Mostra elementi preferiti</string>
+    <string name="theme">Tema</string>
+    <string name="system_theme">Sistema</string>
+    <string name="light_theme">Chiaro</string>
+    <string name="dark_theme">Scuro</string>
+    <string name="blue_theme">Blu</string>
+    <string name="red_theme">Rosso</string>
+    <string name="list_not_found">Lista della Spesa non trovata</string>
+    <string name="error_fetching_suggestions">Errore durante il recupero dei suggerimenti articoli</string>
+    <string name="error_fetching_favorite_elements">Errore durante il recupero degli elementi preferiti</string>
+    <string name="favorite_shopping_lists">Liste della spesa preferite</string>
+    <string name="favorite_list_elements">Elementi di lista preferiti</string>
+    <string name="copied_list_id_to_clipboard">ID della lista copiato negli appunti</string>
+    <string name="copied_list_url_to_clipboard">URL della lista copiato negli appunti</string>
+</resources>

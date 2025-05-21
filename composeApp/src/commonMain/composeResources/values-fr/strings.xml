@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Bring!</string>
+    <string name="new_list">Nouvelle Liste</string>
+    <string name="shopping_list">Liste de Courses</string>
+    <string name="loading_list">Chargement de la Liste de Courses...</string>
+    <string name="create_list">Créer une Nouvelle Liste</string>
+    <string name="create">Créer</string>
+    <string name="join_list">Rejoindre une Liste Existante</string>
+    <string name="join">Rejoindre</string>
+    <string name="settings">Paramètres</string>
+    <string name="favorites">Favoris</string>
+    <string name="enable_edit_mode">Activer le mode édition</string>
+    <string name="show_unchecked_first">Afficher d'abord les articles non cochés</string>
+    <string name="show_favorite_elements">Afficher les éléments favoris</string>
+    <string name="show_suggestions">Afficher les suggestions d'articles</string>
+    <string name="theme">Thème</string>
+    <string name="system_theme">Système</string>
+    <string name="light_theme">Clair</string>
+    <string name="dark_theme">Sombre</string>
+    <string name="blue_theme">Bleu</string>
+    <string name="red_theme">Rouge</string>
+    <string name="list_not_found">Liste de Courses non trouvée</string>
+    <string name="error_fetching_suggestions">Erreur lors de la récupération des suggestions d'articles</string>
+    <string name="error_fetching_favorite_elements">Erreur lors de la récupération des éléments favoris</string>
+    <string name="favorite_shopping_lists">Listes de courses favorites</string>
+    <string name="favorite_list_elements">Éléments de liste favoris</string>
+    <string name="copied_list_id_to_clipboard">ID de liste copié dans le presse-papiers</string>
+    <string name="copied_list_url_to_clipboard">URL de liste copiée dans le presse-papiers</string>
+</resources>

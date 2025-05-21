@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Bring!</string>
+    <string name="new_list">Nueva Lista</string>
+    <string name="shopping_list">Lista de Compras</string>
+    <string name="loading_list">Cargando Lista de Compras...</string>
+    <string name="create_list">Crear Nueva Lista</string>
+    <string name="create">Crear</string>
+    <string name="join_list">Unirse a Lista Existente</string>
+    <string name="join">Unirse</string>
+    <string name="settings">Configuración</string>
+    <string name="favorites">Favoritos</string>
+    <string name="enable_edit_mode">Habilitar modo de edición</string>
+    <string name="show_unchecked_first">Mostrar primero artículos sin marcar</string>
+    <string name="show_favorite_elements">Mostrar elementos favoritos</string>
+    <string name="show_suggestions">Mostrar sugerencias de artículos</string>
+    <string name="theme">Tema</string>
+    <string name="system_theme">Sistema</string>
+    <string name="light_theme">Claro</string>
+    <string name="dark_theme">Oscuro</string>
+    <string name="blue_theme">Azul</string>
+    <string name="red_theme">Rojo</string>
+    <string name="list_not_found">Lista de Compras no encontrada</string>
+    <string name="error_fetching_suggestions">Error al obtener sugerencias de artículos</string>
+    <string name="error_fetching_favorite_elements">Error al obtener elementos favoritos</string>
+    <string name="favorite_shopping_lists">Listas de compras favoritas</string>
+    <string name="favorite_list_elements">Elementos de lista favoritos</string>
+    <string name="copied_list_id_to_clipboard">ID de lista copiado al portapapeles</string>
+    <string name="copied_list_url_to_clipboard">URL de lista copiada al portapapeles</string>
+</resources>

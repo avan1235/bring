@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Bring!</string>
+    <string name="new_list">Neue Liste</string>
+    <string name="shopping_list">Einkaufsliste</string>
+    <string name="loading_list">Einkaufsliste wird geladen...</string>
+    <string name="create_list">Neue Liste erstellen</string>
+    <string name="create">Erstellen</string>
+    <string name="join_list">Bestehender Liste beitreten</string>
+    <string name="join">Beitreten</string>
+    <string name="settings">Einstellungen</string>
+    <string name="favorites">Favoriten</string>
+    <string name="enable_edit_mode">Bearbeitungsmodus aktivieren</string>
+    <string name="show_unchecked_first">Nicht markierte Artikel zuerst anzeigen</string>
+    <string name="show_favorite_elements">Favorisierte Elemente anzeigen</string>
+    <string name="show_suggestions">Artikelvorschläge anzeigen</string>
+    <string name="theme">Thema</string>
+    <string name="system_theme">System</string>
+    <string name="light_theme">Hell</string>
+    <string name="dark_theme">Dunkel</string>
+    <string name="blue_theme">Blau</string>
+    <string name="red_theme">Rot</string>
+    <string name="list_not_found">Einkaufsliste nicht gefunden</string>
+    <string name="error_fetching_suggestions">Fehler beim Abrufen der Artikelvorschläge</string>
+    <string name="error_fetching_favorite_elements">Fehler beim Abrufen der Favoriten</string>
+    <string name="favorite_shopping_lists">Favorisierte Einkaufslisten</string>
+    <string name="favorite_list_elements">Favorisierte Listenelemente</string>
+    <string name="copied_list_id_to_clipboard">Listen-ID in die Zwischenablage kopiert</string>
+    <string name="copied_list_url_to_clipboard">Listen-URL in die Zwischenablage kopiert</string>
+</resources>

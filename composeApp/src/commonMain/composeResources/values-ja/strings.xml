@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Bring!</string>
+    <string name="new_list">新しいリスト</string>
+    <string name="shopping_list">ショッピングリスト</string>
+    <string name="loading_list">ショッピングリストを読み込み中...</string>
+    <string name="create_list">新しいリストを作成</string>
+    <string name="create">作成</string>
+    <string name="join_list">既存のリストに参加</string>
+    <string name="join">参加</string>
+    <string name="settings">設定</string>
+    <string name="favorites">お気に入り</string>
+    <string name="enable_edit_mode">編集モードを有効にする</string>
+    <string name="show_unchecked_first">未チェックのアイテムを先に表示</string>
+    <string name="show_suggestions">アイテムの提案を表示</string>
+    <string name="show_favorite_elements">お気に入り要素を表示</string>
+    <string name="theme">テーマ</string>
+    <string name="system_theme">システム</string>
+    <string name="light_theme">ライト</string>
+    <string name="dark_theme">ダーク</string>
+    <string name="blue_theme">ブルー</string>
+    <string name="red_theme">レッド</string>
+    <string name="list_not_found">ショッピングリストが見つかりません</string>
+    <string name="error_fetching_suggestions">アイテム提案の取得中にエラーが発生しました</string>
+    <string name="error_fetching_favorite_elements">お気に入り要素の取得中にエラーが発生しました</string>
+    <string name="favorite_shopping_lists">お気に入りのショッピングリスト</string>
+    <string name="favorite_list_elements">お気に入りのリスト要素</string>
+    <string name="copied_list_id_to_clipboard">リストIDをクリップボードにコピーしました</string>
+    <string name="copied_list_url_to_clipboard">リストURLをクリップボードにコピーしました</string>
+</resources>

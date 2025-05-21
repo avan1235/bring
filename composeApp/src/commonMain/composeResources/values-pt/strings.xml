@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Bring!</string>
+    <string name="new_list">Nova Lista</string>
+    <string name="shopping_list">Lista de Compras</string>
+    <string name="loading_list">Carregando Lista de Compras...</string>
+    <string name="create_list">Criar Nova Lista</string>
+    <string name="create">Criar</string>
+    <string name="join_list">Entrar em Lista Existente</string>
+    <string name="join">Entrar</string>
+    <string name="settings">Configurações</string>
+    <string name="favorites">Favoritos</string>
+    <string name="enable_edit_mode">Ativar modo de edição</string>
+    <string name="show_unchecked_first">Mostrar itens não marcados primeiro</string>
+    <string name="show_suggestions">Mostrar sugestões de itens</string>
+    <string name="show_favorite_elements">Mostrar elementos favoritos</string>
+    <string name="theme">Tema</string>
+    <string name="system_theme">Sistema</string>
+    <string name="light_theme">Claro</string>
+    <string name="dark_theme">Escuro</string>
+    <string name="blue_theme">Azul</string>
+    <string name="red_theme">Vermelho</string>
+    <string name="list_not_found">Lista de Compras não encontrada</string>
+    <string name="error_fetching_suggestions">Erro ao buscar sugestões de itens</string>
+    <string name="error_fetching_favorite_elements">Erro ao buscar elementos favoritos</string>
+    <string name="favorite_shopping_lists">Listas de compras favoritas</string>
+    <string name="favorite_list_elements">Elementos de lista favoritos</string>
+    <string name="copied_list_id_to_clipboard">ID da lista copiado para a área de transferência</string>
+    <string name="copied_list_url_to_clipboard">URL da lista copiada para a área de transferência</string>
+</resources>
