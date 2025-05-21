@@ -4,6 +4,8 @@
 
 Bring! is a modern, feature-rich shopping list application built with Kotlin Multiplatform (KMP) and Compose Multiplatform (CMP). It allows users to create, manage, and share shopping lists across multiple platforms with a seamless, native-like experience.
 
+Web version is publicly available at https://bring.procyk.in
+
 ## 🚀 Features
 
 - ✅ Create and manage shopping lists
