@@ -20,6 +20,8 @@ data class BringStore(
     @CborLabel(7) val showFavoriteElements: Boolean = true,
     @CborLabel(8) val themeColor: Int = Color.White.toArgb(),
     @CborLabel(9) val darkMode: Theme = Theme.System,
+    @CborLabel(9) val geminiKey: String = "",
+    @CborLabel(10) val useGemini: Boolean = false,
 ) {
     companion object {
         val Default: BringStore = BringStore()

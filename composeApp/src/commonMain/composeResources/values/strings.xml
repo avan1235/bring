@@ -31,4 +31,6 @@
     <string name="select_color">Select Theme Color</string>
     <string name="theme_color">Theme Color</string>
     <string name="dark_mode">Dark Mode</string>
+    <string name="gemini_key">Gemini Key</string>
+    <string name="use_gemini">Use Gemini to generate inputs</string>
 </resources>

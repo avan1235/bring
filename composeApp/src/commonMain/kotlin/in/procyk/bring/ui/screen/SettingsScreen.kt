@@ -5,11 +5,14 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import bring.composeapp.generated.resources.*
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
@@ -18,6 +21,7 @@ import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.Theme
 import `in`.procyk.bring.ui.components.*
 import `in`.procyk.bring.ui.components.card.OutlinedCard
+import `in`.procyk.bring.ui.components.textfield.OutlinedTextField
 import `in`.procyk.bring.ui.icons.BringIcons
 import `in`.procyk.bring.ui.icons.GitHub
 import `in`.procyk.bring.ui.icons.Html
@@ -42,6 +46,15 @@ internal fun SettingsScreen(
         SettingSwitchRow(Res.string.show_unchecked_first, vm.showUncheckedFirst, vm::onShowUncheckedFirstChanged)
         SettingSwitchRow(Res.string.show_favorite_elements, vm.showFavoriteElements, vm::onShowFavoriteElementsChanged)
         SettingSwitchRow(Res.string.show_suggestions, vm.showSuggestions, vm::onShowSuggestionsChanged)
+        SettingSwitchRow(Res.string.use_gemini, vm.useGemini, vm::onUseGeminiChanged)
+        AnimatedVisibility(vm.useGemini.value) {
+            SettingStringRow(
+                Res.string.gemini_key,
+                vm.geminiKey,
+                vm::onGeminiKeyChanged,
+                reference = "https://aistudio.google.com/app/apikey"
+            )
+        }
         SettingSelectionRow(Res.string.dark_mode, vm.theme, vm::onThemeChanged, Theme.entries, optionLabel = {
             when (it) {
                 Theme.System -> Res.string.system_theme
@@ -71,7 +84,7 @@ private inline fun <T : Any> SettingSelectionRow(
     crossinline optionLabel: (T) -> StringResource,
 ) {
     OutlinedCard(
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = Modifier.padding(16.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -129,6 +142,38 @@ private inline fun SettingSwitchRow(
         )
         Switch(
             checked = isChecked, onCheckedChange = { onCheckedChange(it) })
+    }
+}
+
+@Composable
+private inline fun SettingStringRow(
+    label: StringResource,
+    value: StateFlow<String>,
+    crossinline onValueChange: (String) -> Unit,
+    reference: String? = null
+) {
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        val value by value.collectAsState()
+        OutlinedTextField(
+            value = value,
+            onValueChange = { onValueChange(it) },
+            singleLine = true,
+            placeholder = { Text(stringResource(label)) },
+            modifier = Modifier.weight(1f),
+        )
+        reference?.let {
+            val uriHandler = LocalUriHandler.current
+            IconButton(
+                onClick = { uriHandler.openUri(reference) },
+                variant = IconButtonVariant.PrimaryGhost,
+            ) {
+                Icon(Icons.AutoMirrored.Outlined.OpenInNew)
+            }
+        }
     }
 }
 

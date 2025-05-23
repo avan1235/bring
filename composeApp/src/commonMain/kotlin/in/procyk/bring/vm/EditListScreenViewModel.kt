@@ -5,6 +5,11 @@ import bring.composeapp.generated.resources.Res
 import bring.composeapp.generated.resources.error_fetching_favorite_elements
 import bring.composeapp.generated.resources.error_fetching_suggestions
 import bring.composeapp.generated.resources.list_not_found
+import dev.shreyaspatil.ai.client.generativeai.GenerativeModel
+import dev.shreyaspatil.ai.client.generativeai.type.Schema.Companion.arr
+import dev.shreyaspatil.ai.client.generativeai.type.Schema.Companion.str
+import dev.shreyaspatil.ai.client.generativeai.type.content
+import dev.shreyaspatil.ai.client.generativeai.type.generationConfig
 import `in`.procyk.bring.*
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Checked
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Unchecked
@@ -15,6 +20,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 
@@ -31,6 +37,11 @@ internal class EditListScreenViewModel(
 
     private val _suggestedItems = MutableStateFlow<List<SuggestedItem>>(emptyList())
     val suggestedItems: StateFlow<List<SuggestedItem>> = _suggestedItems.asStateFlow()
+
+    val useGeminiSettings = storeFlow.map { it.useGemini }.distinctUntilChanged().state(store.useGemini)
+
+    private val _useGemini = MutableStateFlow(true)
+    val useGemini = _useGemini.asStateFlow()
 
     init {
         if (fetchSuggestionsAndFavoriteElements) viewModelScope.launch {
@@ -50,7 +61,6 @@ internal class EditListScreenViewModel(
                     }
                 }
             }
-
 
             val favoriteElements = when {
                 !store.showFavoriteElements -> CompletableDeferred(value = emptyList())
@@ -152,8 +162,22 @@ internal class EditListScreenViewModel(
     fun onCreateNewItem() {
         val name = _newItemName.value
         _newItemName.update { "" }
-        shoppingListService.durableCall {
-            addEntryToShoppingList(store.userId, listId, name)
+        viewModelScope.launch {
+            val items = when {
+                useGeminiSettings.value && useGemini.value && store.geminiKey.isNotEmpty() -> getSuggestionsFromGemini(
+                    store.geminiKey,
+                    name
+                )
+                    .takeUnless(List<String>::isEmpty)
+                    ?: listOf(name)
+
+                else -> listOf(name)
+            }
+            items.forEach { item ->
+                shoppingListService.durableCall {
+                    addEntryToShoppingList(store.userId, listId, item)
+                }
+            }
         }
     }
 
@@ -175,6 +199,10 @@ internal class EditListScreenViewModel(
                 }
             }
         }
+    }
+
+    fun onToggleUseGemini() {
+        _useGemini.update { !it }
     }
 
     fun onShareList() {
@@ -227,3 +255,36 @@ internal class EditListScreenViewModel(
 
 private val ListItemsComparator: Comparator<ShoppingListItemData> =
     compareByDescending(ShoppingListItemData::order).thenByDescending(ShoppingListItemData::createdAt)
+
+private suspend fun getSuggestionsFromGemini(
+    apiKey: String,
+    description: String,
+): List<String> {
+    val generativeModel = GenerativeModel(
+        modelName = "gemini-1.5-flash",
+        apiKey = apiKey,
+        generationConfig = generationConfig {
+            responseMimeType = "application/json"
+            responseSchema = arr(
+                name = "items",
+                description = "shopping list items to be suggested as a part of described shopping list",
+                items = str("name", "name of the suggested item"),
+            )
+        }
+    )
+    val inputContent = content {
+        text(
+            """
+                Write down a shopping list items from the provided input.
+                Provide a list of elements that might be available at local shops, being 
+                some concrete, one by one listed products, to be bought at shop.
+                Don't answer with general things to buy, only concrete ones matter.
+                Use the same language to describe the list elements as he list description is written in.
+                List description:
+                $description
+                """.trimIndent()
+        )
+    }
+    val response = generativeModel.generateContent(inputContent)
+    return response.text?.let { Json.decodeFromString<List<String>>(it) }.orEmpty()
+}

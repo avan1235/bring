@@ -110,6 +110,7 @@ kotlin {
             implementation(libs.reorderable)
             implementation(libs.compose.colorpicker)
             implementation(libs.materialKolor)
+            implementation(libs.generativeaiGoogle)
 
             implementation(projects.shared)
             implementation(projects.sharedClient)

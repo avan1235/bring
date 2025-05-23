@@ -17,10 +17,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material.icons.twotone.Favorite
+import androidx.compose.material.icons.twotone.Psychology
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -90,6 +92,16 @@ internal fun EditListScreen(
                     ) {
                         val isFavorite by vm.isFavorite.collectAsState()
                         Icon(if (isFavorite) Icons.Filled.Favorite else Icons.TwoTone.Favorite)
+                    }
+                    val useGeminiSettings by vm.useGeminiSettings.collectAsState()
+                    if (useGeminiSettings) {
+                        IconButton(
+                            onClick = vm::onToggleUseGemini,
+                            variant = IconButtonVariant.PrimaryGhost,
+                        ) {
+                            val useGemini by vm.useGemini.collectAsState()
+                            Icon(if (useGemini) Icons.Filled.Psychology else Icons.TwoTone.Psychology)
+                        }
                     }
                     IconButton(
                         onClick = vm::onShareList,

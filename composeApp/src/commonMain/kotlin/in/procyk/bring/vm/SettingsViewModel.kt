@@ -26,6 +26,12 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
     val themeColor: StateFlow<Color> =
         storeFlow.map { Color(it.themeColor) }.state(Color(storeFlow.value.themeColor))
 
+    val geminiKey: StateFlow<String> =
+        storeFlow.map { it.geminiKey }.state(storeFlow.value.geminiKey)
+
+    val useGemini: StateFlow<Boolean> =
+        storeFlow.map { it.useGemini }.state(storeFlow.value.useGemini)
+
     fun onEditModeChanged(value: Boolean) {
         updateConfig { it.copy(enableEditMode = value) }
     }
@@ -48,5 +54,13 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
 
     fun onThemeColorChanged(value: Color) {
         updateConfig { it.copy(themeColor = value.toArgb()) }
+    }
+
+    fun onGeminiKeyChanged(value: String) {
+        updateConfig { it.copy(geminiKey = value) }
+    }
+
+    fun onUseGeminiChanged(value: Boolean) {
+        updateConfig { it.copy(useGemini = value) }
     }
 }
