@@ -26,4 +26,11 @@
     <string name="favorite_list_elements">お気に入りのリスト要素</string>
     <string name="copied_list_id_to_clipboard">リストIDをクリップボードにコピーしました</string>
     <string name="copied_list_url_to_clipboard">リストURLをクリップボードにコピーしました</string>
+    <string name="save">保存</string>
+    <string name="cancel">キャンセル</string>
+    <string name="select_color">テーマカラーを選択</string>
+    <string name="theme_color">テーマカラー</string>
+    <string name="dark_mode">ダークモード</string>
+    <string name="gemini_key">Geminiキー</string>
+    <string name="use_gemini">Geminiを使用して入力を生成する</string>
 </resources>

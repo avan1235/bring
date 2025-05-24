@@ -26,4 +26,11 @@
     <string name="favorite_list_elements">Избранные элементы списка</string>
     <string name="copied_list_id_to_clipboard">ID списка скопирован в буфер обмена</string>
     <string name="copied_list_url_to_clipboard">URL списка скопирован в буфер обмена</string>
+    <string name="save">Сохранить</string>
+    <string name="cancel">Отмена</string>
+    <string name="select_color">Выбрать цвет темы</string>
+    <string name="theme_color">Цвет темы</string>
+    <string name="dark_mode">Тёмный режим</string>
+    <string name="gemini_key">Ключ Gemini</string>
+    <string name="use_gemini">Использовать Gemini для генерации ввода</string>
 </resources>

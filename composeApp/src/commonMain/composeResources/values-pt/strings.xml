@@ -26,4 +26,11 @@
     <string name="favorite_list_elements">Elementos de lista favoritos</string>
     <string name="copied_list_id_to_clipboard">ID da lista copiado para a área de transferência</string>
     <string name="copied_list_url_to_clipboard">URL da lista copiada para a área de transferência</string>
+    <string name="save">Salvar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="select_color">Selecionar Cor do Tema</string>
+    <string name="theme_color">Cor do Tema</string>
+    <string name="dark_mode">Modo Escuro</string>
+    <string name="gemini_key">Chave Gemini</string>
+    <string name="use_gemini">Usar Gemini para gerar entradas</string>
 </resources>

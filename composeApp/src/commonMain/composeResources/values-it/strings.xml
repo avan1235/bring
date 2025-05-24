@@ -26,4 +26,11 @@
     <string name="favorite_list_elements">Elementi di lista preferiti</string>
     <string name="copied_list_id_to_clipboard">ID della lista copiato negli appunti</string>
     <string name="copied_list_url_to_clipboard">URL della lista copiato negli appunti</string>
+    <string name="save">Salva</string>
+    <string name="cancel">Annulla</string>
+    <string name="select_color">Seleziona Colore Tema</string>
+    <string name="theme_color">Colore Tema</string>
+    <string name="dark_mode">Modalità Scura</string>
+    <string name="gemini_key">Chiave Gemini</string>
+    <string name="use_gemini">Usa Gemini per generare input</string>
 </resources>

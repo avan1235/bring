@@ -26,4 +26,11 @@
     <string name="favorite_list_elements">Ulubione elementy listy</string>
     <string name="copied_list_id_to_clipboard">Skopiowano ID listy do schowka</string>
     <string name="copied_list_url_to_clipboard">Skopiowano URL listy do schowka</string>
+    <string name="save">Zapisz</string>
+    <string name="cancel">Anuluj</string>
+    <string name="select_color">Wybierz kolor motywu</string>
+    <string name="theme_color">Kolor motywu</string>
+    <string name="dark_mode">Tryb ciemny</string>
+    <string name="gemini_key">Klucz Gemini</string>
+    <string name="use_gemini">Użyj Gemini do generowania wpisów</string>
 </resources>

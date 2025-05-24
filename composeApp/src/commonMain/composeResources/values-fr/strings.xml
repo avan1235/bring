@@ -26,4 +26,11 @@
     <string name="favorite_list_elements">Éléments de liste favoris</string>
     <string name="copied_list_id_to_clipboard">ID de liste copié dans le presse-papiers</string>
     <string name="copied_list_url_to_clipboard">URL de liste copiée dans le presse-papiers</string>
+    <string name="save">Enregistrer</string>
+    <string name="cancel">Annuler</string>
+    <string name="select_color">Sélectionner la Couleur du Thème</string>
+    <string name="theme_color">Couleur du Thème</string>
+    <string name="dark_mode">Mode Sombre</string>
+    <string name="gemini_key">Clé Gemini</string>
+    <string name="use_gemini">Utiliser Gemini pour générer des entrées</string>
 </resources>
