@@ -164,7 +164,10 @@ internal class EditListScreenViewModel(
         _newItemName.update { "" }
         viewModelScope.launch {
             val items = when {
-                useGeminiSettings.value && useGemini.value && store.geminiKey.isNotEmpty() -> getSuggestionsFromGemini(
+                name.isNotBlank()
+                        && useGeminiSettings.value
+                        && useGemini.value
+                        && store.geminiKey.isNotEmpty() -> getSuggestionsFromGemini(
                     store.geminiKey,
                     name
                 )
