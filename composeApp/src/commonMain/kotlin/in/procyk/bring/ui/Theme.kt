@@ -4,6 +4,7 @@ import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboard
@@ -57,15 +58,19 @@ internal inline fun BringAppTheme(
     val selectionColors = rememberTextSelectionColors(colors)
     val typography = provideTypography()
 
-    CompositionLocalProvider(
-        LocalColors provides colors,
-        LocalTypography provides typography,
-        LocalIndication provides rippleIndication,
-        LocalTextSelectionColors provides selectionColors,
-        LocalContentColor provides colors.contentColorFor(colors.background),
-        LocalTextStyle provides typography.body1,
-        content = { content(context) },
-    )
+    MaterialTheme(
+        colorScheme = colorScheme,
+    ) {
+        CompositionLocalProvider(
+            LocalColors provides colors,
+            LocalTypography provides typography,
+            LocalIndication provides rippleIndication,
+            LocalTextSelectionColors provides selectionColors,
+            LocalContentColor provides colors.contentColorFor(colors.background),
+            LocalTextStyle provides typography.body1,
+            content = { content(context) },
+        )
+    }
 }
 
 @Composable
