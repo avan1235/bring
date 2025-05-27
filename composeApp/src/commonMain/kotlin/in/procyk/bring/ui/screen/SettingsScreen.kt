@@ -1,16 +1,17 @@
 package `in`.procyk.bring.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
@@ -184,7 +185,7 @@ private inline fun SettingColorPickerRow(
     crossinline onColorChanged: (Color) -> Unit,
 ) {
     val selectedColor by selectedColor.collectAsState()
-    var openedDialog by remember { mutableStateOf(false) }
+    var previousColor by remember { mutableStateOf<Color?>(null) }
 
     Row(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
@@ -194,22 +195,30 @@ private inline fun SettingColorPickerRow(
         Text(
             text = stringResource(label),
             modifier = Modifier.clickable(
-                interactionSource = interactionSource, indication = null, onClick = { openedDialog = true })
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = { previousColor = selectedColor }
+            )
                 .weight(1f),
         )
-        ColorBox(
-            color = selectedColor, onClick = { openedDialog = true })
+        IconButton(
+            variant = IconButtonVariant.PrimaryGhost,
+            onClick = { previousColor = selectedColor },
+            interactionSource = interactionSource,
+        ) {
+            Icon(Icons.Filled.Palette)
+        }
     }
 
-    AnimatedVisibility(openedDialog) {
+    AnimatedVisibility(previousColor != null) {
         val controller = rememberColorPickerController()
         AlertDialog(
             onDismissRequest = {
-                openedDialog = false
+                previousColor?.let(onColorChanged)
+                previousColor = null
             },
             onConfirmClick = {
-                onColorChanged(controller.selectedColor.value)
-                openedDialog = false
+                previousColor = null
             },
             title = stringResource(Res.string.select_color),
             text = {
@@ -220,11 +229,7 @@ private inline fun SettingColorPickerRow(
                         modifier = Modifier.fillMaxWidth().height(240.dp).padding(10.dp),
                         controller = controller,
                         initialColor = selectedColor,
-                    )
-                    Spacer(Modifier.height(16.dp))
-
-                    ColorBox(
-                        color = controller.selectedColor.value,
+                        onColorChanged = { onColorChanged(it.color) }
                     )
                 }
             },
@@ -232,17 +237,4 @@ private inline fun SettingColorPickerRow(
             dismissButtonText = stringResource(Res.string.cancel),
         )
     }
-}
-
-@Composable
-private fun ColorBox(
-    color: Color,
-    onClick: (() -> Unit)? = null,
-) {
-    Box(
-        modifier = Modifier.clip(RoundedCornerShape(8.dp)).run {
-            if (onClick != null) clickable(onClick = onClick) else this
-        }.border(1.dp, BringAppTheme.colors.outline, RoundedCornerShape(8.dp))
-            .background(color, RoundedCornerShape(8.dp)).size(36.dp)
-    )
 }
