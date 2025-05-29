@@ -5,16 +5,7 @@ import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
@@ -41,11 +32,7 @@ import bring.composeapp.generated.resources.favorites
 import bring.composeapp.generated.resources.settings
 import bring.composeapp.generated.resources.shopping_list
 import `in`.procyk.bring.ui.BringAppTheme
-import `in`.procyk.bring.ui.components.Icon
-import `in`.procyk.bring.ui.components.NavigationBar
-import `in`.procyk.bring.ui.components.NavigationBarItem
-import `in`.procyk.bring.ui.components.Scaffold
-import `in`.procyk.bring.ui.components.Text
+import `in`.procyk.bring.ui.components.*
 import `in`.procyk.bring.ui.components.snackbar.Snackbar
 import `in`.procyk.bring.ui.components.snackbar.SnackbarHost
 import `in`.procyk.bring.ui.foundation.systemBarsForVisualComponents
@@ -53,13 +40,11 @@ import `in`.procyk.bring.ui.screen.CreateListScreen
 import `in`.procyk.bring.ui.screen.EditListScreen
 import `in`.procyk.bring.ui.screen.FavoritesScreen
 import `in`.procyk.bring.ui.screen.SettingsScreen
-import `in`.procyk.bring.vm.CreateListScreenViewModel
-import `in`.procyk.bring.vm.EditListScreenViewModel
-import `in`.procyk.bring.vm.FavoritesViewModel
-import `in`.procyk.bring.vm.NavBarTarget
-import `in`.procyk.bring.vm.SettingsViewModel
+import `in`.procyk.bring.ui.useBottomNavigation
+import `in`.procyk.bring.vm.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import kotlin.uuid.Uuid
 
 @Composable
@@ -71,8 +56,7 @@ internal fun BringApp(initListId: String? = null) {
         Scaffold(
             topBar = {
                 Row(
-                    modifier = Modifier
-                        .padding(WindowInsets.systemBarsForVisualComponents.asPaddingValues())
+                    modifier = Modifier.padding(WindowInsets.systemBarsForVisualComponents.asPaddingValues())
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -82,24 +66,10 @@ internal fun BringApp(initListId: String? = null) {
                         text = topBarText,
                         style = BringAppTheme.typography.h2,
                         color = BringAppTheme.colors.onBackground,
-                        modifier = Modifier
-                            .weight(weight = 1f)
-                            .padding(16.dp)
+                        modifier = Modifier.weight(weight = 1f).padding(16.dp)
                     )
-                    NavigationBar(
-                        modifier = Modifier
-                            .width(144.dp)
-                            .height(48.dp),
-                    ) {
-                        val currentTarget by context.navBarTarget.collectAsState()
-                        NavBarTarget.entries.forEach { target ->
-                            val selected = currentTarget == target
-                            NavigationBarItem(
-                                icon = { Icon(if (selected) target.filledIcon else target.outlinedIcon) },
-                                selected = selected,
-                                onClick = { context.onNavBarTargetSelected(target) },
-                            )
-                        }
+                    if (!useBottomNavigation) {
+                        Navigation(context)
                     }
                 }
             },
@@ -111,36 +81,35 @@ internal fun BringApp(initListId: String? = null) {
                     Snackbar(it)
                 }
             },
+            bottomBar = {
+                if (useBottomNavigation) {
+                    Navigation(context)
+                }
+            },
             content = { padding ->
                 val focusManager = LocalFocusManager.current
                 Box(
-                    modifier = Modifier
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onTap = { focusManager.clearFocus() }
-                            )
-                        }
-                        .padding(padding),
+                    modifier = Modifier.pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = { focusManager.clearFocus() })
+                    }.padding(padding),
                 ) {
                     NavHost(
                         navController = context.navController,
                         startDestination = when (initListId) {
                             null -> Screen.CreateList
                             else -> Screen.EditList(
-                                initListId,
-                                fetchSuggestionsAndFavoriteElements = false
+                                initListId, fetchSuggestionsAndFavoriteElements = false
                             )
                         },
                         enterTransition = {
                             slideIntoContainer(
-                                SlideDirection.Up,
-                                tween(durationMillis = 250, delayMillis = 250, easing = EaseOut)
+                                SlideDirection.Up, tween(durationMillis = 250, delayMillis = 250, easing = EaseOut)
                             )
                         },
                         exitTransition = {
                             slideOutOfContainer(
-                                SlideDirection.Down,
-                                tween(durationMillis = 250, easing = EaseIn)
+                                SlideDirection.Down, tween(durationMillis = 250, easing = EaseIn)
                             )
                         },
                     ) {
@@ -155,8 +124,7 @@ internal fun BringApp(initListId: String? = null) {
                         composable<Screen.EditList> {
                             val editList = it.toRoute<Screen.EditList>()
                             val listId = editList.listId.let(Uuid::parseHexDash)
-                            val fetchSuggestionsAndFavoriteElements =
-                                editList.fetchSuggestionsAndFavoriteElements
+                            val fetchSuggestionsAndFavoriteElements = editList.fetchSuggestionsAndFavoriteElements
                             val vm = viewModel {
                                 EditListScreenViewModel(
                                     context = context,
@@ -178,6 +146,33 @@ internal fun BringApp(initListId: String? = null) {
                 }
             },
         )
+    }
+}
+
+@Composable
+private fun Navigation(
+    context: AbstractViewModel.Context,
+) {
+    NavigationBar(
+        modifier = when {
+            useBottomNavigation -> Modifier
+            else -> Modifier.width(144.dp).height(48.dp)
+        },
+    ) {
+        val currentTarget by context.navBarTarget.collectAsState()
+        NavBarTarget.entries.forEach { target ->
+            val selected = currentTarget == target
+            NavigationBarItem(
+                icon = { Icon(if (selected) target.filledIcon else target.outlinedIcon) },
+                selected = selected,
+                onClick = { context.onNavBarTargetSelected(target) },
+                label = when {
+                    !useBottomNavigation -> null
+                    else -> {
+                        { Text(stringResource(target.label)) }
+                    }
+                })
+        }
     }
 }
 
@@ -214,6 +209,5 @@ internal sealed class Screen {
     data object Favorites : Screen()
 
     @Serializable
-    data class EditList(val listId: String, val fetchSuggestionsAndFavoriteElements: Boolean) :
-        Screen()
+    data class EditList(val listId: String, val fetchSuggestionsAndFavoriteElements: Boolean) : Screen()
 }
