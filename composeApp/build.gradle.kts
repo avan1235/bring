@@ -147,6 +147,14 @@ kotlin {
             implementation(libs.ktor.client.js)
             implementation(libs.kstore.storage)
         }
+        androidUnitTest.dependencies {
+            implementation(libs.robolectric)
+            implementation(libs.androidx.ui.test.junit4)
+            implementation(libs.roborazzi)
+            implementation(libs.roborazzi.compose)
+            implementation(libs.roborazzi.junit.rule)
+
+        }
 //        macosMain.dependencies {
 //            implementation(libs.ktor.client.darwin)
 //            implementation(libs.kstore.file)
@@ -164,6 +172,11 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+    }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
     }
     packaging {
         resources {
@@ -191,6 +204,7 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
 
 compose.desktop {

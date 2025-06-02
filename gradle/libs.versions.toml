@@ -8,6 +8,7 @@ androidx-lifecycle = "2.8.4"
 androidx-navigation-compose = "2.8.0-alpha10"
 buildKonfig = "0.15.1"
 compose-multiplatform = "1.8.1"
+compose-androidx = "1.8.1"
 compose-hot-reload = "1.0.0-alpha10"
 kotlin = "2.1.21"
 kotlinx-coroutines = "1.10.2"
@@ -29,6 +30,8 @@ lumo = "1.2.1"
 kstore = "0.9.1"
 reorderable = "2.4.3"
 junit = "5.12.0"
+robolectric = "4.14.1"
+roborazzi = "1.44.0"
 testcontainers = "1.20.6"
 colorpicker = "1.1.2"
 materialKolor = "3.0.0-alpha04"
@@ -39,6 +42,8 @@ androidx-navigation-compose = { group = "org.jetbrains.androidx.navigation", nam
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-androidx" }
+androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-androidx" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
@@ -51,6 +56,10 @@ ksoup-network = { module = "com.fleeksoft.ksoup:ksoup-network", version.ref = "k
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "roborazzi" }
+roborazzi-compose = { module = "io.github.takahirom.roborazzi:roborazzi-compose", version.ref = "roborazzi" }
+roborazzi-junit-rule = { module = "io.github.takahirom.roborazzi:roborazzi-junit-rule", version.ref = "roborazzi" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 compose-colorpicker = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
