@@ -35,7 +35,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun SettingsScreen(
     vm: SettingsViewModel,
-) = AppScreen {
+) = AppScreen("screen-settings") {
     Column(
         modifier = Modifier
             .fillMaxSize()

@@ -18,12 +18,13 @@ internal fun RowScope.AddItemTextField(
     onValueChange: (String) -> Unit,
     onAdd: () -> Unit,
     onDone: () -> Unit,
-    modifier: Modifier = Modifier,
+    textFieldModifier: Modifier = Modifier,
+    buttonModifier: Modifier = Modifier,
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = { onValueChange(it) },
-        modifier = modifier
+        modifier = textFieldModifier
             .weight(1f),
         singleLine = true,
         keyboardOptions = KeyboardOptions(
@@ -40,6 +41,7 @@ internal fun RowScope.AddItemTextField(
     IconButton(
         onClick = { onAdd() },
         variant = IconButtonVariant.Primary,
+        modifier = buttonModifier,
     ) {
         Icon(
             imageVector = Icons.Default.Add,

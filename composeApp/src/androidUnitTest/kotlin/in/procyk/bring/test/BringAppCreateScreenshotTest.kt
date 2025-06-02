@@ -3,25 +3,25 @@ package `in`.procyk.bring.test
 import android.content.ContentProvider
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.zIndex
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import bring.composeapp.generated.resources.Res
 import bring.composeapp.generated.resources.pixel
@@ -29,6 +29,7 @@ import com.github.takahirom.roborazzi.captureRoboImage
 import `in`.procyk.bring.BringAppInternal
 import `in`.procyk.bring.BringStore
 import `in`.procyk.bring.ui.BringAppTheme
+import `in`.procyk.bring.ui.components.Text
 import org.jetbrains.compose.resources.painterResource
 import org.junit.Before
 import org.junit.BeforeClass
@@ -70,7 +71,6 @@ internal abstract class BringAppCreateScreenshotTest {
     }
 
     companion object Companion {
-        protected const val EDIT_LIST_ID: String = "3ef9c65e-5961-40e0-a41e-fa8362a69c15"
 
         val DefaultSizeModifier: Modifier = Modifier.size(411.dp, 842.dp)
         const val MidScale: Float = 0.75f
@@ -89,21 +89,25 @@ internal abstract class BringAppCreateScreenshotTest {
         Uuid.random().toHexDashString()
 
     protected inline fun screenshotBringApp(
-        initListId: String? = null,
         modifier: Modifier = Modifier,
         crossinline config: BringStore.() -> BringStore = { this },
+        crossinline text: @Composable BoxScope.() -> Unit = {},
         crossinline context: ComposeContentTestRule.() -> Unit = {},
     ): Unit = with(composeTestRule) {
         setContent {
             BringAppTheme { context ->
                 LaunchedEffect(Unit) {
-                    context.store.update { it?.copy(themeColor = Color(Random.nextLong()).toArgb())?.config() }
+                    context.store.update {
+                        it?.config()
+                    }
                 }
                 Box(
                     modifier = Modifier
                         .background(BringAppTheme.colors.surface)
                         .fillMaxSize()
-                )
+                ) {
+                    text()
+                }
                 Box(
                     modifier = modifier.then(DefaultSizeModifier)
                 ) {
@@ -116,12 +120,20 @@ internal abstract class BringAppCreateScreenshotTest {
                             .fillMaxSize()
 
                     ) {
-                        BringAppInternal(context, initListId)
+                        BringAppInternal(context)
                     }
-                    Image(
-                        painter = painterResource(Res.drawable.pixel),
-                        contentDescription = null,
-                    )
+                }
+                Popup {
+                    Box(
+                        modifier = modifier.then(DefaultSizeModifier)
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .zIndex(Float.MAX_VALUE),
+                            painter = painterResource(Res.drawable.pixel),
+                            contentDescription = null,
+                        )
+                    }
                 }
             }
         }
@@ -133,12 +145,105 @@ internal abstract class BringAppCreateScreenshotTest {
     }
 }
 
-internal const val WAIT_TIMEOUT_MILLIS: Long = 10_000L
+@Composable
+internal fun BigScreenshotText(text: AnnotatedString) {
+    Text(
+        text = text,
+        textAlign = TextAlign.Center,
+        fontSize = 36.sp,
+        lineHeight = 52.sp,
+        maxLines = Int.MAX_VALUE
+    )
+}
+
+internal const val WAIT_TIMEOUT_MILLIS: Long = 60_000L
 
 @OptIn(ExperimentalTestApi::class)
-internal fun ComposeTestRule.waitUntilAtLeastOneTestTagExists(tag: String) =
-    waitUntilAtLeastOneExists(hasTestTag(tag), WAIT_TIMEOUT_MILLIS)
+internal fun ComposeTestRule.waitUntilExactlyOneTestTagExists(tag: String) =
+    waitUntilExactlyOneExists(hasTestTag(tag), WAIT_TIMEOUT_MILLIS)
 
 @OptIn(ExperimentalTestApi::class)
-internal fun ComposeTestRule.waitUntilAtLeastOneTextExists(text: String) =
-    waitUntilAtLeastOneExists(hasText(text), WAIT_TIMEOUT_MILLIS)
+internal fun ComposeTestRule.waitUntilNodeCount(tag: String, count: Int) =
+    waitUntilNodeCount(hasTestTag(tag), count, WAIT_TIMEOUT_MILLIS)
+
+@OptIn(ExperimentalTestApi::class)
+internal fun ComposeTestRule.waitUntilExactlyOneTextExists(text: String) =
+    waitUntilExactlyOneExists(hasText(text), WAIT_TIMEOUT_MILLIS)
+
+internal fun ComposeTestRule.navigateCleanMainScreen() {
+    onNodeWithTag("button-navigate-main")
+        .assertExists()
+        .assertHasClickAction()
+        .performClick()
+
+    waitUntilExactlyOneTestTagExists("screen-create-list")
+
+    onNodeWithTag("button-navigate-main")
+        .assertExists()
+        .assertHasClickAction()
+        .performClick()
+
+    waitUntilExactlyOneTestTagExists("screen-create-list")
+
+    waitUntilExactlyOneTextExists("Bring!")
+}
+
+internal fun ComposeTestRule.navigateFavoritesScreen() {
+    onNodeWithTag("button-navigate-favourites")
+        .assertExists()
+        .assertHasClickAction()
+        .performClick()
+
+    waitUntilExactlyOneTestTagExists("screen-favorites")
+}
+
+internal fun ComposeTestRule.navigateSettingsScreen() {
+    onNodeWithTag("button-navigate-settings")
+        .assertExists()
+        .assertHasClickAction()
+        .performClick()
+
+    waitUntilExactlyOneTestTagExists("screen-settings")
+}
+
+internal fun ComposeTestRule.createShoppingList(
+    listName: String,
+    clickButton: String
+) {
+    onNodeWithTag("screen-create-list")
+        .assertExists()
+
+    onNodeWithTag("text-field-create-list")
+        .assertExists()
+        .assertHasClickAction()
+        .performClick()
+        .performTextClearance()
+
+    onNodeWithTag("text-field-create-list")
+        .assertExists()
+        .assertHasClickAction()
+        .performClick()
+        .performTextInput(listName)
+
+    waitUntilExactlyOneTextExists(listName)
+
+    onNodeWithTag("button-create-list")
+        .assertExists()
+        .assertHasClickAction()
+        .performClick()
+
+    waitUntilExactlyOneTestTagExists("screen-edit-list")
+    waitUntilExactlyOneTextExists(listName)
+
+    onNodeWithTag("button-expand-options")
+        .assertExists()
+        .assertHasClickAction()
+        .performClick()
+
+    waitUntilExactlyOneTestTagExists(clickButton)
+
+    onNodeWithTag(clickButton)
+        .assertExists()
+        .assertHasClickAction()
+        .performClick()
+}

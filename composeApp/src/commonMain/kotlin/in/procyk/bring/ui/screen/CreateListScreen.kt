@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -25,7 +26,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun CreateListScreen(
     vm: CreateListScreenViewModel,
-) = AppScreen {
+) = AppScreen("screen-create-list") {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -49,12 +50,15 @@ internal fun CreateListScreen(
                 keyboardActions = KeyboardActions(
                     onDone = { vm.onCreateShoppingList() },
                 ),
-                modifier = Modifier.widthIn(max = 720.dp),
+                modifier = Modifier
+                    .widthIn(max = 720.dp)
+                    .testTag("text-field-create-list"),
             )
             Spacer(Modifier.height(16.dp))
             Button(
                 onClick = vm::onCreateShoppingList,
                 variant = ButtonVariant.Primary,
+                modifier = Modifier.testTag("button-create-list"),
             ) {
                 Text(stringResource(Res.string.create))
             }
@@ -79,7 +83,10 @@ internal fun CreateListScreen(
                 keyboardActions = KeyboardActions(
                     onDone = { vm.onJoinShoppingList() },
                 ),
-                modifier = Modifier.widthIn(max = 720.dp),
+                modifier = Modifier
+                    .widthIn(max = 720.dp)
+                    .testTag("text-field-join-list-id")
+                ,
             )
             Spacer(Modifier.height(16.dp))
             val isJoinShoppingListEnabled by vm.isJoinShoppingListEnabled.collectAsState()

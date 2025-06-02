@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import bring.composeapp.generated.resources.Res
 import bring.composeapp.generated.resources.favorite_list_elements
@@ -30,7 +31,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun FavoritesScreen(
     vm: FavoritesViewModel
-) = AppScreen {
+) = AppScreen("screen-favorites") {
     val favorites by vm.favoriteLists.collectAsState()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -57,6 +58,8 @@ internal fun FavoritesScreen(
                     onValueChange = { vm.onNewFavoriteElementNameChange(it) },
                     onAdd = { vm.onFavoriteElementCreated() },
                     onDone = { vm.onFavoriteElementCreated() },
+                    textFieldModifier = Modifier.testTag("text-field-add-favourite-element"),
+                    buttonModifier = Modifier.testTag("button-add-favourite-element"),
                 )
             }
         }

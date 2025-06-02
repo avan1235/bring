@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import `in`.procyk.bring.ui.BringAppTheme
@@ -69,6 +70,7 @@ internal fun <T : Any> FlowRowItems(
                     OutlinedChip(
                         onClick = { onClick(item) },
                         trailingIcon = trailingIcon,
+                        modifier = Modifier.testTag("chip-item")
                     ) {
                         Text(
                             text = itemName,

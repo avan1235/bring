@@ -33,9 +33,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Checked
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Unchecked
 import `in`.procyk.bring.ui.BringAppTheme
@@ -52,7 +54,7 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun EditListScreen(
     vm: EditListScreenViewModel,
-) = AppScreen {
+) = AppScreen("screen-edit-list") {
     val listState = rememberLazyListState()
     val items by vm.items.collectAsState()
     val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->
@@ -80,10 +82,19 @@ internal fun EditListScreen(
                     ) {
                         val newItemName by vm.newItemName.collectAsState()
                         AddItemTextField(
-                            value = newItemName, onValueChange = vm::onNewItemNameChange, onAdd = {
+                            value = newItemName,
+                            onValueChange = vm::onNewItemNameChange,
+                            onAdd = {
                                 vm.onCreateNewItem()
                                 focusRequester.requestFocus()
-                            }, onDone = { vm.onCreateNewItem() }, modifier = Modifier.focusRequester(focusRequester)
+                            },
+                            onDone = { vm.onCreateNewItem() },
+                            textFieldModifier = Modifier
+                                .focusRequester(focusRequester)
+                                .testTag("text-field-add-list-item"),
+                            buttonModifier = Modifier
+                                .focusRequester(focusRequester)
+                                .testTag("button-add-list-item"),
                         )
                         when {
                             individualButtons -> Row {
@@ -95,6 +106,7 @@ internal fun EditListScreen(
                                 Box {
                                     IconButton(
                                         onClick = { isExpanded = !isExpanded },
+                                        modifier = Modifier.testTag("button-expand-options"),
                                         icon = Icons.Default.MoreVert,
                                     )
                                     DropdownMenu(
@@ -128,7 +140,9 @@ internal fun EditListScreen(
         }
         items(items, key = { it.id }) { item ->
             ReorderableItemRow(
-                state = reorderableLazyListState, key = item.id
+                modifier = Modifier.testTag("list-item"),
+                state = reorderableLazyListState,
+                key = item.id
             ) { isDragging ->
                 Row(
                     modifier = Modifier.weight(1f).animateItem(),
@@ -140,7 +154,7 @@ internal fun EditListScreen(
                         checked = item.status.isChecked,
                         onCheckedChange = { vm.onChecked(item.id, it) },
                         interactionSource = interactionSource,
-                        modifier = Modifier
+                        modifier = Modifier.testTag("checkbox-list-item")
                     )
                     Box(
                         modifier = Modifier.clickable(
@@ -247,18 +261,23 @@ private fun ControlButtons(
 ) {
     val isFavorite by vm.isFavorite.collectAsState()
     IconButton(
-        onClick = vm::onToggleListFavorite, icon = if (isFavorite) Icons.Filled.Favorite else Icons.TwoTone.Favorite
+        onClick = vm::onToggleListFavorite,
+        icon = if (isFavorite) Icons.Filled.Favorite else Icons.TwoTone.Favorite,
+        modifier = Modifier.testTag("button-toggle-favorite"),
     )
     val useGeminiSettings by vm.useGeminiSettings.collectAsState()
     if (useGeminiSettings) {
         val useGemini by vm.useGemini.collectAsState()
         IconButton(
-            onClick = vm::onToggleUseGemini, icon = if (useGemini) Icons.Filled.Psychology else Icons.TwoTone.Psychology
+            onClick = vm::onToggleUseGemini,
+            icon = if (useGemini) Icons.Filled.Psychology else Icons.TwoTone.Psychology,
+            modifier = Modifier.testTag("button-toggle-gemini"),
         )
     }
     IconButton(
         onClick = vm::onShareList,
         icon = Icons.Outlined.IosShare,
+        modifier = Modifier.testTag("button-share-list"),
     )
 }
 
@@ -266,10 +285,12 @@ private fun ControlButtons(
 private fun IconButton(
     onClick: () -> Unit,
     icon: ImageVector,
+    modifier: Modifier = Modifier,
 ) {
     IconButton(
         onClick = onClick,
         variant = IconButtonVariant.PrimaryGhost,
+        modifier = modifier,
     ) {
         Icon(icon)
     }

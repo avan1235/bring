@@ -18,10 +18,8 @@ import `in`.procyk.bring.vm.AbstractViewModel.Context
 import io.github.xxfast.kstore.KStore
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.rpc.annotations.Rpc
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
@@ -88,7 +86,9 @@ abstract class AbstractViewModel(
             appScope.launch {
                 updateListLocationPresentation(null)
                 _topBarText.value = getString(Res.string.favorites)
-                navController.navigate(Screen.Favorites)
+                withContext(Dispatchers.Main) {
+                    navController.navigate(Screen.Favorites)
+                }
             }
         }
 
@@ -96,7 +96,9 @@ abstract class AbstractViewModel(
             appScope.launch {
                 updateListLocationPresentation(null)
                 _topBarText.value = getString(Res.string.settings)
-                navController.navigate(Screen.Settings)
+                withContext(Dispatchers.Main) {
+                    navController.navigate(Screen.Settings)
+                }
             }
         }
 
@@ -104,7 +106,9 @@ abstract class AbstractViewModel(
             appScope.launch {
                 updateListLocationPresentation(listId)
                 store.update { it?.copy(lastListId = listId) }
-                navController.navigate(Screen.EditList(listId, fetchSuggestions))
+                withContext(Dispatchers.Main) {
+                    navController.navigate(Screen.EditList(listId, fetchSuggestions))
+                }
             }
         }
 
@@ -117,7 +121,9 @@ abstract class AbstractViewModel(
                 if (cleanLastListId) {
                     store.update { it?.copy(lastListId = null) }
                 }
-                navController.navigate(Screen.CreateList)
+                withContext(Dispatchers.Main) {
+                    navController.navigate(Screen.CreateList)
+                }
                 _topBarText.value = ComposeAppConfig.APP_NAME
             }
         }

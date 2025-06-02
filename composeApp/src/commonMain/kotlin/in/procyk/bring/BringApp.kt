@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -174,6 +175,7 @@ private fun Navigation(
                 icon = { Icon(if (selected) target.filledIcon else target.outlinedIcon) },
                 selected = selected,
                 onClick = { context.onNavBarTargetSelected(target) },
+                modifier = Modifier.testTag("button-navigate-${target.name.lowercase()}"),
                 label = when {
                     !useBottomNavigation -> null
                     else -> {
