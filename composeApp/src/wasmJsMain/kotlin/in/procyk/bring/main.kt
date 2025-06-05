@@ -20,13 +20,17 @@ import kotlinx.browser.window
 import kotlinx.coroutines.await
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
+import org.w3c.dom.asList
 import org.w3c.fetch.Response
 import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    ComposeViewport(document.body!!) {
+    val body = document.body ?: return
+    body.children.asList().forEach { it.remove() }
+
+    ComposeViewport(body) {
         val fontFamilyResolver = LocalFontFamilyResolver.current
         var fontsLoaded by remember { mutableStateOf(false) }
 
