@@ -28,7 +28,6 @@ import kotlin.wasm.unsafe.withScopedMemoryAllocator
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     val body = document.body ?: return
-    body.children.asList().forEach { it.remove() }
 
     ComposeViewport(body) {
         val fontFamilyResolver = LocalFontFamilyResolver.current
@@ -42,24 +41,14 @@ fun main() {
                 }
             )
 
-            else -> BringAppTheme {
-                Surface {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(48.dp),
-                        )
-                    }
-                }
-            }
+            else -> {}
         }
 
         LaunchedEffect(Unit) {
             val notoColorEmojiBytes = loadRes(NotoColorEmoji).toByteArray()
             val fontFamily = FontFamily(listOf(Font("NotoColorEmoji", notoColorEmojiBytes)))
             fontFamilyResolver.preload(fontFamily)
+            body.children.asList().forEach { it.remove() }
             fontsLoaded = true
         }
     }
