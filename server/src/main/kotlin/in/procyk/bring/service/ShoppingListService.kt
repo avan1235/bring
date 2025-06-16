@@ -13,11 +13,7 @@ import `in`.procyk.bring.db.Database
 import `in`.procyk.bring.db.ShoppingListEntity
 import `in`.procyk.bring.db.ShoppingListItemEntity
 import `in`.procyk.bring.db.ShoppingListItemsTable
-import `in`.procyk.bring.extract.AggregateIngredientsExtractor
-import `in`.procyk.bring.extract.AniaGotujeIngredientsExtractor
-import `in`.procyk.bring.extract.CookidooIngredientsExtractor
-import `in`.procyk.bring.extract.IngredientsExtractor
-import `in`.procyk.bring.extract.KwestiaSmakuIngredientsExtractor
+import `in`.procyk.bring.extract.*
 import `in`.procyk.bring.service.ShoppingListService.*
 import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +21,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
@@ -99,7 +94,7 @@ internal class ShoppingListServiceImpl(
 
     override fun getShoppingList(
         listId: Uuid,
-    ): Flow<Either<ShoppingListData, GetShoppingListError>> = sessions.getOrPut(listId) {
+    ): Flow<Either<ShoppingListData, GetShoppingListError>> =
         callbackFlow {
             val channelName = "event_${listId.toHexDashString().replace('-', '_')}"
             val listener = Database.createListener(channelName) { payload ->
@@ -112,17 +107,12 @@ internal class ShoppingListServiceImpl(
             getShoppingListData(listId)
         }
             .flowOn(Dispatchers.IO)
-            .stateIn(
-                scope = application,
-                started = WhileSubscribed(stopTimeoutMillis = 5_000),
-                initialValue = null,
-            )
-    }.let { stateFlow ->
-        flow {
-            emit(getShoppingListData(listId))
-            emitAll(stateFlow.filterNotNull())
-        }
-    }
+            .let { stateFlow ->
+                flow {
+                    emit(getShoppingListData(listId))
+                    emitAll(stateFlow.filterNotNull())
+                }
+            }
 
     private suspend fun getShoppingListData(
         listId: Uuid,
@@ -220,7 +210,7 @@ internal class ShoppingListServiceImpl(
     private fun addEntriesToShoppingListInTransaction(
         userId: UUID,
         listId: EntityID<UUID>,
-        names: List<String>
+        names: List<String>,
     ) {
         if (names.isEmpty()) return
 
@@ -272,7 +262,7 @@ internal class ShoppingListServiceImpl(
 
     override suspend fun updateItemOrder(
         itemId: Uuid,
-        order: Double
+        order: Double,
     ): Either<Unit, UpdateItemError> {
         return runNewSuspendedTransactionCatchingAs(UpdateItemError.Internal) txn@{
             val item = ShoppingListItemEntity.findById(itemId.toJavaUuid())
