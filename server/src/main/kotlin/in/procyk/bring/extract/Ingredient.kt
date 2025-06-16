@@ -1,3 +1,5 @@
 package `in`.procyk.bring.extract
 
-internal data class Ingredient(val description: String)
+internal class Ingredient(description: String) {
+    val description: String = description.trim()
+}
