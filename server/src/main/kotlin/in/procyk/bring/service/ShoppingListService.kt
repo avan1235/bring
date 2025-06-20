@@ -29,6 +29,7 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
@@ -36,7 +37,7 @@ import kotlin.uuid.toKotlinUuid
 internal class ShoppingListServiceImpl(
     override val coroutineContext: CoroutineContext,
     private val application: Application,
-    private val sessions: ConcurrentHashMap<Uuid, StateFlow<Either<ShoppingListData, GetShoppingListError>?>>,
+    private val sessions: ConcurrentHashMap<Uuid, Flow<Either<ShoppingListData, GetShoppingListError>?>>,
 ) : ShoppingListService {
 
     private val extractor: IngredientsExtractor = AggregateIngredientsExtractor(
@@ -94,7 +95,7 @@ internal class ShoppingListServiceImpl(
 
     override fun getShoppingList(
         listId: Uuid,
-    ): Flow<Either<ShoppingListData, GetShoppingListError>> =
+    ): Flow<Either<ShoppingListData, GetShoppingListError>> = sessions.getOrPut(listId) {
         callbackFlow {
             val channelName = "event_${listId.toHexDashString().replace('-', '_')}"
             val listener = Database.createListener(channelName) { payload ->
@@ -107,12 +108,15 @@ internal class ShoppingListServiceImpl(
             getShoppingListData(listId)
         }
             .flowOn(Dispatchers.IO)
-            .let { stateFlow ->
-                flow {
-                    emit(getShoppingListData(listId))
-                    emitAll(stateFlow.filterNotNull())
-                }
+            .stateIn(
+                scope = application,
+                started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
+                initialValue = null,
+            )
+            .onSubscription {
+                emit(getShoppingListData(listId))
             }
+    }.filterNotNull()
 
     private suspend fun getShoppingListData(
         listId: Uuid,
