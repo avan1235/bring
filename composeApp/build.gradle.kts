@@ -219,10 +219,6 @@ compose.desktop {
     }
 }
 
-composeCompiler {
-    featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
-}
-
 buildkonfig {
     packageName = "in.procyk.bring"
     objectName = "ComposeAppConfig"
