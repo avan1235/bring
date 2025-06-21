@@ -2,6 +2,7 @@ package `in`.procyk.bring.db
 
 import com.impossibl.postgres.api.jdbc.PGConnection
 import com.impossibl.postgres.api.jdbc.PGNotificationListener
+import kotlin.uuid.Uuid
 
 
 @Suppress("SqlSourceToSinkFlow")
@@ -20,14 +21,16 @@ abstract class PGNotifyListener(
         }
     }
 
+    private val uniqueName: String = Uuid.random().toHexString()
+
     init {
-        pgConnection.addNotificationListener(listener)
+        pgConnection.addNotificationListener(uniqueName, channelName, listener)
         pgConnection.createStatement().use { it.executeUpdate("LISTEN $channelName") }
     }
 
     override fun close() {
         pgConnection.createStatement().use { it.executeUpdate("UNLISTEN $channelName") }
-        pgConnection.removeNotificationListener(listener)
+        pgConnection.removeNotificationListener(uniqueName)
     }
 
     protected abstract fun notification(payload: String)
