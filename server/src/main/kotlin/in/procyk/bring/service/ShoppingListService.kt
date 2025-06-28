@@ -16,8 +16,7 @@ import `in`.procyk.bring.db.ShoppingListItemsTable
 import `in`.procyk.bring.extract.*
 import `in`.procyk.bring.service.ShoppingListService.*
 import io.ktor.server.application.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
@@ -29,6 +28,7 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
@@ -96,12 +96,16 @@ internal class ShoppingListServiceImpl(
     override fun getShoppingList(
         listId: Uuid,
     ): Flow<Either<ShoppingListData, GetShoppingListError>> = sessions.getOrPut(listId) {
-        callbackFlow {
+        channelFlow {
             val channelName = "event_${listId.toHexDashString().replace('-', '_')}"
-            val listener = Database.createListener(channelName) { payload ->
-                trySendBlocking(payload)
+            while (currentCoroutineContext().isActive) {
+                Database.createListener(channelName) { payload ->
+                    trySendBlocking(payload)
+                }.use {
+                    delay(30.minutes)
+                }
             }
-            awaitClose { listener.close() }
+            awaitClose()
         }.onStart {
             reorderListItems(listId).onRight { cancel(it.name) }
         }.map {
