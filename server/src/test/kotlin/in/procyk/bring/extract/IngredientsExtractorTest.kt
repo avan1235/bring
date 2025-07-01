@@ -1,7 +1,5 @@
 package `in`.procyk.bring.extract
 
-import com.fleeksoft.ksoup.Ksoup
-import com.fleeksoft.ksoup.network.parseGetRequest
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,7 +20,7 @@ internal abstract class IngredientsExtractorTest(
 
     @Test
     fun `extracts some ingredients`() = runTest {
-        val ingredients = extractor.extractIngredients(Ksoup.parseGetRequest(testUrl))
+        val ingredients = extractor.extractIngredients()
 
         assertNotEquals(0, ingredients.size, "Expected non empty list of ingredients")
 

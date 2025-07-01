@@ -4,8 +4,8 @@ import com.fleeksoft.ksoup.nodes.Document
 
 internal data object CookidooIngredientsExtractor : KsoupIngredientsExtractor() {
 
-    override suspend fun supports(url: String): Boolean {
-        return url.startsWith("https://cookidoo.pl/recipes/recipe/")
+    override suspend fun supports(input: String): Boolean {
+        return input.startsWith("https://cookidoo.pl/recipes/recipe/")
     }
 
     override suspend fun extractIngredients(document: Document): List<Ingredient> {

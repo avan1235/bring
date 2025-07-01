@@ -3,8 +3,6 @@ package `in`.procyk.bring.service
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
-import com.fleeksoft.ksoup.Ksoup
-import com.fleeksoft.ksoup.network.parseGetRequest
 import `in`.procyk.bring.ShoppingListData
 import `in`.procyk.bring.ShoppingListItemData
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Unchecked
@@ -39,6 +37,7 @@ internal class ShoppingListServiceImpl(
         AniaGotujeIngredientsExtractor,
         KwestiaSmakuIngredientsExtractor,
         CookidooIngredientsExtractor,
+        ExistingShoppingListIngredientsExtractor,
     )
 
     override suspend fun createNewShoppingList(
@@ -51,10 +50,9 @@ internal class ShoppingListServiceImpl(
         val (title, ingredients) = when {
             !extractor.supports(input) -> input to emptyList()
             else -> runCatching {
-                val document = Ksoup.parseGetRequest(input)
-                val title = extractor.extractTitle(document)
+                val title = extractor.extractTitle(input)
                     ?: return CreateNewShoppingListError.ExtractionError.right()
-                val ingredients = extractor.extractIngredients(document)
+                val ingredients = extractor.extractIngredients(input)
                     .map { it.description }
                     .takeIf { it.isNotEmpty() }
                     ?: return CreateNewShoppingListError.ExtractionError.right()
@@ -187,7 +185,7 @@ internal class ShoppingListServiceImpl(
         val names = when {
             !extractor.supports(input) -> listOf(input)
             else -> runCatching {
-                extractor.extractIngredients(Ksoup.parseGetRequest(input))
+                extractor.extractIngredients(input)
                     .map { it.description }
                     .takeIf { it.isNotEmpty() }
             }.getOrNull() ?: return AddEntryToShoppingListError.ExtractionError.right()

@@ -4,8 +4,8 @@ import com.fleeksoft.ksoup.nodes.Document
 
 internal data object AniaGotujeIngredientsExtractor : KsoupIngredientsExtractor() {
 
-    override suspend fun supports(url: String): Boolean {
-        return url.startsWith("https://aniagotuje.pl/przepis/")
+    override suspend fun supports(input: String): Boolean {
+        return input.startsWith("https://aniagotuje.pl/przepis/")
     }
 
     override suspend fun extractIngredients(document: Document): List<Ingredient> {
