@@ -58,6 +58,10 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/bring:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
 
+  publish-koyeb:
+    needs: build-server
+    runs-on: ubuntu-latest
+    steps:
       - name: Install and configure Koyeb CLI
         uses: koyeb-community/install-koyeb-cli@v2
         with:
@@ -65,4 +69,17 @@ jobs:
           github_token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Deploy
-        run: koyeb services update ${{ secrets.SERVICE_ID }} --docker ${{ secrets.DOCKER_USERNAME }}/bring:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
+        run: koyeb services update ${{ secrets.KOYEB_SERVICE_ID }} --docker ${{ secrets.DOCKER_USERNAME }}/bring:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
+
+  publish-northflank:
+    needs: build-server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Northflank
+        uses: northflank/deploy-to-northflank@v1
+        with:
+          northflank-api-key: ${{ secrets.NORTHFLANK_API_KEY }}
+          project-id: ${{ env.NORTHFLANK_PROJECT_ID }}
+          service-id: ${{ env.NORTHFLANK_SERVICE_ID }}
+          image-path: ${{ secrets.DOCKER_USERNAME }}/bring:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
+          credentials-id: ${{ env.NORTHFLANK_CREDENTIALS_ID }}
