@@ -20,7 +20,7 @@ internal abstract class IngredientsExtractorTest(
 
     @Test
     fun `extracts some ingredients`() = runTest {
-        val ingredients = extractor.extractIngredients()
+        val ingredients = extractor.extractIngredients(testUrl)
 
         assertNotEquals(0, ingredients.size, "Expected non empty list of ingredients")
 
