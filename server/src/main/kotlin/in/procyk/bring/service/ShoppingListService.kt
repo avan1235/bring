@@ -15,7 +15,6 @@ import `in`.procyk.bring.db.ShoppingListItemEntity
 import `in`.procyk.bring.db.ShoppingListItemsTable
 import `in`.procyk.bring.extract.*
 import `in`.procyk.bring.service.ShoppingListService.*
-import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
@@ -94,11 +93,11 @@ internal class ShoppingListServiceImpl(
     ): Flow<Either<ShoppingListData, GetShoppingListError>> {
         return channelFlow {
             val channelName = "event_${listId.toHexDashString().replace('-', '_')}"
-            Database.createListener(channelName) { payload ->
+            val listener = Database.createListener(channelName) { payload ->
                 trySendBlocking(payload)
             }
             trySendBlocking("")
-            awaitClose()
+            awaitClose { listener.close() }
         }.onStart {
             reorderListItems(listId).onRight { cancel(it.name) }
         }.map {
