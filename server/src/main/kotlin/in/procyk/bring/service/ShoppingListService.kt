@@ -16,7 +16,8 @@ import `in`.procyk.bring.db.ShoppingListItemsTable
 import `in`.procyk.bring.extract.*
 import `in`.procyk.bring.service.ShoppingListService.*
 import io.ktor.server.application.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
@@ -26,18 +27,13 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
 
 internal class ShoppingListServiceImpl(
     override val coroutineContext: CoroutineContext,
-    private val application: Application,
-    private val sessions: ConcurrentHashMap<Uuid, Flow<Either<ShoppingListData, GetShoppingListError>?>>,
 ) : ShoppingListService {
 
     private val extractor: IngredientsExtractor = AggregateIngredientsExtractor(
@@ -95,16 +91,13 @@ internal class ShoppingListServiceImpl(
 
     override fun getShoppingList(
         listId: Uuid,
-    ): Flow<Either<ShoppingListData, GetShoppingListError>> = sessions.getOrPut(listId) {
-        channelFlow {
+    ): Flow<Either<ShoppingListData, GetShoppingListError>> {
+        return channelFlow {
             val channelName = "event_${listId.toHexDashString().replace('-', '_')}"
-            while (currentCoroutineContext().isActive) {
-                Database.createListener(channelName) { payload ->
-                    trySendBlocking(payload)
-                }.use {
-                    delay(30.minutes)
-                }
+            Database.createListener(channelName) { payload ->
+                trySendBlocking(payload)
             }
+            trySendBlocking("")
             awaitClose()
         }.onStart {
             reorderListItems(listId).onRight { cancel(it.name) }
@@ -112,15 +105,7 @@ internal class ShoppingListServiceImpl(
             getShoppingListData(listId)
         }
             .flowOn(Dispatchers.IO)
-            .stateIn(
-                scope = application,
-                started = SharingStarted.WhileSubscribed(stopTimeout = 5.seconds),
-                initialValue = null,
-            )
-            .onSubscription {
-                emit(getShoppingListData(listId))
-            }
-    }.filterNotNull()
+    }
 
     private suspend fun getShoppingListData(
         listId: Uuid,
