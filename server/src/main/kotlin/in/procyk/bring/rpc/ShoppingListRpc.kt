@@ -8,6 +8,6 @@ import kotlinx.rpc.krpc.ktor.server.rpc
 
 internal fun Route.shoppingListRpc() {
     rpc(ShoppingListRpcPath) {
-        registerService<ShoppingListService> { ShoppingListServiceImpl(it) }
+        registerService<ShoppingListService>(::ShoppingListServiceImpl)
     }
 }

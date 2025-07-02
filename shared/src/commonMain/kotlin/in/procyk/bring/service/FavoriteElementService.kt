@@ -2,13 +2,12 @@ package `in`.procyk.bring.service
 
 import arrow.core.Either
 import `in`.procyk.bring.UserFavoriteElementsData
-import kotlinx.rpc.RemoteService
 import kotlinx.rpc.annotations.Rpc
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
 @Rpc
-interface FavoriteElementService : RemoteService {
+interface FavoriteElementService {
 
     @Serializable
     enum class GetFavoriteElementsError { Internal }

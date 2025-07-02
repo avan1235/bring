@@ -4,13 +4,12 @@ import arrow.core.Either
 import `in`.procyk.bring.ShoppingListData
 import `in`.procyk.bring.UserShoppingListSuggestionsData
 import kotlinx.coroutines.flow.Flow
-import kotlinx.rpc.RemoteService
 import kotlinx.rpc.annotations.Rpc
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
 @Rpc
-interface ShoppingListService : RemoteService {
+interface ShoppingListService {
 
     @Serializable
     enum class CreateNewShoppingListError { Internal, ExtractionError, InvalidName }

@@ -21,7 +21,7 @@ interface DurableRpcService<@Rpc T : Any> {
     fun durableLaunch(f: suspend T.() -> Unit)
 }
 
-@OptIn(DelicateCoroutinesApi::class)
+@OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
 inline fun <@Rpc reified T : Any> DurableRpcService(
     coroutineScope: CoroutineScope,
     httpClient: HttpClient,
@@ -32,7 +32,8 @@ inline fun <@Rpc reified T : Any> DurableRpcService(
     private val mutex = Mutex()
 
     private inline val KtorRpcClient.hasActiveConnection: Boolean
-        get() = webSocketSession.isActive && !webSocketSession.outgoing.isClosedForSend
+        get() = !webSocketSession.isCompleted || webSocketSession.getCompleted()
+            .run { isActive && !outgoing.isClosedForSend }
 
     private val lastActiveClient: KtorRpcClient?
         get() = client?.takeIf { it.hasActiveConnection }

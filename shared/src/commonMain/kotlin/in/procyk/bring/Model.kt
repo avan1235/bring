@@ -1,9 +1,9 @@
 package `in`.procyk.bring
 
-import kotlinx.datetime.Instant
-import kotlinx.serialization.SerialName
+import kotlinx.datetime.serializers.FormattedInstantSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.cbor.CborLabel
+import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 const val ShoppingListRpcPath: String = "/shoppingList"
@@ -16,6 +16,7 @@ data class ShoppingListData(
     @CborLabel(0) val id: Uuid,
     @CborLabel(1) val name: String,
     @CborLabel(2) val byUserId: Uuid,
+    @Serializable(InstantSerializer::class)
     @CborLabel(3) val createdAt: Instant,
     @CborLabel(4) val items: List<ShoppingListItemData>,
 )
@@ -41,6 +42,7 @@ data class ShoppingListItemData(
     @CborLabel(0) val id: Uuid,
     @CborLabel(1) val name: String,
     @CborLabel(2) val byUserId: Uuid,
+    @Serializable(InstantSerializer::class)
     @CborLabel(3) val createdAt: Instant,
     @CborLabel(4) val order: Double,
     @CborLabel(5) val status: CheckedStatusData,
@@ -52,6 +54,7 @@ data class ShoppingListItemData(
 
         @Serializable
         data class Checked(
+            @Serializable(InstantSerializer::class)
             @CborLabel(0) val changedAt: Instant,
             @CborLabel(1) val byUserId: Uuid,
         ) : CheckedStatusData()

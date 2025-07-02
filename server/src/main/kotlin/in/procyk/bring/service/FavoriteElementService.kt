@@ -8,15 +8,13 @@ import `in`.procyk.bring.UserFavoriteElementsData
 import `in`.procyk.bring.db.FavoriteElementEntity
 import `in`.procyk.bring.db.FavoriteElementsTable
 import `in`.procyk.bring.service.FavoriteElementService.*
-import kotlinx.datetime.Clock
-import kotlin.coroutines.CoroutineContext
+import kotlinx.datetime.toDeprecatedInstant
+import kotlin.time.Clock
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
 
-internal class FavoriteElementServiceImpl(
-    override val coroutineContext: CoroutineContext,
-) : FavoriteElementService {
+internal class FavoriteElementServiceImpl : FavoriteElementService {
 
     private fun findFavoriteElements(byUserId: Uuid): Either<UserFavoriteElementsData, Nothing> {
         val elements = FavoriteElementEntity.find {
@@ -49,7 +47,7 @@ internal class FavoriteElementServiceImpl(
             FavoriteElementEntity.new {
                 this.name = name
                 this.byUserId = byUserId.toJavaUuid()
-                this.createdAt = Clock.System.now()
+                this.createdAt = Clock.System.now().toDeprecatedInstant()
             }
             findFavoriteElements(byUserId)
         }

@@ -17,21 +17,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.*
-import kotlinx.datetime.Clock
+import kotlinx.datetime.toDeprecatedInstant
+import kotlin.time.Clock
+import kotlinx.datetime.toStdlibInstant
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.util.*
-import kotlin.coroutines.CoroutineContext
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
 
-internal class ShoppingListServiceImpl(
-    override val coroutineContext: CoroutineContext,
-) : ShoppingListService {
+internal class ShoppingListServiceImpl : ShoppingListService {
 
     private val extractor: IngredientsExtractor = AggregateIngredientsExtractor(
         AniaGotujeIngredientsExtractor,
@@ -64,7 +64,7 @@ internal class ShoppingListServiceImpl(
             val listId = ShoppingListEntity.new {
                 this.name = title
                 this.byUserId = userUUID
-                this.createdAt = Clock.System.now()
+                this.createdAt = Clock.System.now().toDeprecatedInstant()
             }.id
             addEntriesToShoppingListInTransaction(userUUID, listId, ingredients)
             listId.value.toKotlinUuid().left()
@@ -97,7 +97,7 @@ internal class ShoppingListServiceImpl(
             trySendBlocking("")
             awaitClose { listener.close() }
         }.onStart {
-            reorderListItems(listId).onRight { cancel(it.name) }
+            reorderListItems(listId).onRight { currentCoroutineContext().cancel() }
         }.map {
             getShoppingListData(listId)
         }
@@ -114,13 +114,13 @@ internal class ShoppingListServiceImpl(
                 id = list.id.value.toKotlinUuid(),
                 name = list.name,
                 byUserId = list.byUserId.toKotlinUuid(),
-                createdAt = list.createdAt,
+                createdAt = list.createdAt.toStdlibInstant(),
                 items = list.items.map { item ->
                     ShoppingListItemData(
                         id = item.id.value.toKotlinUuid(),
                         name = item.name,
                         byUserId = item.byUserId.toKotlinUuid(),
-                        createdAt = item.createdAt,
+                        createdAt = item.createdAt.toStdlibInstant(),
                         order = item.order,
                         status = item.status
                     )
@@ -218,7 +218,7 @@ internal class ShoppingListServiceImpl(
                 this.name = name
                 this.listId = listId
                 this.byUserId = userId
-                this.createdAt = createdAt
+                this.createdAt = createdAt.toDeprecatedInstant()
                 this.order = incrementedOrder + idx
             }
         }
@@ -232,7 +232,7 @@ internal class ShoppingListServiceImpl(
             val listItem = ShoppingListItemEntity.findById(itemId.toJavaUuid())
                 ?: return@txn UpdateItemError.UnknownItemId.right()
             listItem.status = ShoppingListItemData.CheckedStatusData.Checked(
-                changedAt = Clock.System.now(),
+                changedAt = kotlin.time.Clock.System.now(),
                 byUserId = userId,
             )
             Unit.left()
