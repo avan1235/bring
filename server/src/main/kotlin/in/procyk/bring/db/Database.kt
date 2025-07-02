@@ -19,6 +19,7 @@ object Database {
             url = dotenv.databaseUrl
             user = dotenv.env("POSTGRES_USER")
             password = dotenv.env("POSTGRES_PASSWORD")
+            sslMode = dotenv.env("POSTGRES_SSL_MODE")
         }
         db = Database.connect(ds)
         @Suppress("DEPRECATION")

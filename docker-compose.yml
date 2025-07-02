@@ -3,6 +3,7 @@ services:
     image: postgres:alpine3.14
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_SSL_MODE=${POSTGRES_SSL_MODE}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
@@ -23,6 +24,7 @@ services:
       - POSTGRES_HOST=bring-dev-postgres
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_SSL_MODE=${POSTGRES_SSL_MODE}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - HOST=${HOST}
