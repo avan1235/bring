@@ -9,10 +9,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.*
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
-import kotlin.uuid.Uuid
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 internal class CreateListScreenViewModel(
     context: Context,
@@ -65,7 +68,7 @@ private fun suggestListName(): String {
 }
 
 private val suggestListNameDateFormat = LocalDate.Format {
-    dayOfMonth()
+    day(padding = Padding.ZERO)
     char('.')
     monthNumber(padding = Padding.ZERO)
     char('.')
