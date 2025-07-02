@@ -1,5 +1,6 @@
 package `in`.procyk.bring.extract
 
+import `in`.procyk.bring.ListIdRegex
 import `in`.procyk.bring.db.ShoppingListEntity
 import `in`.procyk.bring.db.ShoppingListItemEntity
 import `in`.procyk.bring.db.ShoppingListItemsTable
@@ -10,20 +11,22 @@ import kotlin.uuid.toJavaUuid
 internal data object ExistingShoppingListIngredientsExtractor : IngredientsExtractor {
 
     override suspend fun supports(input: String): Boolean =
-        runCatching { Uuid.parseHexDash(input) }.isSuccess
+        ListIdRegex.find(input) != null
 
     override suspend fun extractIngredients(input: String): List<Ingredient> {
+        val match = ListIdRegex.find(input) ?: return emptyList()
+        val id = Uuid.parseHexDash(match.value).toJavaUuid()
         return newSuspendedTransaction {
-            val id = Uuid.parseHexDash(input).toJavaUuid()
             ShoppingListItemEntity.find {
                 ShoppingListItemsTable.listId eq id
-            }.map { Ingredient(it.name)  }
+            }.map { Ingredient(it.name) }
         }
     }
 
     override suspend fun extractTitle(input: String): String? {
+        val match = ListIdRegex.find(input) ?: return null
+        val id = Uuid.parseHexDash(match.value).toJavaUuid()
         return newSuspendedTransaction {
-            val id = Uuid.parseHexDash(input).toJavaUuid()
             ShoppingListEntity.findById(id)?.name
         }
     }
