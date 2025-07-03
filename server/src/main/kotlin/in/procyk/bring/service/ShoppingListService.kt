@@ -13,25 +13,31 @@ import `in`.procyk.bring.db.ShoppingListItemEntity
 import `in`.procyk.bring.db.ShoppingListItemsTable
 import `in`.procyk.bring.extract.*
 import `in`.procyk.bring.service.ShoppingListService.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.datetime.toDeprecatedInstant
-import kotlin.time.Clock
 import kotlinx.datetime.toStdlibInstant
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.time.Clock
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
 
-internal class ShoppingListServiceImpl : ShoppingListService {
+internal class ShoppingListServiceImpl(
+    private val applicationScope: CoroutineScope,
+    private val listUpdates: ConcurrentHashMap<Uuid, SharedFlow<Either<ShoppingListData, GetShoppingListError>?>>,
+) : ShoppingListService {
 
     private val extractor: IngredientsExtractor = AggregateIngredientsExtractor(
         AniaGotujeIngredientsExtractor,
@@ -89,19 +95,26 @@ internal class ShoppingListServiceImpl : ShoppingListService {
     override fun getShoppingList(
         listId: Uuid,
     ): Flow<Either<ShoppingListData, GetShoppingListError>> {
-        return channelFlow {
-            val channelName = "event_${listId.toHexDashString().replace('-', '_')}"
-            val listener = Database.createListener(channelName) { payload ->
-                trySendBlocking(payload)
+        return flow {
+            listUpdates.getOrPut(listId) {
+                callbackFlow {
+                    val channelName = "event_${listId.toHexDashString().replace('-', '_')}"
+                    val listener = Database.createListener(channelName) { payload ->
+                        trySendBlocking(payload)
+                    }
+                    trySendBlocking("")
+                    awaitClose { listener.close() }
+                }.onStart {
+                    reorderListItems(listId).onRight { currentCoroutineContext().cancel() }
+                }.map {
+                    getShoppingListData(listId)
+                }
+                    .flowOn(Dispatchers.IO)
+                    .stateIn(applicationScope, WhileSubscribed(), null)
             }
-            trySendBlocking("")
-            awaitClose { listener.close() }
-        }.onStart {
-            reorderListItems(listId).onRight { currentCoroutineContext().cancel() }
-        }.map {
-            getShoppingListData(listId)
+                .filterNotNull()
+                .let { emitAll(it) }
         }
-            .flowOn(Dispatchers.IO)
     }
 
     private suspend fun getShoppingListData(
