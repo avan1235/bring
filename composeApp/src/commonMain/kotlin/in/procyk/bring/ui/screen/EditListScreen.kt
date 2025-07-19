@@ -192,22 +192,13 @@ internal fun EditListScreen(
         )
     }
     val density = LocalDensity.current
-    val navigationBars = WindowInsets.navigationBars
-    val padding = remember(density, navigationBars) {
-        val insets = navigationBars.asPaddingValues(density)
-        object : PaddingValues by insets {
-            override fun calculateBottomPadding(): Dp = insets.calculateBottomPadding() + FabPadding
-
-            override fun calculateRightPadding(layoutDirection: LayoutDirection): Dp = FabPadding
-        }
-    }
     Box(
-        modifier = Modifier.padding(padding).fillMaxSize(),
+        modifier = Modifier.padding(FabPadding).fillMaxSize(),
         contentAlignment = Alignment.BottomEnd,
     ) {
         val scope = rememberCoroutineScope()
         val showFab by vm.showFab.collectAsState()
-        val extra = with(density) { padding.calculateBottomPadding().roundToPx() }
+        val extra = remember(density) { with(density) { FabPadding.roundToPx() } }
         AnimatedVisibility(
             visible = showFab,
             enter = slideInVertically(initialOffsetY = { it + extra }),
