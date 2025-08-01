@@ -1,7 +1,7 @@
 package `in`.procyk.bring
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
-import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
@@ -58,7 +59,7 @@ internal fun BringApp(initListId: String? = null) {
 @Composable
 internal fun BringAppInternal(
     context: AbstractViewModel.Context,
-    initListId: String? = null
+    initListId: String? = null,
 ) {
     LaunchedEffect(initListId) {
         context.store.update { it?.copy(lastListId = initListId) }
@@ -114,12 +115,15 @@ internal fun BringAppInternal(
                     },
                     enterTransition = {
                         slideIntoContainer(
-                            SlideDirection.Up, tween(durationMillis = 250, delayMillis = 250, easing = EaseOut)
+                            towards = towards(),
+                            animationSpec = tween(durationMillis = 400, easing = EaseOut),
                         )
                     },
                     exitTransition = {
                         slideOutOfContainer(
-                            SlideDirection.Down, tween(durationMillis = 250, easing = EaseIn)
+                            towards = towards(),
+                            animationSpec = tween(durationMillis = 400, easing = EaseOut),
+                            targetOffset = { fullOffset -> (fullOffset * 0.4f).toInt() },
                         )
                     },
                 ) {
@@ -206,6 +210,24 @@ private val NavBarTarget.label: StringResource
         NavBarTarget.Favourites -> Res.string.favorites
         NavBarTarget.Settings -> Res.string.settings
     }
+
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.towards(): SlideDirection {
+    val targetRoute = targetState.toScreenOrderOrNull() ?: return SlideDirection.Left
+    val initialRoute = initialState.toScreenOrderOrNull() ?: return SlideDirection.Left
+    return when {
+        targetRoute > initialRoute -> SlideDirection.Left
+        else -> SlideDirection.Right
+    }
+}
+
+private fun NavBackStackEntry.toScreenOrderOrNull(): Int? = when {
+    navigatesFrom<Screen.CreateList>() -> 0
+    navigatesFrom<Screen.EditList>() -> 1
+    navigatesFrom<Screen.Favorites>() -> 2
+    navigatesFrom<Screen.Settings>() -> 3
+    else -> null
+}
+
 
 @Serializable
 internal sealed class Screen {

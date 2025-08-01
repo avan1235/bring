@@ -166,7 +166,7 @@ abstract class AbstractViewModel(
     protected val storeFlow: StateFlow<BringStore> = context.storeFlow
 }
 
-private inline fun <reified T : Screen> NavBackStackEntry?.navigatesFrom(): Boolean =
+internal inline fun <reified T : Screen> NavBackStackEntry?.navigatesFrom(): Boolean =
     this?.destination?.route?.split('/')?.getOrNull(0) == T::class.qualifiedName
 
 enum class NavBarTarget {
