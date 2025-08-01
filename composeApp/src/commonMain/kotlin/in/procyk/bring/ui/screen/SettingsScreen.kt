@@ -13,6 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ContextClick
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import bring.composeapp.generated.resources.*
@@ -104,12 +108,16 @@ private inline fun <T : Any> SettingSelectionRow(
             modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()
         ) {
             entries.forEach { option ->
+                val haptics = LocalHapticFeedback.current
                 Row(
                     modifier = Modifier.padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
                         selected = selectedOption == option,
-                        onClick = { onSelectedChange(option) },
+                        onClick = {
+                            onSelectedChange(option)
+                            haptics.performHapticFeedback(ContextClick)
+                        },
                         content = {
                             Text(
                                 text = stringResource(optionLabel(option)),
@@ -133,16 +141,24 @@ private inline fun SettingSwitchRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val interactionSource = remember { MutableInteractionSource() }
+        val haptics = LocalHapticFeedback.current
         val isChecked by isChecked.collectAsState()
         Text(
             text = stringResource(label),
             modifier = Modifier.clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = { onCheckedChange(!isChecked) }).weight(1f),
+                onClick = {
+                    onCheckedChange(!isChecked)
+                    haptics.performHapticFeedback(if (isChecked) ToggleOff else ToggleOn)
+                }
+            ).weight(1f),
         )
         Switch(
-            checked = isChecked, onCheckedChange = { onCheckedChange(it) })
+            checked = isChecked, onCheckedChange = {
+                onCheckedChange(it)
+                haptics.performHapticFeedback(if (it) ToggleOn else ToggleOff)
+            })
     }
 }
 
@@ -151,7 +167,7 @@ private inline fun SettingStringRow(
     label: StringResource,
     value: StateFlow<String>,
     crossinline onValueChange: (String) -> Unit,
-    reference: String? = null
+    reference: String? = null,
 ) {
     Row(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),

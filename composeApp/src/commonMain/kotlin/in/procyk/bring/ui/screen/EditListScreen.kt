@@ -32,12 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.GestureEnd
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.GestureThresholdActivate
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.PopupProperties
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Checked
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Unchecked
 import `in`.procyk.bring.ui.BringAppTheme
@@ -228,6 +228,13 @@ private fun LazyItemScope.ReorderableItemRow(
     content: @Composable RowScope.(isDragging: Boolean) -> Unit,
 ) {
     ReorderableItem(state, key, modifier, enabled, animateItemModifier) { isDragging ->
+        val haptics = LocalHapticFeedback.current
+        LaunchedEffect(isDragging) {
+            when {
+                isDragging -> haptics.performHapticFeedback(GestureThresholdActivate)
+                else -> haptics.performHapticFeedback(GestureEnd)
+            }
+        }
         Row(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,

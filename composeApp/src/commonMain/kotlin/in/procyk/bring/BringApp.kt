@@ -20,8 +20,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ContextClick
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -173,12 +175,16 @@ private fun Navigation(
         },
     ) {
         val currentTarget by context.navBarTarget.collectAsState()
+        val haptics = LocalHapticFeedback.current
         NavBarTarget.entries.forEach { target ->
             val selected = currentTarget == target
             NavigationBarItem(
                 icon = { Icon(if (selected) target.filledIcon else target.outlinedIcon) },
                 selected = selected,
-                onClick = { context.onNavBarTargetSelected(target) },
+                onClick = {
+                    context.onNavBarTargetSelected(target)
+                    haptics.performHapticFeedback(ContextClick)
+                },
                 modifier = Modifier.testTag("button-navigate-${target.name.lowercase()}"),
                 label = when {
                     !useBottomNavigation -> null
