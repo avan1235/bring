@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem as currentOS
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
@@ -22,7 +23,7 @@ plugins {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.add("-Xnon-local-break-continue")
+        freeCompilerArgs.addAll("-Xnon-local-break-continue", "-Xwhen-guards")
     }
 
     androidTarget {
@@ -167,8 +168,8 @@ android {
         applicationId = "in.procyk.bring"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1.23"
     }
     testOptions {
         unitTests {

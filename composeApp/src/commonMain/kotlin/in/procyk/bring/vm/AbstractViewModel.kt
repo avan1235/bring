@@ -37,7 +37,8 @@ abstract class AbstractViewModel(
         private val appScope: CoroutineScope,
     ) {
         val storeFlow: StateFlow<BringStore> =
-            store.updates.filterNotNull().stateIn(appScope, SharingStarted.Eagerly, BringStore.Default)
+            store.updates.filterNotNull()
+                .stateIn(appScope, SharingStarted.Eagerly, BringStore.Default)
 
         private val _topBarText = MutableStateFlow(ComposeAppConfig.APP_NAME)
         val topBarText: StateFlow<String> = _topBarText.asStateFlow()
@@ -51,19 +52,26 @@ abstract class AbstractViewModel(
                 else -> NavBarTarget.Main
             }
 
-        }.stateIn(appScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 1_000), NavBarTarget.Main)
+        }.stateIn(
+            appScope,
+            SharingStarted.WhileSubscribed(stopTimeoutMillis = 1_000),
+            NavBarTarget.Main
+        )
 
         fun onNavBarTargetSelected(target: NavBarTarget) {
+            val current = navBarTarget.value
             when (target) {
-                NavBarTarget.Favourites -> navigateFavourites()
-                NavBarTarget.Settings -> navigateSettings()
+                NavBarTarget.Favourites if target != current -> navigateFavourites()
+                NavBarTarget.Settings if target != current -> navigateSettings()
                 NavBarTarget.Main -> when {
-                    navController.currentBackStackEntry.navigatesFrom<Screen.EditList>() -> navigateCreateList(
-                        cleanLastListId = true
-                    )
+                    navController.currentBackStackEntry.navigatesFrom<Screen.EditList>() ->
+                        navigateCreateList(cleanLastListId = true)
 
-                    else -> navigateList()
+                    target != current -> navigateList()
+                    else -> {}
                 }
+
+                else -> {}
             }
         }
 
