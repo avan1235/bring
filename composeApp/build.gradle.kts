@@ -1,3 +1,5 @@
+import buildsrc.convention.Env_gradle.Env.BringPackageName
+import buildsrc.convention.Env_gradle.Env.BringVersion
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -8,8 +10,8 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.lang.System.getenv
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem as currentOS
 
-
 plugins {
+    id("buildsrc.convention.env")
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinxRpc)
     alias(libs.plugins.kotlinSerialization)
@@ -114,7 +116,7 @@ kotlin {
             implementation(projects.sharedClient)
 
             implementation(libs.kotlinx.rpc.core)
-            
+
             implementation(libs.ktor.serialization.kotlinx.cbor)
             implementation(libs.ktor.serialization.kotlinx.json)
 
@@ -169,7 +171,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = libsVersionCode
-        versionName = "1.1.23"
+        versionName = BringVersion
     }
     testOptions {
         unitTests {
@@ -211,14 +213,14 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "in.procyk.bring"
-            packageVersion = "1.0.0"
+            packageName = BringPackageName
+            packageVersion = BringVersion
         }
     }
 }
 
 buildkonfig {
-    packageName = "in.procyk.bring"
+    packageName = BringPackageName
     objectName = "ComposeAppConfig"
     exposeObjectWithName = "ComposeAppConfig"
 

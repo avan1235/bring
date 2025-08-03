@@ -40,6 +40,8 @@ jobs:
           export GRADLE_USER_HOME=$(pwd)/.gradle
           chmod +x ./gradlew
           ./gradlew server:test
+        env:
+          VERSION: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v5

@@ -66,6 +66,8 @@ jobs:
           export CLIENT_WS_PROTOCOL=wss
           chmod +x ./gradlew
           ./gradlew composeApp:wasmJsBrowserDistribution
+        env:
+          VERSION: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -114,6 +116,7 @@ jobs:
       - name: Build APK file
         if: job.status == 'success'
         run: |
+          export GRADLE_USER_HOME=$(pwd)/.gradle
           export CLIENT_HOST=${{ secrets.CLIENT_HOST }}
           export CLIENT_PORT=${{ secrets.CLIENT_PORT }}
           export CLIENT_HTTP_PROTOCOL=https

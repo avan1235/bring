@@ -1,6 +1,9 @@
+import buildsrc.convention.Env_gradle.Env.BringPackageName
+import buildsrc.convention.Env_gradle.Env.BringVersion
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem as currentOS
 
 plugins {
+    id("buildsrc.convention.env")
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.kotlinxRpc)
     alias(libs.plugins.kotlinSerialization)
@@ -9,8 +12,9 @@ plugins {
     application
 }
 
-group = "in.procyk.bring"
-version = "1.0.0"
+group = BringPackageName
+version = BringVersion
+
 application {
     mainClass.set("in.procyk.bring.ApplicationKt")
 }
