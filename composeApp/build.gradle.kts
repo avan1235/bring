@@ -5,8 +5,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import java.lang.System.getenv
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem as currentOS
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
@@ -168,7 +168,7 @@ android {
         applicationId = "in.procyk.bring"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 2
+        versionCode = libsVersionCode
         versionName = "1.1.23"
     }
     testOptions {
@@ -237,3 +237,26 @@ buildkonfig {
 tasks.withType<KotlinJsCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xwasm-kclass-fqn")
 }
+
+private val libsVersionCode: Int
+    get() {
+        val code = libs.versions.versionCode.get().toInt()
+        val bump = getenv()["BUMP_FILE_VERSION_CODE"]?.toBooleanStrictOrNull() ?: false
+        if (!bump) return code
+
+        val file = project.file("../gradle/libs.versions.toml")
+        val updatedFile = file.readLines().map { line ->
+            if (!line.startsWith("versionCode")) return@map line
+
+            val currentVersionCode = line
+                .dropWhile { it != '"' }
+                .removePrefix("\"")
+                .takeWhile { it != '"' }
+                .toInt()
+            if (currentVersionCode != code) throw IllegalStateException("Two different version codes: $code vs $currentVersionCode")
+
+            """versionCode = "${currentVersionCode + 1}""""
+        }.joinToString(separator = "\n")
+        file.writeText(updatedFile)
+        return code
+    }
