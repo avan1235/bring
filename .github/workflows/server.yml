@@ -16,8 +16,7 @@ jobs:
           fetch-depth: 0
 
       - name: Extract version from tag
-        id: extract_version
-        uses: damienaicheh/extract-version-from-tag-action@v1.1.0
+        uses: damienaicheh/extract-version-from-tag-action@v1.3.0
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
