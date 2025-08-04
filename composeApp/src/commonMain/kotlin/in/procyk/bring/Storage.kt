@@ -1,8 +1,15 @@
 package `in`.procyk.bring
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ContextClick
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
+import androidx.compose.ui.platform.LocalHapticFeedback
 import `in`.procyk.bring.ui.Theme
 import io.github.xxfast.kstore.Codec
 import kotlinx.serialization.Serializable
@@ -22,11 +29,45 @@ data class BringStore(
     @CborLabel(9) val darkMode: Theme = Theme.System,
     @CborLabel(9) val geminiKey: String = "",
     @CborLabel(10) val useGemini: Boolean = false,
+    @CborLabel(11) val useHaptics: Boolean = true,
 ) {
     companion object {
         val Default: BringStore = BringStore()
     }
+
+    @Composable
+    inline fun onClickWithHaptics(
+        crossinline onClick: () -> Unit,
+        type: HapticFeedbackType = ContextClick,
+    ): () -> Unit {
+        val hapticFeedback = LocalHapticFeedback.current
+        return when {
+            useHaptics -> fun() {
+                onClick()
+                hapticFeedback.performHapticFeedback(type)
+            }
+
+            else -> fun() { onClick() }
+        }
+    }
+
+    @Composable
+    inline fun onToggleWithHaptics(
+        crossinline onToggle: (Boolean) -> Unit,
+    ): (Boolean) -> Unit {
+        val hapticFeedback = LocalHapticFeedback.current
+        return when {
+            useHaptics -> fun(value: Boolean) {
+                onToggle(value)
+                hapticFeedback.performHapticFeedback(if (value) ToggleOn else ToggleOff)
+            }
+
+            else -> fun(value: Boolean) { onToggle(value) }
+        }
+    }
 }
+
+val LocalBringStore: ProvidableCompositionLocal<BringStore> = staticCompositionLocalOf { BringStore.Default }
 
 @Serializable
 data class FavoriteShoppingList(

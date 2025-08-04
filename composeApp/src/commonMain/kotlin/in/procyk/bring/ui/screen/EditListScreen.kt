@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import `in`.procyk.bring.LocalBringStore
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Checked
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Unchecked
 import `in`.procyk.bring.ui.BringAppTheme
@@ -229,8 +230,10 @@ private fun LazyItemScope.ReorderableItemRow(
 ) {
     ReorderableItem(state, key, modifier, enabled, animateItemModifier) { isDragging ->
         val haptics = LocalHapticFeedback.current
+        val useHaptics = LocalBringStore.current.useHaptics
         LaunchedEffect(isDragging) {
             when {
+                !useHaptics -> return@LaunchedEffect
                 isDragging -> haptics.performHapticFeedback(GestureThresholdActivate)
                 else -> haptics.performHapticFeedback(GestureEnd)
             }

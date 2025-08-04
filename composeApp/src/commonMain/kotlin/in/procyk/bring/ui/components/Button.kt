@@ -19,6 +19,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import `in`.procyk.bring.LocalBringStore
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.LocalContentColor
 import `in`.procyk.bring.ui.foundation.ButtonElevation
@@ -79,7 +80,7 @@ internal fun ButtonComponent(
 //    val buttonModifier = modifier.fillMaxWidth()
 
     Surface(
-        onClick = onClick,
+        onClick = LocalBringStore.current.onClickWithHaptics(onClick),
         modifier =
             modifier
                 .defaultMinSize(minHeight = ButtonDefaults.MinHeight)

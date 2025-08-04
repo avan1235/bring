@@ -21,6 +21,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import `in`.procyk.bring.LocalBringStore
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.LocalContentColor
 import `in`.procyk.bring.ui.components.NavigationBarDefaults.NavigationBarHeight
@@ -94,7 +95,7 @@ internal fun RowScope.NavigationBarItem(
         modifier
             .selectable(
                 selected = selected,
-                onClick = onClick,
+                onClick = LocalBringStore.current.onClickWithHaptics(onClick),
                 enabled = enabled,
                 role = Role.Tab,
                 interactionSource = interactionSource,

@@ -19,6 +19,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import `in`.procyk.bring.LocalBringStore
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.LocalContentColor
 import `in`.procyk.bring.ui.foundation.ButtonElevation
@@ -68,7 +69,7 @@ private fun IconButtonComponent(
     val shadowElevation = style.elevation?.shadowElevation(enabled, interactionSource)?.value ?: 0.dp
 
     Surface(
-        onClick = onClick,
+        onClick = LocalBringStore.current.onClickWithHaptics(onClick),
         modifier =
             modifier.defaultMinSize(
                 minWidth = IconButtonDefaults.ButtonSize,

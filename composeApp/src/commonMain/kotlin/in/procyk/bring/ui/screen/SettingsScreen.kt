@@ -13,15 +13,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ContextClick
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import bring.composeapp.generated.resources.*
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import `in`.procyk.bring.LocalBringStore
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.Theme
 import `in`.procyk.bring.ui.components.*
@@ -108,16 +105,14 @@ private inline fun <T : Any> SettingSelectionRow(
             modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()
         ) {
             entries.forEach { option ->
-                val haptics = LocalHapticFeedback.current
                 Row(
                     modifier = Modifier.padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
                         selected = selectedOption == option,
-                        onClick = {
+                        onClick = LocalBringStore.current.onClickWithHaptics(onClick = {
                             onSelectedChange(option)
-                            haptics.performHapticFeedback(ContextClick)
-                        },
+                        }),
                         content = {
                             Text(
                                 text = stringResource(optionLabel(option)),
@@ -141,23 +136,20 @@ private inline fun SettingSwitchRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val interactionSource = remember { MutableInteractionSource() }
-        val haptics = LocalHapticFeedback.current
+        val onClick = LocalBringStore.current.onToggleWithHaptics(onCheckedChange)
         val isChecked by isChecked.collectAsState()
         Text(
             text = stringResource(label),
             modifier = Modifier.clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = {
-                    onCheckedChange(!isChecked)
-                    haptics.performHapticFeedback(if (isChecked) ToggleOff else ToggleOn)
-                }
+                onClick = { onClick(!isChecked) },
             ).weight(1f),
         )
         Switch(
-            checked = isChecked, onCheckedChange = {
+            checked = isChecked,
+            onCheckedChange = {
                 onCheckedChange(it)
-                haptics.performHapticFeedback(if (it) ToggleOn else ToggleOff)
             })
     }
 }

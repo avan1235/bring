@@ -5,10 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ContextClick
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import `in`.procyk.bring.LocalBringStore
 
 data class BottomBannerItem(
     val url: String,
@@ -33,13 +32,11 @@ internal fun BottomBanner(
             horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
         ) {
             val uriHandler = LocalUriHandler.current
-            val haptics = LocalHapticFeedback.current
             for (item in items) {
                 IconButton(
-                    onClick = {
+                    onClick = LocalBringStore.current.onClickWithHaptics(onClick = {
                         uriHandler.openUri(item.url)
-                        haptics.performHapticFeedback(ContextClick)
-                    },
+                    }),
                     variant = IconButtonVariant.SecondaryGhost,
                 ) {
                     Icon(item.icon)

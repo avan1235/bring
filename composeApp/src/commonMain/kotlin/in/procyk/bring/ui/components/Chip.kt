@@ -16,6 +16,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import `in`.procyk.bring.LocalBringStore
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.components.ChipDefaults.ChipIconHorizontalPadding
 import `in`.procyk.bring.ui.components.ChipDefaults.ChipIconSize
@@ -132,7 +133,7 @@ private fun ChipComponent(
     val shadowElevation = style.elevation?.shadowElevation(enabled, interactionSource)?.value ?: 0.dp
 
     Surface(
-        onClick = onClick,
+        onClick = LocalBringStore.current.onClickWithHaptics(onClick),
         modifier = modifier.semantics { role = Role.Button },
         enabled = enabled,
         shape = style.shape,
