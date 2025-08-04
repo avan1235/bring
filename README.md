@@ -23,8 +23,6 @@ Web version is publicly available at https://bring.procyk.in
   <img src="composeApp/screenshots/edit-list-screen-options.png" style="width: 20%;" />
   <img src="composeApp/screenshots/create-list-screen-custom-name.png" style="width: 20%;" />
   <img src="composeApp/screenshots/create-list-screen-join-list.png" style="width: 20%;" />
-</div>
-<div style="display: flex; justify-content: center; flex-wrap: nowrap;">
   <img src="composeApp/screenshots/favorites-screen-collections.png" style="width: 20%;" />
   <img src="composeApp/screenshots/settings-screen-options.png" style="width: 20%;" />
 </div>
@@ -93,7 +91,7 @@ bring/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- JDK 11 or higher
+- JDK 21 or higher
 - Docker and Docker Compose (for running the server)
 - Android Studio or IntelliJ IDEA (for development)
 - Xcode (for iOS development, macOS only)
