@@ -1,20 +1,13 @@
 package `in`.procyk.bring
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.platform.Font
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ComposeViewport
+import com.materialkolor.ktx.toHex
 import `in`.procyk.bring.ui.BringAppTheme
-import `in`.procyk.bring.ui.components.Surface
-import `in`.procyk.bring.ui.components.progressindicators.CircularProgressIndicator
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.await
@@ -27,19 +20,33 @@ import kotlin.wasm.unsafe.withScopedMemoryAllocator
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    val body = document.body ?: return
+    val body = document.body ?: error("no <body>")
+    val head = document.head ?: error("no <head>")
 
     ComposeViewport(body) {
         val fontFamilyResolver = LocalFontFamilyResolver.current
         var fontsLoaded by remember { mutableStateOf(false) }
 
         when {
-            fontsLoaded -> BringApp(
-                initListId = when {
-                    window.location.hash.isNotEmpty() -> window.location.hash.substring(1)
-                    else -> null
+            fontsLoaded -> {
+                BringAppTheme { context ->
+                    val backgroundColor = BringAppTheme.colors.background
+                    LaunchedEffect(backgroundColor) {
+                        head.children.asList().last().remove()
+                        document.createElement("meta").apply {
+                            setAttribute("name", "theme-color")
+                            setAttribute("content", backgroundColor.toHex())
+                        }.let(head::appendChild)
+                    }
+                    BringAppInternal(
+                        context = context,
+                        initListId = when {
+                            window.location.hash.isNotEmpty() -> window.location.hash.substring(1)
+                            else -> null
+                        }
+                    )
                 }
-            )
+            }
 
             else -> {}
         }
