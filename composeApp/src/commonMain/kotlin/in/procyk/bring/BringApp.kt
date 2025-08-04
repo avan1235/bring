@@ -1,8 +1,11 @@
 package `in`.procyk.bring
 
-import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.*
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.Spring.DampingRatioMediumBouncy
+import androidx.compose.animation.core.Spring.StiffnessLow
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -13,10 +16,9 @@ import androidx.compose.material.icons.filled.Summarize
 import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material.icons.twotone.Summarize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -75,12 +77,7 @@ internal fun BringAppInternal(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 val topBarText by context.topBarText.collectAsState()
-                Text(
-                    text = topBarText,
-                    style = BringAppTheme.typography.h2,
-                    color = BringAppTheme.colors.onBackground,
-                    modifier = Modifier.weight(weight = 1f).padding(16.dp)
-                )
+                AnimatedTopBar(topBarText, modifier = Modifier.weight(1f))
                 if (!useBottomNavigation) {
                     Navigation(context)
                 }
@@ -125,7 +122,6 @@ internal fun BringAppInternal(
                         slideOutOfContainer(
                             towards = towards(),
                             animationSpec = tween(durationMillis = 400, easing = EaseOut),
-                            targetOffset = { fullOffset -> (fullOffset * 0.4f).toInt() },
                         )
                     },
                 ) {
@@ -165,6 +161,40 @@ internal fun BringAppInternal(
 }
 
 @Composable
+private fun AnimatedTopBar(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    var counter by remember { mutableStateOf(0L) }
+    var textWithCounter by remember { mutableStateOf(text to counter) }
+    LaunchedEffect(text) {
+        textWithCounter = text to counter
+        counter += 1
+    }
+    AnimatedContent(
+        targetState = textWithCounter,
+        transitionSpec = {
+            slideInVertically(
+                animationSpec = spring(DampingRatioMediumBouncy, StiffnessLow),
+                initialOffsetY = { fullWidth -> fullWidth }
+            ) togetherWith slideOutHorizontally(
+                animationSpec = tween(ScreenChangeAnimationDurationMillis),
+                targetOffsetX = { fullWidth -> -fullWidth }
+            )
+        },
+        contentAlignment = Alignment.CenterStart,
+        modifier = modifier,
+    ) { (currentText, _) ->
+        Text(
+            text = currentText,
+            modifier = Modifier.padding(16.dp),
+            style = BringAppTheme.typography.h2,
+            color = BringAppTheme.colors.onBackground,
+        )
+    }
+}
+
+@Composable
 private fun Navigation(
     context: AbstractViewModel.Context,
 ) {
@@ -195,6 +225,8 @@ private fun Navigation(
         }
     }
 }
+
+private const val ScreenChangeAnimationDurationMillis: Int = 400
 
 private val NavBarTarget.outlinedIcon: ImageVector
     get() = when (this) {
