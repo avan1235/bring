@@ -32,6 +32,9 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
     val useGemini: StateFlow<Boolean> =
         storeFlow.map { it.useGemini }.state(storeFlow.value.useGemini)
 
+    val useHaptics: StateFlow<Boolean> =
+        storeFlow.map { it.useHaptics }.state(storeFlow.value.useHaptics)
+
     fun onEditModeChanged(value: Boolean) {
         updateConfig { it.copy(enableEditMode = value) }
     }
@@ -62,5 +65,9 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
 
     fun onUseGeminiChanged(value: Boolean) {
         updateConfig { it.copy(useGemini = value) }
+    }
+
+    fun onUseHapticsChanged(value: Boolean) {
+        updateConfig { it.copy(useHaptics = value) }
     }
 }

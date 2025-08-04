@@ -33,4 +33,5 @@
     <string name="dark_mode">Modalità Scura</string>
     <string name="gemini_key">Chiave Gemini</string>
     <string name="use_gemini">Usa Gemini per generare input</string>
+    <string name="use_haptics">Usa il feedback aptico</string>
 </resources>

@@ -57,6 +57,7 @@ internal fun SettingsScreen(
                 reference = "https://aistudio.google.com/app/apikey"
             )
         }
+        SettingSwitchRow(Res.string.use_haptics, vm.useHaptics, vm::onUseHapticsChanged)
         SettingSelectionRow(Res.string.dark_mode, vm.theme, vm::onThemeChanged, Theme.entries, optionLabel = {
             when (it) {
                 Theme.System -> Res.string.system_theme

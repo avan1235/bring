@@ -33,4 +33,5 @@
     <string name="dark_mode">Modo Escuro</string>
     <string name="gemini_key">Chave Gemini</string>
     <string name="use_gemini">Usar Gemini para gerar entradas</string>
+    <string name="use_haptics">Usar feedback tátil</string>
 </resources>
