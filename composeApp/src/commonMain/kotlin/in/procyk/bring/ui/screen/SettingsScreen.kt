@@ -44,6 +44,7 @@ internal fun SettingsScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(modifier = Modifier.height(16.dp))
+        SettingsCategoryName(Res.string.shopping_list)
         SettingSwitchRow(Res.string.enable_edit_mode, vm.enableEditMode, vm::onEditModeChanged)
         SettingSwitchRow(Res.string.show_unchecked_first, vm.showUncheckedFirst, vm::onShowUncheckedFirstChanged)
         SettingSwitchRow(Res.string.show_favorite_elements, vm.showFavoriteElements, vm::onShowFavoriteElementsChanged)
@@ -57,7 +58,7 @@ internal fun SettingsScreen(
                 reference = "https://aistudio.google.com/app/apikey"
             )
         }
-        SettingSwitchRow(Res.string.use_haptics, vm.useHaptics, vm::onUseHapticsChanged)
+        SettingsCategoryName(Res.string.theme)
         SettingSelectionRow(Res.string.dark_mode, vm.theme, vm::onThemeChanged, Theme.entries, optionLabel = {
             when (it) {
                 Theme.System -> Res.string.system_theme
@@ -66,6 +67,8 @@ internal fun SettingsScreen(
             }
         })
         SettingColorPickerRow(Res.string.theme_color, vm.themeColor, vm::onThemeColorChanged)
+        SettingsCategoryName(Res.string.miscellaneous)
+        SettingSwitchRow(Res.string.use_haptics, vm.useHaptics, vm::onUseHapticsChanged)
         Spacer(modifier = Modifier.weight(1f))
         Spacer(modifier = Modifier.height(16.dp))
         BottomBanner(
@@ -123,6 +126,23 @@ private inline fun <T : Any> SettingSelectionRow(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SettingsCategoryName(
+    label: StringResource,
+) {
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            text = stringResource(label),
+            style = BringAppTheme.typography.h4,
+        )
+        HorizontalDivider(color = DividerDefaults.color.copy(alpha = 0.2f))
     }
 }
 

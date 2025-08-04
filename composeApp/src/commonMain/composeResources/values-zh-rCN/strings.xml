@@ -34,4 +34,5 @@
     <string name="gemini_key">Gemini密钥</string>
     <string name="use_gemini">使用Gemini生成输入</string>
     <string name="use_haptics">使用触觉反馈</string>
+    <string name="miscellaneous">其他</string>
 </resources>
