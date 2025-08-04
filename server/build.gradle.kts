@@ -3,13 +3,13 @@ import buildsrc.convention.Env_gradle.Env.BringVersion
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem as currentOS
 
 plugins {
-    id("buildsrc.convention.env")
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.kotlinxRpc)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ktor)
     alias(libs.plugins.graalVM)
     application
+    id("buildsrc.convention.env")
 }
 
 group = BringPackageName
@@ -73,6 +73,9 @@ kotlin {
 graalvmNative {
     binaries {
         named("main") {
+            javaLauncher.set(javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(21))
+            })
             resources.autodetect()
             fallback.set(false)
             verbose.set(true)
