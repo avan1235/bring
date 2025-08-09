@@ -16,8 +16,7 @@ CMD='xcodebuild \
   -project iosApp/iosApp.xcodeproj \
   -scheme "Release iosApp" \
   -configuration "Release" \
-  -sdk "iphoneos" \
-  -destination "generic/platform=iOS" \
+  -destination "id=$DEVICE_ID" \
   clean build'
 
 BUILD_OUTPUT=$(eval "$CMD" 2>&1 | tee /dev/tty)
