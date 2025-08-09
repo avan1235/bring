@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.ComposeTestRule
@@ -23,14 +23,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.zIndex
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import bring.composeapp.generated.resources.Res
-import bring.composeapp.generated.resources.pixel
 import com.github.takahirom.roborazzi.captureRoboImage
 import `in`.procyk.bring.BringAppInternal
 import `in`.procyk.bring.BringStore
+import `in`.procyk.bring.R
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.components.Text
-import org.jetbrains.compose.resources.painterResource
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -130,7 +128,7 @@ internal abstract class BringAppCreateScreenshotTest {
                         Image(
                             modifier = Modifier
                                 .zIndex(Float.MAX_VALUE),
-                            painter = painterResource(Res.drawable.pixel),
+                            painter = painterResource(R.drawable.pixel),
                             contentDescription = null,
                         )
                     }
