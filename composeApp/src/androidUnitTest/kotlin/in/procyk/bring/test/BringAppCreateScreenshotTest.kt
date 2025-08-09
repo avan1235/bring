@@ -116,7 +116,7 @@ internal abstract class BringAppCreateScreenshotTest {
                             .padding(top = 16.dp, bottom = 18.dp, start = 16.dp, end = 32.dp)
                             .clip(RoundedCornerShape(36.dp))
                             .background(BringAppTheme.colors.background)
-                            .padding(top = 32.dp)
+                            .padding(top = 32.dp, bottom = 16.dp)
                             .fillMaxSize()
 
                     ) {
