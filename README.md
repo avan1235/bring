@@ -61,7 +61,7 @@ Web version is publicly available at https://bring.procyk.in
 ## 💻 Supported Platforms
 
 The client application supports:
-- 📱 Android
+- 📱 Android <a href="https://play.google.com/store/apps/details?id=in.procyk.bring"><img alt="Get it on Google Play" height="32" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"/></a>
 - 🍎 iOS (requires macOS for building)
 - 🖥️ Desktop (Windows, macOS, Linux)
 - 🌐 Web (via WebAssembly)
