@@ -7,8 +7,10 @@ import androidx.compose.animation.core.Spring.DampingRatioMediumBouncy
 import androidx.compose.animation.core.Spring.StiffnessLow
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
@@ -19,6 +21,7 @@ import androidx.compose.material.icons.twotone.Summarize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -37,7 +40,7 @@ import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.components.*
 import `in`.procyk.bring.ui.components.snackbar.Snackbar
 import `in`.procyk.bring.ui.components.snackbar.SnackbarHost
-import `in`.procyk.bring.ui.foundation.systemBarsForVisualComponents
+import `in`.procyk.bring.ui.components.topbar.TopBarDefaults
 import `in`.procyk.bring.ui.screen.CreateListScreen
 import `in`.procyk.bring.ui.screen.EditListScreen
 import `in`.procyk.bring.ui.screen.FavoritesScreen
@@ -67,7 +70,8 @@ internal fun BringAppInternal(
     Scaffold(
         topBar = {
             Row(
-                modifier = Modifier.padding(WindowInsets.systemBarsForVisualComponents.asPaddingValues())
+                modifier = Modifier
+                    .windowInsetsPadding(TopBarDefaults.windowInsets)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -199,12 +203,26 @@ private fun Navigation(
             useBottomNavigation -> Modifier
             else -> Modifier.width(144.dp).height(48.dp)
         },
+        windowInsets = when {
+            useBottomNavigation -> NavigationBarDefaults.windowInsets
+            else -> WindowInsets(0)
+        },
     ) {
         val currentTarget by context.navBarTarget.collectAsState()
         NavBarTarget.entries.forEach { target ->
             val selected = currentTarget == target
             NavigationBarItem(
-                icon = { Icon(if (selected) target.filledIcon else target.outlinedIcon) },
+                icon = {
+                    Icon(
+                        imageVector = if (selected) target.filledIcon else target.outlinedIcon,
+                        modifier = Modifier
+                            .background(
+                                color = if (selected) BringAppTheme.colors.primary.copy(alpha = 0.16f) else Color.Transparent,
+                                shape = RoundedCornerShape(16.dp),
+                            )
+                            .padding(horizontal = 24.dp, vertical = 4.dp),
+                    )
+                },
                 selected = selected,
                 onClick = {
                     context.onNavBarTargetSelected(target)

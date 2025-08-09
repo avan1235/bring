@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.contentColorFor
-import `in`.procyk.bring.ui.foundation.systemBarsForVisualComponents
 import kotlin.jvm.JvmInline
 
 @Composable
@@ -226,7 +225,7 @@ private fun ScaffoldLayout(
 object ScaffoldDefaults {
     val contentWindowInsets: WindowInsets
         @Composable
-        get() = WindowInsets.systemBarsForVisualComponents
+        get() = WindowInsets.systemBars
 }
 
 @JvmInline

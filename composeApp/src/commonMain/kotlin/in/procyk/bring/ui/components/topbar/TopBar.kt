@@ -25,7 +25,6 @@ import `in`.procyk.bring.ui.components.Surface
 import `in`.procyk.bring.ui.components.topbar.TopBarDefaults.TopBarHeight
 import `in`.procyk.bring.ui.components.topbar.TopBarState.Companion.Saver
 import `in`.procyk.bring.ui.contentColorFor
-import `in`.procyk.bring.ui.foundation.systemBarsForVisualComponents
 
 @Composable
 internal fun TopBar(
@@ -156,7 +155,7 @@ object TopBarDefaults {
 
     val windowInsets: WindowInsets
         @Composable get() =
-            WindowInsets.systemBarsForVisualComponents.only(
+            WindowInsets.systemBars.only(
                 WindowInsetsSides.Horizontal + WindowInsetsSides.Top,
             )
 

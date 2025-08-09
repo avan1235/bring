@@ -3,6 +3,7 @@ package `in`.procyk.bring.ui.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
@@ -30,7 +31,6 @@ import `in`.procyk.bring.ui.components.NavigationBarItemDefaults.NavigationBarIt
 import `in`.procyk.bring.ui.components.NavigationBarItemDefaults.NavigationBarItemVerticalPadding
 import `in`.procyk.bring.ui.contentColorFor
 import `in`.procyk.bring.ui.foundation.ProvideTextStyle
-import `in`.procyk.bring.ui.foundation.systemBarsForVisualComponents
 import kotlin.math.roundToInt
 
 @Composable
@@ -192,7 +192,7 @@ private fun MeasureScope.placeLabelAndIcon(
     val height = constraints.maxHeight
 
     val labelY =
-        height - labelPlaceable.height - NavigationBarItemVerticalPadding.roundToPx()
+        height - labelPlaceable.height
 
     val selectedIconY = NavigationBarItemVerticalPadding.roundToPx()
     val unselectedIconY =
@@ -216,19 +216,19 @@ private fun MeasureScope.placeLabelAndIcon(
 }
 
 internal object NavigationBarDefaults {
-    internal val NavigationBarHeight: Dp = 80.0.dp
+    internal val NavigationBarHeight: Dp = 58.0.dp
     val containerColor: Color @Composable get() = BringAppTheme.colors.background
 
     val windowInsets: WindowInsets
         @Composable get() =
-            WindowInsets.systemBarsForVisualComponents.only(
+            WindowInsets.systemBars.only(
                 WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
             )
 }
 
 object NavigationBarItemDefaults {
     internal val NavigationBarItemHorizontalPadding: Dp = 8.dp
-    internal val NavigationBarItemVerticalPadding: Dp = 18.dp
+    internal val NavigationBarItemVerticalPadding: Dp = 8.dp
     internal const val ItemAnimationDurationMillis: Int = 100
 
     @Composable
