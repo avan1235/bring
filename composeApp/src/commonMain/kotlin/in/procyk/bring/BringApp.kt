@@ -80,6 +80,7 @@ internal fun BringAppInternal(
                 AnimatedTopBar(topBarText, modifier = Modifier.weight(1f))
                 if (!useBottomNavigation) {
                     Navigation(context)
+                    Spacer(Modifier.width(16.dp))
                 }
             }
         },
@@ -201,7 +202,7 @@ private fun Navigation(
     NavigationBar(
         modifier = when {
             useBottomNavigation -> Modifier
-            else -> Modifier.width(144.dp).height(48.dp)
+            else -> Modifier.size(224.dp, 48.dp)
         },
         windowInsets = when {
             useBottomNavigation -> NavigationBarDefaults.windowInsets
