@@ -1,16 +1,16 @@
 package `in`.procyk.bring.ui.components
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 
 @Composable
 internal inline fun AppScreen(
     testTag: String,
+    padding: PaddingValues,
     crossinline content: @Composable BoxScope.() -> Unit,
 ) {
     Surface(
@@ -18,8 +18,14 @@ internal inline fun AppScreen(
             .fillMaxSize()
             .testTag(testTag),
     ) {
+        val layoutDirection = LocalLayoutDirection.current
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .padding(
+                    start = padding.calculateStartPadding(layoutDirection),
+                    end = padding.calculateEndPadding(layoutDirection)
+                )
+                .fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
             content()

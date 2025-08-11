@@ -99,62 +99,62 @@ internal fun BringAppInternal(
         },
         content = { padding ->
             val focusManager = LocalFocusManager.current
-            Box(
+            NavHost(
+                navController = context.navController,
                 modifier = Modifier.pointerInput(Unit) {
                     detectTapGestures(
                         onTap = { focusManager.clearFocus() })
-                }.padding(padding),
+                }.padding(
+                    top = padding.calculateTopPadding(),
+                    bottom = padding.calculateBottomPadding(),
+                ),
+                startDestination = when (initListId) {
+                    null -> Screen.CreateList
+                    else -> Screen.EditList(
+                        initListId, fetchSuggestionsAndFavoriteElements = false
+                    )
+                },
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = towards(),
+                        animationSpec = tween(durationMillis = 400, easing = EaseOut),
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = towards(),
+                        animationSpec = tween(durationMillis = 400, easing = EaseOut),
+                    )
+                },
             ) {
-                NavHost(
-                    navController = context.navController,
-                    startDestination = when (initListId) {
-                        null -> Screen.CreateList
-                        else -> Screen.EditList(
-                            initListId, fetchSuggestionsAndFavoriteElements = false
+                composable<Screen.CreateList> {
+                    val vm = viewModel {
+                        CreateListScreenViewModel(
+                            context = context,
                         )
-                    },
-                    enterTransition = {
-                        slideIntoContainer(
-                            towards = towards(),
-                            animationSpec = tween(durationMillis = 400, easing = EaseOut),
+                    }
+                    CreateListScreen(padding, vm)
+                }
+                composable<Screen.EditList> {
+                    val editList = it.toRoute<Screen.EditList>()
+                    val listId = editList.listId.let(Uuid::parseHexDash)
+                    val fetchSuggestionsAndFavoriteElements = editList.fetchSuggestionsAndFavoriteElements
+                    val vm = viewModel {
+                        EditListScreenViewModel(
+                            context = context,
+                            listId = listId,
+                            fetchSuggestionsAndFavoriteElements = fetchSuggestionsAndFavoriteElements,
                         )
-                    },
-                    exitTransition = {
-                        slideOutOfContainer(
-                            towards = towards(),
-                            animationSpec = tween(durationMillis = 400, easing = EaseOut),
-                        )
-                    },
-                ) {
-                    composable<Screen.CreateList> {
-                        val vm = viewModel {
-                            CreateListScreenViewModel(
-                                context = context,
-                            )
-                        }
-                        CreateListScreen(vm)
                     }
-                    composable<Screen.EditList> {
-                        val editList = it.toRoute<Screen.EditList>()
-                        val listId = editList.listId.let(Uuid::parseHexDash)
-                        val fetchSuggestionsAndFavoriteElements = editList.fetchSuggestionsAndFavoriteElements
-                        val vm = viewModel {
-                            EditListScreenViewModel(
-                                context = context,
-                                listId = listId,
-                                fetchSuggestionsAndFavoriteElements = fetchSuggestionsAndFavoriteElements,
-                            )
-                        }
-                        EditListScreen(vm)
-                    }
-                    composable<Screen.Favorites> {
-                        val vm = viewModel { FavoritesViewModel(context) }
-                        FavoritesScreen(vm)
-                    }
-                    composable<Screen.Settings> {
-                        val vm = viewModel { SettingsViewModel(context) }
-                        SettingsScreen(vm)
-                    }
+                    EditListScreen(padding, vm)
+                }
+                composable<Screen.Favorites> {
+                    val vm = viewModel { FavoritesViewModel(context) }
+                    FavoritesScreen(padding, vm)
+                }
+                composable<Screen.Settings> {
+                    val vm = viewModel { SettingsViewModel(context) }
+                    SettingsScreen(padding, vm)
                 }
             }
         },

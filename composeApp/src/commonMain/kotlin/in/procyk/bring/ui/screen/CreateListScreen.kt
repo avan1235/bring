@@ -25,8 +25,9 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun CreateListScreen(
+    padding: PaddingValues,
     vm: CreateListScreenViewModel,
-) = AppScreen("screen-create-list") {
+) = AppScreen("screen-create-list", padding) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,

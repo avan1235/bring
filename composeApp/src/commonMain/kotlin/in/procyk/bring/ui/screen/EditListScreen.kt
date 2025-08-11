@@ -54,8 +54,9 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun EditListScreen(
+    padding: PaddingValues,
     vm: EditListScreenViewModel,
-) = AppScreen("screen-edit-list") {
+) = AppScreen("screen-edit-list", padding) {
     val listState = rememberLazyListState()
     val items by vm.items.collectAsState()
     val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->

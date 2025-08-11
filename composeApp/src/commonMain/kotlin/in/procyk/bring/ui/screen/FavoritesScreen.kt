@@ -30,8 +30,9 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun FavoritesScreen(
+    padding: PaddingValues,
     vm: FavoritesViewModel
-) = AppScreen("screen-favorites") {
+) = AppScreen("screen-favorites", padding) {
     val favorites by vm.favoriteLists.collectAsState()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
