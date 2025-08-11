@@ -33,6 +33,7 @@ deploy_to_device() {
     -scheme "Release iosApp" \
     -configuration "Release" \
     -destination "id='$DEVICE_ID'" \
+    -allowProvisioningUpdates \
     clean build'
 
   BUILD_OUTPUT=$(eval "$CMD" 2>&1 | tee /dev/tty)
