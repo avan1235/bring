@@ -11,7 +11,10 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.rpc.annotations.Rpc
 import kotlinx.rpc.krpc.ktor.client.KtorRpcClient
 import kotlinx.rpc.krpc.ktor.client.rpc
+import kotlinx.rpc.krpc.ktor.client.rpcConfig
+import kotlinx.rpc.krpc.serialization.cbor.cbor
 import kotlinx.rpc.withService
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.time.Duration.Companion.seconds
 
 interface DurableRpcService<@Rpc T : Any> {
@@ -21,11 +24,10 @@ interface DurableRpcService<@Rpc T : Any> {
     fun durableLaunch(f: suspend T.() -> Unit)
 }
 
-@OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
+@OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class, ExperimentalSerializationApi::class)
 inline fun <@Rpc reified T : Any> DurableRpcService(
     coroutineScope: CoroutineScope,
     httpClient: HttpClient,
-    path: String,
     crossinline configureRequest: HttpRequestBuilder.() -> Unit,
 ): DurableRpcService<T> = object : DurableRpcService<T> {
     private var client: KtorRpcClient? = null
@@ -43,8 +45,13 @@ inline fun <@Rpc reified T : Any> DurableRpcService(
 
     private suspend fun ensureActiveClient(): KtorRpcClient = lastActiveClient ?: mutex.withLock {
         lastActiveClient?.let { return@withLock it }
-        httpClient.rpc(path) {
+        httpClient.rpc {
             method = HttpMethod.Get
+            rpcConfig {
+                serialization {
+                    cbor(DefaultCbor)
+                }
+            }
             configureRequest()
         }.also {
             client = it

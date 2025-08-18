@@ -149,7 +149,7 @@ abstract class AbstractViewModel(
 
     @OptIn(DelicateCoroutinesApi::class)
     protected inline fun <@Rpc reified T : Any> durableRpcService(path: String): DurableRpcService<T> =
-        DurableRpcService(viewModelScope, httpClient, path) {
+        DurableRpcService(viewModelScope, httpClient) {
             url(scheme = CLIENT_WS_PROTOCOL, host = CLIENT_HOST, port = CLIENT_PORT, path = path)
         }
 

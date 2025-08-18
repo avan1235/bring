@@ -1,6 +1,5 @@
 package `in`.procyk.bring
 
-import kotlinx.datetime.serializers.FormattedInstantSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.cbor.CborLabel
 import kotlin.time.Instant
@@ -46,7 +45,7 @@ data class ShoppingListItemData(
     @CborLabel(3) val createdAt: Instant,
     @CborLabel(4) val order: Double,
     @CborLabel(5) val status: CheckedStatusData,
-    @CborLabel(6) val count: Int,
+    @CborLabel(6) val count: Int = 1,
 ) {
     @Serializable
     sealed class CheckedStatusData {

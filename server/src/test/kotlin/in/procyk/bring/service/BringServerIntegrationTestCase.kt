@@ -44,12 +44,12 @@ internal abstract class BringServerIntegrationTestCase {
     }
 
     protected fun TestScope.shoppingListService() =
-        DurableRpcService<ShoppingListService>(backgroundScope, httpClient, ShoppingListRpcPath) {
+        DurableRpcService<ShoppingListService>(backgroundScope, httpClient) {
             url(scheme = "ws", host = containerHost, port = containerPort, path = ShoppingListRpcPath)
         }
 
     protected fun TestScope.favoriteElementService() =
-        DurableRpcService<FavoriteElementService>(backgroundScope, httpClient, FavoriteElementRpcPath) {
+        DurableRpcService<FavoriteElementService>(backgroundScope, httpClient) {
             url(scheme = "ws", host = containerHost, port = containerPort, path = FavoriteElementRpcPath)
         }
 
