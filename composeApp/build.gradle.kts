@@ -150,6 +150,7 @@ kotlin {
         androidUnitTest.dependencies {
             implementation(libs.robolectric)
             implementation(libs.androidx.ui.test.junit4)
+            implementation(libs.androidx.test.ext.junit)
             implementation(libs.roborazzi)
             implementation(libs.roborazzi.compose)
             implementation(libs.roborazzi.junit.rule)
