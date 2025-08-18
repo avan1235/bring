@@ -73,8 +73,8 @@ internal fun EditListScreen(
         state = listState,
     ) {
         item(key = "input") {
-            val showInputField by vm.showInputField.collectAsState()
-            AnimatedVisibility(visible = showInputField) {
+            val enableEditMode by vm.enableEditMode.collectAsState()
+            AnimatedVisibility(visible = enableEditMode) {
                 BoxWithConstraints {
                     val individualButtons = maxWidth > 480.dp
                     Row(
@@ -127,10 +127,10 @@ internal fun EditListScreen(
             }
         }
         item(key = "favorite_elements_and_suggestions") {
+            val enableEditMode by vm.enableEditMode.collectAsState()
             val showSuggestions by vm.showSuggestions.collectAsState()
             val showFavoriteElements by vm.showFavoriteElements.collectAsState()
-            val showInputField by vm.showInputField.collectAsState()
-            AnimatedVisibility(visible = showInputField && (showSuggestions || showFavoriteElements)) {
+            AnimatedVisibility(visible = enableEditMode && (showSuggestions || showFavoriteElements)) {
                 val suggestedItems by vm.suggestedItems.collectAsState()
                 FlowRowItems(
                     items = suggestedItems,
@@ -145,7 +145,8 @@ internal fun EditListScreen(
                 modifier = Modifier.testTag("list-item"),
                 state = reorderableLazyListState,
                 key = item.id
-            ) { isDragging ->
+            ) {
+                val enableEditMode by vm.enableEditMode.collectAsState()
                 Row(
                     modifier = Modifier.weight(1f).animateItem(),
                     horizontalArrangement = Arrangement.Start,
@@ -172,36 +173,21 @@ internal fun EditListScreen(
                             },
                         )
                     }
-                    AnimatedVisibility(
-                        visible = item.count > 1,
-                        enter = fadeIn(),
-                        exit = fadeOut(),
-                    ) {
-                        IconButton(
-                            variant = IconButtonVariant.Ghost,
-                            onClick = { vm.onDecreaseItemCount(item.id) },
-                            modifier = Modifier.compactButtonMinSize(),
-                            contentPadding = CompactButtonPadding,
-                        ) {
-                            Icon(Icons.Outlined.ExposureNeg1)
-                        }
-                    }
-                    IconButton(
-                        variant = IconButtonVariant.Ghost,
+                    AnimatedVisibilityGhostButton(
+                        visible = enableEditMode && item.count > 1,
+                        icon = Icons.Outlined.ExposureNeg1,
+                        onClick = { vm.onDecreaseItemCount(item.id) },
+                    )
+                    AnimatedVisibilityGhostButton(
+                        visible = enableEditMode,
                         onClick = { vm.onIncreaseItemCount(item.id) },
-                        modifier = Modifier.compactButtonMinSize(),
-                        contentPadding = CompactButtonPadding,
-                    ) {
-                        Icon(Icons.Outlined.ExposurePlus1)
-                    }
-                    IconButton(
-                        variant = IconButtonVariant.Ghost,
+                        icon = Icons.Outlined.ExposurePlus1,
+                    )
+                    AnimatedVisibilityGhostButton(
+                        visible = enableEditMode,
+                        icon = Icons.Outlined.Close,
                         onClick = { vm.onRemoved(item.id) },
-                        modifier = Modifier.compactButtonMinSize(),
-                        contentPadding = CompactButtonPadding,
-                    ) {
-                        Icon(Icons.Outlined.Close)
-                    }
+                    )
                 }
             }
         }
@@ -236,6 +222,28 @@ internal fun EditListScreen(
                 }) {
                 Icon(Icons.Default.KeyboardArrowUp)
             }
+        }
+    }
+}
+
+@Composable
+private inline fun RowScope.AnimatedVisibilityGhostButton(
+    visible: Boolean,
+    icon: ImageVector,
+    crossinline onClick: () -> Unit,
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut(),
+    ) {
+        IconButton(
+            variant = IconButtonVariant.Ghost,
+            onClick = { onClick() },
+            modifier = Modifier.compactButtonMinSize(),
+            contentPadding = CompactButtonPadding,
+        ) {
+            Icon(icon)
         }
     }
 }

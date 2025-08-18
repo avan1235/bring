@@ -145,11 +145,11 @@ internal class EditListScreenViewModel(
     private val _newItemName: MutableStateFlow<String> = MutableStateFlow("")
     val newItemName: StateFlow<String> = _newItemName.asStateFlow()
 
-    val showInputField: StateFlow<Boolean> = storeFlow.map { it.enableEditMode }.state(store.enableEditMode)
+    val enableEditMode: StateFlow<Boolean> = storeFlow.map { it.enableEditMode }.state(store.enableEditMode)
 
     private val _showFab: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val showFab: StateFlow<Boolean> =
-        combine(_showFab, showInputField) { state, setting -> state && setting }.state(false)
+        combine(_showFab, enableEditMode) { state, setting -> state && setting }.state(false)
 
     val isFavorite: StateFlow<Boolean> =
         combine(storeFlow.map { it.favoriteShoppingLists }, fetchedList) { favorites, list ->
