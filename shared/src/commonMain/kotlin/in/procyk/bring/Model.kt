@@ -46,6 +46,7 @@ data class ShoppingListItemData(
     @CborLabel(3) val createdAt: Instant,
     @CborLabel(4) val order: Double,
     @CborLabel(5) val status: CheckedStatusData,
+    @CborLabel(6) val count: Int,
 ) {
     @Serializable
     sealed class CheckedStatusData {

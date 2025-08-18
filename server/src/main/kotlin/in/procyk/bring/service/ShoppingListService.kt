@@ -29,6 +29,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.max
 import kotlin.time.Clock
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
@@ -135,7 +136,8 @@ internal class ShoppingListServiceImpl(
                         byUserId = item.byUserId.toKotlinUuid(),
                         createdAt = item.createdAt.toStdlibInstant(),
                         order = item.order,
-                        status = item.status
+                        status = item.status,
+                        count = item.count,
                     )
                 }
             ).left()
@@ -271,6 +273,28 @@ internal class ShoppingListServiceImpl(
             val item = ShoppingListItemEntity.findById(itemId.toJavaUuid())
                 ?: return@txn UpdateItemError.UnknownItemId.right()
             item.order = order
+            Unit.left()
+        }
+    }
+
+    override suspend fun increaseItemCount(
+        itemId: Uuid,
+    ): Either<Unit, UpdateItemError> {
+        return runNewSuspendedTransactionCatchingAs(UpdateItemError.Internal) txn@{
+            val item = ShoppingListItemEntity.findById(itemId.toJavaUuid())
+                ?: return@txn UpdateItemError.UnknownItemId.right()
+            item.count = item.count + 1
+            Unit.left()
+        }
+    }
+
+    override suspend fun decreaseItemCount(
+        itemId: Uuid,
+    ): Either<Unit, UpdateItemError> {
+        return runNewSuspendedTransactionCatchingAs(UpdateItemError.Internal) txn@{
+            val item = ShoppingListItemEntity.findById(itemId.toJavaUuid())
+                ?: return@txn UpdateItemError.UnknownItemId.right()
+            item.count = max(item.count - 1, 1)
             Unit.left()
         }
     }

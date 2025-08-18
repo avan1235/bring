@@ -20,6 +20,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import kotlin.math.max
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
@@ -231,6 +232,24 @@ internal class EditListScreenViewModel(
         }
         shoppingListService.durableCall {
             removeShoppingListItem(itemId)
+        }
+    }
+
+    fun onIncreaseItemCount(itemId: Uuid) {
+        localListItems.update { list ->
+            list.map { if (it.id == itemId) it.copy(count = it.count + 1) else it }
+        }
+        shoppingListService.durableCall {
+            increaseItemCount(itemId)
+        }
+    }
+
+    fun onDecreaseItemCount(itemId: Uuid) {
+        localListItems.update { list ->
+            list.map { if (it.id == itemId) it.copy(count = max(it.count - 1, 1)) else it }
+        }
+        shoppingListService.durableCall {
+            decreaseItemCount(itemId)
         }
     }
 

@@ -57,7 +57,7 @@ internal fun AnimatedStrikethroughText(
         modifier = modifier,
         style = textStyle,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
+        overflow = TextOverflow.MiddleEllipsis,
     )
 }
 

@@ -37,6 +37,7 @@ internal object ShoppingListItemsTable : UUIDTable(name = "shopping_list_items")
     val createdAt = timestamp("created_at")
     val order = double("order").index("order_index")
     val status = blob("status").nullable()
+    val count = integer("count").nullable()
 }
 
 internal class ShoppingListItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -55,6 +56,15 @@ internal class ShoppingListItemEntity(id: EntityID<UUID>) : UUIDEntity(id) {
             when (status) {
                 is Checked -> DefaultCbor.encodeToByteArray<Checked>(status).let(::ExposedBlob)
                 Unchecked -> null
+            }
+        }
+    )
+    var count by ShoppingListItemsTable.count.transform(
+        wrap = { it ?: 1 },
+        unwrap = { count ->
+            when {
+                count <= 1 -> null
+                else -> count
             }
         }
     )

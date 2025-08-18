@@ -2,9 +2,7 @@
 
 package `in`.procyk.bring.ui.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +19,8 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.ExposureNeg1
+import androidx.compose.material.icons.outlined.ExposurePlus1
 import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material.icons.twotone.Favorite
@@ -165,12 +165,34 @@ internal fun EditListScreen(
                             onClick = { vm.onChecked(item.id, !item.status.isChecked) }).weight(1f)
                     ) {
                         AnimatedStrikethroughText(
-                            text = item.name,
+                            text = item.name + if (item.count > 1) " (${item.count})" else "",
                             isChecked = when (item.status) {
                                 is Checked -> true
                                 is Unchecked -> false
                             },
                         )
+                    }
+                    AnimatedVisibility(
+                        visible = item.count > 1,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        IconButton(
+                            variant = IconButtonVariant.Ghost,
+                            onClick = { vm.onDecreaseItemCount(item.id) },
+                            modifier = Modifier.compactButtonMinSize(),
+                            contentPadding = CompactButtonPadding,
+                        ) {
+                            Icon(Icons.Outlined.ExposureNeg1)
+                        }
+                    }
+                    IconButton(
+                        variant = IconButtonVariant.Ghost,
+                        onClick = { vm.onIncreaseItemCount(item.id) },
+                        modifier = Modifier.compactButtonMinSize(),
+                        contentPadding = CompactButtonPadding,
+                    ) {
+                        Icon(Icons.Outlined.ExposurePlus1)
                     }
                     IconButton(
                         variant = IconButtonVariant.Ghost,

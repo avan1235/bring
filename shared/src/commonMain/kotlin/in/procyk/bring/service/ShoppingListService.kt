@@ -73,4 +73,12 @@ interface ShoppingListService {
         itemId: Uuid,
         order: Double,
     ): Either<Unit, UpdateItemError>
+
+    suspend fun increaseItemCount(
+        itemId: Uuid,
+    ): Either<Unit, UpdateItemError>
+
+    suspend fun decreaseItemCount(
+        itemId: Uuid,
+    ): Either<Unit, UpdateItemError>
 }
