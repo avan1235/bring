@@ -102,6 +102,16 @@ internal class EditListScreenScreenshotTest : BringAppCreateScreenshotTest() {
                         .assertHasClickAction()
                         .performClick()
                 }
+
+                if (idx in setOf(0, 1, 5)) {
+                    repeat((1..3).random()) {
+                        onAllNodesWithTag("button-increase-item-count")
+                            .onFirst()
+                            .assertExists()
+                            .assertHasClickAction()
+                            .performClick()
+                    }
+                }
             }
 
         onNodeWithTag("button-expand-options")

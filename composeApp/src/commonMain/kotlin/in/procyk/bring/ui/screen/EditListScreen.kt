@@ -176,16 +176,19 @@ internal fun EditListScreen(
                     AnimatedVisibilityGhostButton(
                         visible = enableEditMode && item.count > 1,
                         icon = Icons.Outlined.ExposureNeg1,
+                        testTag = "button-decrease-item-count",
                         onClick = { vm.onDecreaseItemCount(item.id) },
                     )
                     AnimatedVisibilityGhostButton(
                         visible = enableEditMode,
                         onClick = { vm.onIncreaseItemCount(item.id) },
+                        testTag = "button-increase-item-count",
                         icon = Icons.Outlined.ExposurePlus1,
                     )
                     AnimatedVisibilityGhostButton(
                         visible = enableEditMode,
                         icon = Icons.Outlined.Close,
+                        testTag = "button-remove-item",
                         onClick = { vm.onRemoved(item.id) },
                     )
                 }
@@ -230,6 +233,7 @@ internal fun EditListScreen(
 private inline fun RowScope.AnimatedVisibilityGhostButton(
     visible: Boolean,
     icon: ImageVector,
+    testTag: String,
     crossinline onClick: () -> Unit,
 ) {
     AnimatedVisibility(
@@ -240,7 +244,9 @@ private inline fun RowScope.AnimatedVisibilityGhostButton(
         IconButton(
             variant = IconButtonVariant.Ghost,
             onClick = { onClick() },
-            modifier = Modifier.compactButtonMinSize(),
+            modifier = Modifier
+                .compactButtonMinSize()
+                .testTag(testTag),
             contentPadding = CompactButtonPadding,
         ) {
             Icon(icon)
