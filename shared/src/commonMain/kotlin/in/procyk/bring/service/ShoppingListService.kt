@@ -55,13 +55,7 @@ interface ShoppingListService {
         userId: Uuid,
         listId: Uuid,
         input: String,
-    ): Either<Unit, AddEntryToShoppingListError>
-
-    suspend fun addEntryToShoppingList(
-        userId: Uuid,
-        listId: Uuid,
-        input: String,
-        count: Int,
+        count: Int = 1,
     ): Either<Unit, AddEntryToShoppingListError>
 
     @Serializable
