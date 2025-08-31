@@ -193,6 +193,13 @@ internal class ShoppingListServiceImpl(
         userId: Uuid,
         listId: Uuid,
         input: String,
+    ): Either<Unit, AddEntryToShoppingListError> =
+        addEntryToShoppingList(userId, listId, input, count = 1)
+
+    override suspend fun addEntryToShoppingList(
+        userId: Uuid,
+        listId: Uuid,
+        input: String,
         count: Int,
     ): Either<Unit, AddEntryToShoppingListError> {
         if (input.isBlank()) {
