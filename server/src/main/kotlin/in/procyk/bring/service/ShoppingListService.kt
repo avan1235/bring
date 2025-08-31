@@ -60,7 +60,7 @@ internal class ShoppingListServiceImpl(
                 val title = extractor.extractTitle(input)
                     ?: return CreateNewShoppingListError.ExtractionError.right()
                 val ingredients = extractor.extractIngredients(input)
-                    .map { it.description }
+                    .map { it.description to 1 }
                     .takeIf { it.isNotEmpty() }
                     ?: return CreateNewShoppingListError.ExtractionError.right()
                 title to ingredients
@@ -193,15 +193,16 @@ internal class ShoppingListServiceImpl(
         userId: Uuid,
         listId: Uuid,
         input: String,
+        count: Int,
     ): Either<Unit, AddEntryToShoppingListError> {
         if (input.isBlank()) {
             return AddEntryToShoppingListError.InvalidName.right()
         }
         val names = when {
-            !extractor.supports(input) -> listOf(input)
+            !extractor.supports(input) -> listOf(input to count)
             else -> runCatching {
                 extractor.extractIngredients(input)
-                    .map { it.description }
+                    .map { it.description to count }
                     .takeIf { it.isNotEmpty() }
             }.getOrNull() ?: return AddEntryToShoppingListError.ExtractionError.right()
         }
@@ -215,9 +216,9 @@ internal class ShoppingListServiceImpl(
     private fun addEntriesToShoppingListInTransaction(
         userId: UUID,
         listId: EntityID<UUID>,
-        names: List<String>,
+        items: List<Pair<String, Int>>,
     ) {
-        if (names.isEmpty()) return
+        if (items.isEmpty()) return
 
         val incrementedOrder = ShoppingListItemsTable
             .select(ShoppingListItemsTable.order.max())
@@ -228,13 +229,14 @@ internal class ShoppingListServiceImpl(
             ?.let { it + 1.0 }
             ?: 0.0
         val createdAt = Clock.System.now()
-        names.forEachIndexed { idx, name ->
+        items.forEachIndexed { idx, (name, count) ->
             ShoppingListItemEntity.new {
                 this.name = name
                 this.listId = listId
                 this.byUserId = userId
                 this.createdAt = createdAt.toDeprecatedInstant()
                 this.order = incrementedOrder + idx
+                this.count = count
             }
         }
     }

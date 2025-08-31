@@ -36,7 +36,7 @@ roborazzi = "1.48.0"
 testcontainers = "1.21.3"
 colorpicker = "1.1.2"
 materialKolor = "3.0.0-alpha04"
-generativeaiGoogle = "0.9.0-1.1.0"
+koog = "0.4.1"
 versionCode = "13"
 
 [libraries]
@@ -68,7 +68,7 @@ testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 compose-colorpicker = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
-generativeaiGoogle = { module = "dev.shreyaspatil.generativeai:generativeai-google", version.ref = "generativeaiGoogle" }
+koog-agents = { module = "ai.koog:koog-agents", version.ref = "koog" }
 
 koin-ktor = { module = "io.insert-koin:koin-ktor3", version.ref = "koin" }
 ktor-shared-resources = { module = "io.ktor:ktor-resources", version.ref = "ktor" }

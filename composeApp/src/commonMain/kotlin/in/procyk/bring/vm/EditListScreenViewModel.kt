@@ -1,25 +1,29 @@
 package `in`.procyk.bring.vm
 
+import ai.koog.agents.core.tools.annotations.LLMDescription
+import ai.koog.prompt.dsl.prompt
+import ai.koog.prompt.executor.clients.google.GoogleModels
+import ai.koog.prompt.executor.llms.all.simpleGoogleAIExecutor
+import ai.koog.prompt.structure.StructuredOutput.Manual
+import ai.koog.prompt.structure.StructuredOutputConfig
+import ai.koog.prompt.structure.executeStructured
 import androidx.lifecycle.viewModelScope
 import bring.composeapp.generated.resources.Res
 import bring.composeapp.generated.resources.error_fetching_favorite_elements
 import bring.composeapp.generated.resources.error_fetching_suggestions
 import bring.composeapp.generated.resources.list_not_found
-import dev.shreyaspatil.ai.client.generativeai.GenerativeModel
-import dev.shreyaspatil.ai.client.generativeai.type.Schema.Companion.arr
-import dev.shreyaspatil.ai.client.generativeai.type.Schema.Companion.str
-import dev.shreyaspatil.ai.client.generativeai.type.content
-import dev.shreyaspatil.ai.client.generativeai.type.generationConfig
 import `in`.procyk.bring.*
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Checked
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Unchecked
+import `in`.procyk.bring.ai.MarkdownWrappedJsonStructuredData.Companion.createMarkdownWrappedJsonStructure
 import `in`.procyk.bring.service.FavoriteElementService
 import `in`.procyk.bring.service.ShoppingListService
 import `in`.procyk.bring.service.ShoppingListService.GetShoppingListError
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlin.math.max
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
@@ -168,18 +172,17 @@ internal class EditListScreenViewModel(
                 name.isNotBlank()
                         && useGeminiSettings.value
                         && useGemini.value
-                        && store.geminiKey.isNotEmpty() -> getSuggestionsFromGemini(
-                    store.geminiKey,
-                    name
-                )
-                    .takeUnless(List<String>::isEmpty)
-                    ?: listOf(name)
+                        && store.geminiKey.isNotEmpty() -> getSuggestionsFromGemini(store.geminiKey, name)
+                    ?.items
+                    ?.map { it.name to it.count }
+                    ?.takeUnless { it.isEmpty() }
+                    ?: listOf(name to 1)
 
-                else -> listOf(name)
+                else -> listOf(name to 1)
             }
-            items.forEach { item ->
+            items.forEach { (item, count) ->
                 shoppingListService.durableCall {
-                    addEntryToShoppingList(store.userId, listId, item)
+                    addEntryToShoppingList(store.userId, listId, item, count)
                 }
             }
         }
@@ -281,32 +284,65 @@ private val ListItemsComparator: Comparator<ShoppingListItemData> =
 private suspend fun getSuggestionsFromGemini(
     apiKey: String,
     description: String,
-): List<String> {
-    val generativeModel = GenerativeModel(
-        modelName = "gemini-1.5-flash",
-        apiKey = apiKey,
-        generationConfig = generationConfig {
-            responseMimeType = "application/json"
-            responseSchema = arr(
-                name = "items",
-                description = "shopping list items to be suggested as a part of described shopping list",
-                items = str("name", "name of the suggested item"),
-            )
-        }
-    )
-    val inputContent = content {
-        text(
-            """
+): SuggestedShoppingList? {
+    val promptExecutor = simpleGoogleAIExecutor(apiKey)
+    val structuredResponse = promptExecutor.executeStructured(
+        prompt = prompt("shopping-list-suggestion") {
+            system(
+                """
+                You are shopping list planner assistant.
                 Write down a shopping list items from the provided input.
-                Provide a list of elements that might be available at local shops, being 
-                some concrete, one by one listed products, to be bought at shop.
-                Don't answer with general things to buy, only concrete ones matter.
+                Provide a list of elements that might be available at local shops, being some concrete, one by one listed products, to be bought at shop.
+                Don't answer with general things to buy, only concrete ones matter, but not specify concrete producer.
                 Use the same language to describe the list elements as he list description is written in.
-                List description:
-                $description
                 """.trimIndent()
+            )
+            user(description)
+        },
+        model = GoogleModels.Gemini2_0Flash,
+        config = StructuredOutputConfig(
+            default = Manual(shoppingListStructure),
         )
-    }
-    val response = generativeModel.generateContent(inputContent)
-    return response.text?.let { Json.decodeFromString<List<String>>(it) }.orEmpty()
+    )
+    return structuredResponse.getOrNull()?.structure
 }
+
+@Serializable
+@SerialName("ShoppingList")
+@LLMDescription("Suggested shopping list containing items with their count")
+private data class SuggestedShoppingList(
+    @property:LLMDescription("List of suggested items")
+    val items: List<SuggestedShoppingListItem>,
+)
+
+@Serializable
+@SerialName("ShoppingListItem")
+@LLMDescription("Shopping list item with its count")
+private data class SuggestedShoppingListItem(
+    @property:LLMDescription("Shopping list item count")
+    val count: Int,
+    @property:LLMDescription("Shopping list item name")
+    val name: String,
+)
+
+private val examples = listOf(
+    SuggestedShoppingList(
+        items = listOf(
+            SuggestedShoppingListItem(1, "bread"),
+            SuggestedShoppingListItem(2, "milk"),
+            SuggestedShoppingListItem(10, "eggs"),
+            SuggestedShoppingListItem(1, "cheese"),
+        )
+    ),
+    SuggestedShoppingList(
+        items = listOf(
+            SuggestedShoppingListItem(1, "cup"),
+            SuggestedShoppingListItem(5, "water filter"),
+            SuggestedShoppingListItem(3, "tea"),
+        )
+    )
+)
+
+private val shoppingListStructure =
+    createMarkdownWrappedJsonStructure<SuggestedShoppingList>(examples = examples)
+

@@ -55,6 +55,7 @@ interface ShoppingListService {
         userId: Uuid,
         listId: Uuid,
         input: String,
+        count: Int = 1,
     ): Either<Unit, AddEntryToShoppingListError>
 
     @Serializable
