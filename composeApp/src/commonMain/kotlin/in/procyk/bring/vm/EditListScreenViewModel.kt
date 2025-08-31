@@ -2,7 +2,9 @@ package `in`.procyk.bring.vm
 
 import ai.koog.agents.core.tools.annotations.LLMDescription
 import ai.koog.prompt.dsl.prompt
+import ai.koog.prompt.executor.clients.google.GoogleLLMClient
 import ai.koog.prompt.executor.clients.google.GoogleModels
+import ai.koog.prompt.executor.llms.SingleLLMPromptExecutor
 import ai.koog.prompt.executor.llms.all.simpleGoogleAIExecutor
 import ai.koog.prompt.structure.StructuredOutput.Manual
 import ai.koog.prompt.structure.StructuredOutputConfig
@@ -19,6 +21,7 @@ import `in`.procyk.bring.ai.MarkdownWrappedJsonStructuredData.Companion.createMa
 import `in`.procyk.bring.service.FavoriteElementService
 import `in`.procyk.bring.service.ShoppingListService
 import `in`.procyk.bring.service.ShoppingListService.GetShoppingListError
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -172,7 +175,7 @@ internal class EditListScreenViewModel(
                 name.isNotBlank()
                         && useGeminiSettings.value
                         && useGemini.value
-                        && store.geminiKey.isNotEmpty() -> getSuggestionsFromGemini(store.geminiKey, name)
+                        && store.geminiKey.isNotEmpty() -> httpClient.getSuggestionsFromGemini(store.geminiKey, name)
                     ?.items
                     ?.map { it.name to it.count }
                     ?.takeUnless { it.isEmpty() }
@@ -281,11 +284,11 @@ internal class EditListScreenViewModel(
 private val ListItemsComparator: Comparator<ShoppingListItemData> =
     compareByDescending(ShoppingListItemData::order).thenByDescending(ShoppingListItemData::createdAt)
 
-private suspend fun getSuggestionsFromGemini(
+private suspend fun HttpClient.getSuggestionsFromGemini(
     apiKey: String,
     description: String,
 ): SuggestedShoppingList? {
-    val promptExecutor = simpleGoogleAIExecutor(apiKey)
+    val promptExecutor = SingleLLMPromptExecutor(GoogleLLMClient(apiKey, baseClient = this))
     val structuredResponse = promptExecutor.executeStructured(
         prompt = prompt("shopping-list-suggestion") {
             system(
