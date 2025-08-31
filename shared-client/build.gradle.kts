@@ -1,5 +1,4 @@
 import buildsrc.convention.Env_gradle.Env.BringPackageName
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
@@ -28,8 +27,8 @@ kotlin {
     if (currentOS().isMacOsX) {
         iosArm64()
         iosSimulatorArm64()
-        macosX64()
-        macosArm64()
+//        macosX64()
+//        macosArm64()
     }
 
     jvmToolchain(17)
@@ -70,6 +69,18 @@ kotlin {
             implementation(libs.kotlinx.rpc.client)
             implementation(libs.kotlinx.rpc.client.ktor)
             implementation(libs.kotlinx.rpc.serialization.cbor)
+        }
+        androidMain.dependencies {
+            implementation(libs.ktor.client.cio)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+        jvmMain.dependencies {
+            implementation(libs.ktor.client.cio)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.js)
         }
     }
 }
