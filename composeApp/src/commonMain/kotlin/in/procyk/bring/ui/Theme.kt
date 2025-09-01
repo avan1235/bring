@@ -16,6 +16,7 @@ import `in`.procyk.bring.bringCodec
 import `in`.procyk.bring.ui.components.snackbar.rememberSnackbarHost
 import `in`.procyk.bring.ui.foundation.ripple
 import `in`.procyk.bring.vm.AbstractViewModel.Context
+import `in`.procyk.bring.vm.PlatformContext
 import io.github.xxfast.kstore.storeOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -30,6 +31,7 @@ object BringAppTheme {
 
 @Composable
 internal inline fun BringAppTheme(
+    platformContext: PlatformContext,
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     crossinline content: @Composable (Context) -> Unit,
 ) {
@@ -40,7 +42,7 @@ internal inline fun BringAppTheme(
     val clipboard = LocalClipboard.current
     val scope = rememberCoroutineScope()
     val context = remember(navController, snackbarHostState, store, scope) {
-        Context(navController, snackbarHostState, store, clipboard, scope)
+        Context(navController, snackbarHostState, store, clipboard, scope, platformContext)
     }
 
     val theme by store.updates.mapNotNull { it?.darkMode }.collectAsState(Theme.System)

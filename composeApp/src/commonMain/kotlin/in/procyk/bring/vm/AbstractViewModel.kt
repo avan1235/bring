@@ -35,6 +35,7 @@ abstract class AbstractViewModel(
         val store: KStore<BringStore>,
         val clipboard: Clipboard,
         private val appScope: CoroutineScope,
+        val platformContext: PlatformContext,
     ) {
         val storeFlow: StateFlow<BringStore> =
             store.updates.filterNotNull()

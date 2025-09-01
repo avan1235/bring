@@ -8,6 +8,7 @@ import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.window.ComposeViewport
 import com.materialkolor.ktx.toHex
 import `in`.procyk.bring.ui.BringAppTheme
+import `in`.procyk.bring.vm.PlatformContext
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.await
@@ -29,7 +30,7 @@ fun main() {
 
         when {
             fontsLoaded -> {
-                BringAppTheme { context ->
+                BringAppTheme(PlatformContext()) { context ->
                     val backgroundColor = BringAppTheme.colors.background
                     LaunchedEffect(backgroundColor) {
                         head.children.asList().last().remove()

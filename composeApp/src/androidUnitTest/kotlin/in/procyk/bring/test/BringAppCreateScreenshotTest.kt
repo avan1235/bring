@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -29,6 +29,7 @@ import `in`.procyk.bring.BringStore
 import `in`.procyk.bring.R
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.components.Text
+import `in`.procyk.bring.vm.PlatformContext
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -42,7 +43,6 @@ import java.lang.Class.forName
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
-import kotlin.random.Random
 import kotlin.uuid.Uuid
 
 
@@ -93,7 +93,7 @@ internal abstract class BringAppCreateScreenshotTest {
         crossinline context: ComposeContentTestRule.() -> Unit = {},
     ): Unit = with(composeTestRule) {
         setContent {
-            BringAppTheme { context ->
+            BringAppTheme(PlatformContext(LocalContext.current)) { context ->
                 LaunchedEffect(Unit) {
                     context.store.update {
                         it?.config()
@@ -206,7 +206,7 @@ internal fun ComposeTestRule.navigateSettingsScreen() {
 
 internal fun ComposeTestRule.createShoppingList(
     listName: String,
-    clickButton: String
+    clickButton: String,
 ) {
     onNodeWithTag("screen-create-list")
         .assertExists()

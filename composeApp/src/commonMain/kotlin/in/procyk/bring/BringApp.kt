@@ -53,8 +53,11 @@ import org.jetbrains.compose.resources.stringResource
 import kotlin.uuid.Uuid
 
 @Composable
-internal fun BringApp(initListId: String? = null) {
-    BringAppTheme { context ->
+internal fun BringApp(
+    platformContext: PlatformContext,
+    initListId: String? = null,
+) {
+    BringAppTheme(platformContext) { context ->
         BringAppInternal(context, initListId)
     }
 }
