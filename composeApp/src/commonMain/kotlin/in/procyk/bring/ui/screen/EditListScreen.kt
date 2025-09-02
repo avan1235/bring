@@ -83,9 +83,11 @@ internal fun EditListScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         val newItemName by vm.newItemName.collectAsState()
+                        val newItemLoading by vm.newItemLoading.collectAsState()
                         AddItemTextField(
                             value = newItemName,
                             onValueChange = vm::onNewItemNameChange,
+                            loading = newItemLoading,
                             onAdd = {
                                 vm.onCreateNewItem()
                                 focusRequester.requestFocus()
@@ -94,6 +96,7 @@ internal fun EditListScreen(
                             textFieldModifier = Modifier
                                 .focusRequester(focusRequester)
                                 .testTag("text-field-add-list-item"),
+                            buttonEnabled = !newItemLoading,
                             buttonModifier = Modifier
                                 .focusRequester(focusRequester)
                                 .testTag("button-add-list-item"),

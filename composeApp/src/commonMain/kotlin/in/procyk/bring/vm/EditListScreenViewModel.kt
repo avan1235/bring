@@ -5,7 +5,6 @@ import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.clients.google.GoogleLLMClient
 import ai.koog.prompt.executor.clients.google.GoogleModels
 import ai.koog.prompt.executor.llms.SingleLLMPromptExecutor
-import ai.koog.prompt.executor.llms.all.simpleGoogleAIExecutor
 import ai.koog.prompt.structure.StructuredOutput.Manual
 import ai.koog.prompt.structure.StructuredOutputConfig
 import ai.koog.prompt.structure.executeStructured
@@ -21,7 +20,7 @@ import `in`.procyk.bring.ai.MarkdownWrappedJsonStructuredData.Companion.createMa
 import `in`.procyk.bring.service.FavoriteElementService
 import `in`.procyk.bring.service.ShoppingListService
 import `in`.procyk.bring.service.ShoppingListService.GetShoppingListError
-import io.ktor.client.HttpClient
+import io.ktor.client.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -152,6 +151,9 @@ internal class EditListScreenViewModel(
     private val _newItemName: MutableStateFlow<String> = MutableStateFlow("")
     val newItemName: StateFlow<String> = _newItemName.asStateFlow()
 
+    private val _newItemLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val newItemLoading: StateFlow<Boolean> = _newItemLoading.asStateFlow()
+
     val enableEditMode: StateFlow<Boolean> = storeFlow.map { it.enableEditMode }.state(store.enableEditMode)
 
     private val _showFab: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -171,22 +173,28 @@ internal class EditListScreenViewModel(
         val name = _newItemName.value
         _newItemName.update { "" }
         viewModelScope.launch {
-            val items = when {
-                name.isNotBlank()
-                        && useGeminiSettings.value
-                        && useGemini.value
-                        && store.geminiKey.isNotEmpty() -> httpClient.getSuggestionsFromGemini(store.geminiKey, name)
-                    ?.items
-                    ?.map { it.name to it.count }
-                    ?.takeUnless { it.isEmpty() }
-                    ?: listOf(name to 1)
+            try {
+                _newItemLoading.getAndUpdate { true }
+                val items = when {
+                    name.isNotBlank()
+                            && useGeminiSettings.value
+                            && useGemini.value
+                            && store.geminiKey.isNotEmpty() ->
+                        httpClient.getSuggestionsFromGemini(store.geminiKey, name)
+                            ?.items
+                            ?.map { it.name to it.count }
+                            ?.takeUnless { it.isEmpty() }
+                            ?: listOf(name to 1)
 
-                else -> listOf(name to 1)
-            }
-            items.forEach { (item, count) ->
-                shoppingListService.durableCall {
-                    addEntryToShoppingList(store.userId, listId, item, count)
+                    else -> listOf(name to 1)
                 }
+                items.forEach { (item, count) ->
+                    shoppingListService.durableCall {
+                        addEntryToShoppingList(store.userId, listId, item, count)
+                    }
+                }
+            } finally {
+                _newItemLoading.update { false }
             }
         }
     }
