@@ -4,7 +4,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import `in`.procyk.bring.vm.PlatformContext
 import platform.UIKit.*
 
-fun MainViewController(): UIViewController = object : UIViewController(nibName = null, bundle = null) {
+fun MainViewController(initListId: String?): UIViewController = object : UIViewController(nibName = null, bundle = null) {
 
     private lateinit var composeViewController: UIViewController
 
@@ -12,7 +12,7 @@ fun MainViewController(): UIViewController = object : UIViewController(nibName =
         super.viewDidLoad()
 
         composeViewController = ComposeUIViewController {
-            BringApp(PlatformContext())
+            BringApp(PlatformContext(), initListId)
         }
 
         // Add as child view controller

@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
+import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
@@ -22,5 +23,9 @@ actual inline fun <reified T : @Serializable Any> bringCodec(): Codec<T> {
         error = null
     )!!
 
-    return FileCodec<T>(file = Path(documentsUrl.path!!, ".bring"))
+    val documentsPath = documentsUrl.path!!
+    return FileCodec<T>(
+        file = Path(documentsPath, ".bring"),
+        tempFile = Path(documentsPath, Uuid.random().toHexDashString())
+    )
 }

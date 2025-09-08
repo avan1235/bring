@@ -7,6 +7,7 @@ import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.serialization.Serializable
 import net.harawata.appdirs.AppDirsFactory
+import kotlin.uuid.Uuid
 
 @Composable
 actual inline fun <reified T : @Serializable Any> bringCodec(): Codec<T> {
@@ -19,5 +20,5 @@ actual inline fun <reified T : @Serializable Any> bringCodec(): Codec<T> {
 
     with(SystemFileSystem) { if (!exists(file)) createDirectories(file) }
 
-    return FileCodec<T>(Path(file, ".bring"))
+    return FileCodec<T>(Path(file, ".bring"), tempFile = Path(file, Uuid.random().toHexDashString()))
 }
