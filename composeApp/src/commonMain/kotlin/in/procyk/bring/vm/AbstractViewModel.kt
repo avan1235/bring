@@ -1,5 +1,6 @@
 package `in`.procyk.bring.vm
 
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.Clipboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -40,6 +41,10 @@ abstract class AbstractViewModel(
         val storeFlow: StateFlow<BringStore> =
             store.updates.filterNotNull()
                 .stateIn(appScope, SharingStarted.Eagerly, BringStore.Default)
+
+        val useBottomNavigation: StateFlow<Boolean> = storeFlow
+            .map { it.useBottomNavigation }
+            .stateIn(appScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 1_000), storeFlow.value.useBottomNavigation)
 
         private val _topBarText = MutableStateFlow(ComposeAppConfig.APP_NAME)
         val topBarText: StateFlow<String> = _topBarText.asStateFlow()

@@ -11,6 +11,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.platform.LocalHapticFeedback
 import `in`.procyk.bring.ui.Theme
+import `in`.procyk.bring.ui.defaultUseBottomNavigation
 import io.github.xxfast.kstore.Codec
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.cbor.CborLabel
@@ -30,6 +31,7 @@ data class BringStore(
     @CborLabel(9) val geminiKey: String = "",
     @CborLabel(10) val useGemini: Boolean = false,
     @CborLabel(11) val useHaptics: Boolean = true,
+    @CborLabel(12) val useBottomNavigation: Boolean = defaultUseBottomNavigation,
 ) {
     companion object {
         val Default: BringStore = BringStore()

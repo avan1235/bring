@@ -34,5 +34,6 @@
     <string name="gemini_key">Klucz Gemini</string>
     <string name="use_gemini">Użyj Gemini do generowania wpisów</string>
     <string name="use_haptics">Użyj wibracji</string>
+    <string name="use_bottom_navigation">Użyj dolnej nawigacji</string>
     <string name="miscellaneous">Różne</string>
 </resources>

@@ -34,5 +34,6 @@
     <string name="gemini_key">Clé Gemini</string>
     <string name="use_gemini">Utiliser Gemini pour générer des entrées</string>
     <string name="use_haptics">Utiliser le retour haptique</string>
+    <string name="use_bottom_navigation">Utiliser la barre de navigation inférieure</string>
     <string name="miscellaneous">Divers</string>
 </resources>

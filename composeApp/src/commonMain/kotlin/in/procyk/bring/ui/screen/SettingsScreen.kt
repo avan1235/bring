@@ -70,6 +70,7 @@ internal fun SettingsScreen(
         SettingColorPickerRow(Res.string.theme_color, vm.themeColor, vm::onThemeColorChanged)
         SettingsCategoryName(Res.string.miscellaneous)
         SettingSwitchRow(Res.string.use_haptics, vm.useHaptics, vm::onUseHapticsChanged)
+        SettingSwitchRow(Res.string.use_bottom_navigation, vm.useBottomNavigation, vm::onUseBottomNavigationChanged)
         Spacer(modifier = Modifier.weight(1f))
         Spacer(modifier = Modifier.height(16.dp))
         BottomBanner(

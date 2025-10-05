@@ -34,5 +34,6 @@
     <string name="gemini_key">Geminiキー</string>
     <string name="use_gemini">Geminiを使用して入力を生成する</string>
     <string name="use_haptics">触覚フィードバックを使用する</string>
+    <string name="use_bottom_navigation">下部ナビゲーションを使用する</string>
     <string name="miscellaneous">その他</string>
 </resources>

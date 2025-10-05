@@ -35,6 +35,9 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
     val useHaptics: StateFlow<Boolean> =
         storeFlow.map { it.useHaptics }.state(storeFlow.value.useHaptics)
 
+    val useBottomNavigation: StateFlow<Boolean> =
+        context.useBottomNavigation
+
     fun onEditModeChanged(value: Boolean) {
         updateConfig { it.copy(enableEditMode = value) }
     }
@@ -69,5 +72,9 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
 
     fun onUseHapticsChanged(value: Boolean) {
         updateConfig { it.copy(useHaptics = value) }
+    }
+
+    fun onUseBottomNavigationChanged(value: Boolean) {
+        updateConfig { it.copy(useBottomNavigation = value) }
     }
 }

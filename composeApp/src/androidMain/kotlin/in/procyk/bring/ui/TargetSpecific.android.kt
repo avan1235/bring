@@ -1,4 +1,4 @@
 package `in`.procyk.bring.ui
 
-internal actual val useBottomNavigation: Boolean
+internal actual val defaultUseBottomNavigation: Boolean
     get() = true

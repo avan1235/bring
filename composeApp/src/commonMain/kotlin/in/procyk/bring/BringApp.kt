@@ -45,8 +45,8 @@ import `in`.procyk.bring.ui.screen.CreateListScreen
 import `in`.procyk.bring.ui.screen.EditListScreen
 import `in`.procyk.bring.ui.screen.FavoritesScreen
 import `in`.procyk.bring.ui.screen.SettingsScreen
-import `in`.procyk.bring.ui.useBottomNavigation
 import `in`.procyk.bring.vm.*
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -80,6 +80,7 @@ internal fun BringAppInternal(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 val topBarText by context.topBarText.collectAsState()
+                val useBottomNavigation by context.useBottomNavigation.collectAsState()
                 AnimatedTopBar(topBarText, modifier = Modifier.weight(1f))
                 if (!useBottomNavigation) {
                     Navigation(context)
@@ -96,6 +97,7 @@ internal fun BringAppInternal(
             }
         },
         bottomBar = {
+            val useBottomNavigation by context.useBottomNavigation.collectAsState()
             if (useBottomNavigation) {
                 Navigation(context)
             }
@@ -202,6 +204,7 @@ private fun AnimatedTopBar(
 private fun Navigation(
     context: AbstractViewModel.Context,
 ) {
+    val useBottomNavigation by context.useBottomNavigation.collectAsState()
     NavigationBar(
         modifier = when {
             useBottomNavigation -> Modifier

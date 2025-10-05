@@ -1,3 +1,3 @@
 package `in`.procyk.bring.ui
 
-internal expect val useBottomNavigation: Boolean
+internal expect val defaultUseBottomNavigation: Boolean

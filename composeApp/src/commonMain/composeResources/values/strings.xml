@@ -34,5 +34,6 @@
     <string name="gemini_key">Gemini Key</string>
     <string name="use_gemini">Use Gemini to generate inputs</string>
     <string name="use_haptics">Use haptic feedback</string>
+    <string name="use_bottom_navigation">Use bottom navigation</string>
     <string name="miscellaneous">Miscellaneous</string>
 </resources>
