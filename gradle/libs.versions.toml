@@ -1,8 +1,8 @@
 [versions]
 agp = "8.11.2"
-android-compileSdk = "35"
+android-compileSdk = "36"
 android-minSdk = "24"
-android-targetSdk = "35"
+android-targetSdk = "36"
 androidx-activityCompose = "1.11.0"
 androidx-lifecycle = "2.9.4"
 androidx-test-ext = "1.3.0"
