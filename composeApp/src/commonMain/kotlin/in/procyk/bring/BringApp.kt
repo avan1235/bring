@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -46,7 +47,6 @@ import `in`.procyk.bring.ui.screen.EditListScreen
 import `in`.procyk.bring.ui.screen.FavoritesScreen
 import `in`.procyk.bring.ui.screen.SettingsScreen
 import `in`.procyk.bring.vm.*
-import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -205,6 +205,7 @@ private fun Navigation(
     context: AbstractViewModel.Context,
 ) {
     val useBottomNavigation by context.useBottomNavigation.collectAsState()
+    val density = LocalDensity.current
     NavigationBar(
         modifier = when {
             useBottomNavigation -> Modifier
@@ -212,7 +213,10 @@ private fun Navigation(
         },
         windowInsets = when {
             useBottomNavigation -> NavigationBarDefaults.windowInsets
-            else -> WindowInsets(0)
+                .takeIf { it.getBottom(density) > 0 }
+                ?: WindowInsets(bottom = 32.dp)
+
+            else -> WindowInsets()
         },
     ) {
         val currentTarget by context.navBarTarget.collectAsState()
