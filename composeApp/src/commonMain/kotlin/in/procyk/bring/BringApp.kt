@@ -116,7 +116,7 @@ internal fun BringAppInternal(
                 startDestination = when (initListId) {
                     null -> Screen.CreateList
                     else -> Screen.EditList(
-                        initListId, fetchSuggestionsAndFavoriteElements = false
+                        initListId, fetchSuggestionsAndFavoriteElements = true
                     )
                 },
                 enterTransition = {
