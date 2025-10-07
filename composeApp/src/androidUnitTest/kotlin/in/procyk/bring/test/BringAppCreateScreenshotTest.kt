@@ -104,7 +104,13 @@ internal abstract class BringAppCreateScreenshotTest {
                         .background(BringAppTheme.colors.surface)
                         .fillMaxSize()
                 ) {
-                    text()
+                    Box(
+                        modifier = Modifier
+                            .background(BringAppTheme.colors.primary.copy(alpha = 0.25f))
+                            .fillMaxSize()
+                    ) {
+                        text()
+                    }
                 }
                 Box(
                     modifier = modifier.then(DefaultSizeModifier)
