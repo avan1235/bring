@@ -99,6 +99,7 @@ graalvmNative {
                     "--initialize-at-build-time=com.impossibl.postgres.system.Version",
                     "--initialize-at-build-time=com.impossibl.postgres.protocol.ssl.ConsolePasswordCallbackHandler",
                     "--initialize-at-build-time=java.sql.DriverManager",
+                    "--initialize-at-build-time=okhttp3.Protocol",
 
                     "--initialize-at-run-time=kotlin.uuid.SecureRandomHolder",
 
