@@ -20,11 +20,11 @@ Bring! is a modern, feature-rich shopping list application built with Kotlin Mul
 Web version is publicly available at https://bring.procyk.in
 
 <div style="display: flex; justify-content: center; flex-wrap: nowrap;">
-  <img src="composeApp/screenshots/edit-list-screen-options.png" style="width: 20%;" />
-  <img src="composeApp/screenshots/create-list-screen-custom-name.png" style="width: 20%;" />
-  <img src="composeApp/screenshots/create-list-screen-join-list.png" style="width: 20%;" />
-  <img src="composeApp/screenshots/favorites-screen-collections.png" style="width: 20%;" />
-  <img src="composeApp/screenshots/settings-screen-options.png" style="width: 20%;" />
+  <img src="composeApp/screenshots/edit-list-screen-options.png" style="width: 19%;" />
+  <img src="composeApp/screenshots/create-list-screen-custom-name.png" style="width: 19%;" />
+  <img src="composeApp/screenshots/create-list-screen-join-list.png" style="width: 19%;" />
+  <img src="composeApp/screenshots/favorites-screen-collections.png" style="width: 19%;" />
+  <img src="composeApp/screenshots/settings-screen-options.png" style="width: 19%;" />
 </div>
 
 
