@@ -31,10 +31,10 @@ kotlin {
 //        macosArm64()
     }
 
-    jvmToolchain(17)
+    jvmToolchain(21)
     jvm {
         compilerOptions {
-            jvmTarget = JvmTarget.JVM_17
+            jvmTarget = JvmTarget.JVM_21
         }
     }
 
@@ -87,7 +87,7 @@ kotlin {
 
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 
@@ -95,8 +95,8 @@ android {
     namespace = "$BringPackageName.sharedClient"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
