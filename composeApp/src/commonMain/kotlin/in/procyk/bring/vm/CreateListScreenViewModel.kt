@@ -1,5 +1,6 @@
 package `in`.procyk.bring.vm
 
+import androidx.lifecycle.viewModelScope
 import bring.composeapp.generated.resources.Res
 import bring.composeapp.generated.resources.list_not_found
 import `in`.procyk.bring.ListIdRegex
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
@@ -46,11 +48,13 @@ internal class CreateListScreenViewModel(
     fun onCreateShoppingList() {
         val name = name.value
         val userId = store.userId
-        shoppingListService.durableCall {
-            createNewShoppingList(userId, name).fold(
-                ifLeft = { this@CreateListScreenViewModel.context.navigateEditList(it, fetchSuggestions = true) },
-                ifRight = { /* TODO: handle errors */ }
-            )
+        viewModelScope.launch {
+            shoppingListService.durableCall {
+                createNewShoppingList(userId, name).fold(
+                    ifLeft = { this@CreateListScreenViewModel.context.navigateEditList(it, fetchSuggestions = true) },
+                    ifRight = { /* TODO: handle errors */ }
+                )
+            }
         }
     }
 

@@ -56,16 +56,20 @@ CREATE OR REPLACE FUNCTION notify_shopping_list_items_trigger() RETURNS trigger 
 ${'$'}trigger${'$'}
 DECLARE
     list_id uuid;
+    event_timestamp text;
 BEGIN
+    event_timestamp := CURRENT_TIMESTAMP::text;
+    
     CASE TG_OP
-        WHEN 'UPDATE' THEN list_id := NEW.list_id;
+        WHEN 'UPDATE' THEN 
+            PERFORM pg_notify('event_'::text || REPLACE(OLD.list_id::text, '-', '_'), event_timestamp);
+            list_id := NEW.list_id;
         WHEN 'INSERT' THEN list_id := NEW.list_id;
         WHEN 'DELETE' THEN list_id := OLD.list_id;
         ELSE RAISE EXCEPTION 'Unknown TG_OP: "%". Should not occur!', TG_OP;
         END CASE;
         
-    PERFORM pg_notify('event_'::text || REPLACE(list_id::text, '-', '_'),
-                      CURRENT_TIMESTAMP::text);
+    PERFORM pg_notify('event_'::text || REPLACE(list_id::text, '-', '_'), event_timestamp);
 
     RETURN NULL;
 END;

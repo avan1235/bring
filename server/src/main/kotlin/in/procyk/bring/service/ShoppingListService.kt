@@ -67,15 +67,25 @@ internal class ShoppingListServiceImpl(
             }.getOrNull() ?: return CreateNewShoppingListError.ExtractionError.right()
         }
         return runNewSuspendedTransactionCatchingAs(CreateNewShoppingListError.Internal) {
-            val userUUID = userId.toJavaUuid()
-            val listId = ShoppingListEntity.new {
-                this.name = title
-                this.byUserId = userUUID
-                this.createdAt = Clock.System.now().toDeprecatedInstant()
-            }.id
-            addEntriesToShoppingListInTransaction(userUUID, listId, ingredients)
-            listId.value.toKotlinUuid().left()
+            createNewShoppingList(userId, title) { listId ->
+                addEntriesToShoppingListInTransaction(userId.toJavaUuid(), listId, ingredients).left()
+            }
         }
+    }
+
+    private fun <E> createNewShoppingList(
+        userId: Uuid,
+        name: String,
+        addEntries: (listId: EntityID<UUID>) -> Either<Unit, E>
+    ): Either<Uuid, E> {
+        val userUUID = userId.toJavaUuid()
+        val listId = ShoppingListEntity.new {
+            this.name = name
+            this.byUserId = userUUID
+            this.createdAt = Clock.System.now().toDeprecatedInstant()
+        }.id
+        addEntries(listId).onRight { return it.right() }
+        return listId.value.toKotlinUuid().left()
     }
 
     override suspend fun removeShoppingListItem(
@@ -141,6 +151,27 @@ internal class ShoppingListServiceImpl(
                     )
                 }
             ).left()
+        }
+    }
+
+    override suspend fun extractUncheckedShoppingList(
+        userId: Uuid,
+        listId: Uuid,
+    ): Either<Uuid, ExtractUncheckedShoppingListError> {
+        return runNewSuspendedTransactionCatchingAs(ExtractUncheckedShoppingListError.Internal) txn@{
+            val list = ShoppingListEntity.findById(listId.toJavaUuid())
+                ?: return@txn ExtractUncheckedShoppingListError.UnknownListId.right()
+            val unchecked = list.items.filterNot { it.status.isChecked }
+            createNewShoppingList(userId, list.name) { listId ->
+                val userUUID = userId.toJavaUuid()
+                val createdAt = Clock.System.now()
+                unchecked.forEach {
+                    it.listId = listId
+                    it.byUserId = userUUID
+                    it.createdAt = createdAt.toDeprecatedInstant()
+                }
+                Unit.left()
+            }
         }
     }
 

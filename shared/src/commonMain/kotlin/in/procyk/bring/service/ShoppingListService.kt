@@ -34,6 +34,14 @@ interface ShoppingListService {
     ): Flow<Either<ShoppingListData, GetShoppingListError>>
 
     @Serializable
+    enum class ExtractUncheckedShoppingListError { Internal, UnknownListId }
+
+    suspend fun extractUncheckedShoppingList(
+        userId: Uuid,
+        listId: Uuid,
+    ): Either<Uuid, ExtractUncheckedShoppingListError>
+
+    @Serializable
     enum class GetUserShoppingListSuggestionsError { Internal }
 
     suspend fun getUserShoppingListSuggestions(

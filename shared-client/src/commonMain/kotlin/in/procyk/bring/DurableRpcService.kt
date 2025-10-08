@@ -19,7 +19,7 @@ import kotlin.time.Duration.Companion.seconds
 
 interface DurableRpcService<@Rpc T : Any> {
 
-    fun durableCall(f: suspend T.() -> Unit)
+    suspend fun <U> durableCall(f: suspend T.() -> U): U
 
     fun durableLaunch(f: suspend T.() -> Unit)
 }
@@ -40,7 +40,7 @@ inline fun <@Rpc reified T : Any> DurableRpcService(
     private val lastActiveClient: KtorRpcClient?
         get() = client?.takeIf { it.hasActiveConnection }
 
-    private val callQueue = Channel<suspend T.() -> Unit>(UNLIMITED)
+    private val callQueue = Channel<Pair<suspend T.() -> Any?, CompletableDeferred<Any?>>>(UNLIMITED)
     private val launchQueue = Channel<suspend T.() -> Unit>(UNLIMITED)
 
     private suspend fun ensureActiveClient(): KtorRpcClient = lastActiveClient ?: mutex.withLock {
@@ -87,8 +87,8 @@ inline fun <@Rpc reified T : Any> DurableRpcService(
 
     init {
         coroutineScope.launch {
-            for (call in callQueue) retry {
-                cancellable(call)
+            for ((call, deferred) in callQueue) retry {
+                deferred.complete(cancellable(call))
             }
         }
         coroutineScope.launch {
@@ -100,8 +100,11 @@ inline fun <@Rpc reified T : Any> DurableRpcService(
         }
     }
 
-    override fun durableCall(f: suspend T.() -> Unit) {
-        callQueue.trySend(f)
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun <U> durableCall(f: suspend T.() -> U): U {
+        val deferred = CompletableDeferred<Any?>()
+        callQueue.trySend(f as suspend T.() -> Any to deferred)
+        return deferred.await() as U
     }
 
     override fun durableLaunch(f: suspend T.() -> Unit) {

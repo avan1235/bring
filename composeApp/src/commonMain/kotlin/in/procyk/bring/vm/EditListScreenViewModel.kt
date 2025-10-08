@@ -201,8 +201,10 @@ internal class EditListScreenViewModel(
 
     fun onCreateNewItemFromSuggestion(name: String) {
         _suggestedItems.update { items -> items.map { if (it.name == name) it.copy(used = true) else it } }
-        shoppingListService.durableCall {
-            addEntryToShoppingList(store.userId, listId, name)
+        viewModelScope.launch {
+            shoppingListService.durableCall {
+                addEntryToShoppingList(store.userId, listId, name)
+            }
         }
     }
 
@@ -229,14 +231,31 @@ internal class EditListScreenViewModel(
         }
     }
 
+    fun onExtractUncheckedList() {
+        viewModelScope.launch {
+            println("extracting ${listId}")
+            shoppingListService.durableCall {
+                extractUncheckedShoppingList(userId = store.userId, listId = listId)
+            }.fold(
+                ifLeft = {
+                    println("extracted ${it}")
+                    context.navigateEditList(it, fetchSuggestions = false)
+                },
+                ifRight = { /* TODO: handle errors */ },
+            )
+        }
+    }
+
     fun onChecked(itemId: Uuid, checked: Boolean) {
         val localStatus = if (checked) Checked(Clock.System.now(), store.userId) else Unchecked
         localListItems.update { list ->
             list.map { if (it.id == itemId) it.copy(status = localStatus) else it }.sortedWith(ListItemsComparator)
         }
-        when {
-            checked -> shoppingListService.durableCall { markItemAsChecked(store.userId, itemId) }
-            else -> shoppingListService.durableCall { markItemAsUnchecked(itemId) }
+        viewModelScope.launch {
+            when {
+                checked -> shoppingListService.durableCall { markItemAsChecked(store.userId, itemId) }
+                else -> shoppingListService.durableCall { markItemAsUnchecked(itemId) }
+            }
         }
     }
 
@@ -244,8 +263,10 @@ internal class EditListScreenViewModel(
         localListItems.update { list ->
             list.filter { it.id != itemId }
         }
-        shoppingListService.durableCall {
-            removeShoppingListItem(itemId)
+        viewModelScope.launch {
+            shoppingListService.durableCall {
+                removeShoppingListItem(itemId)
+            }
         }
     }
 
@@ -253,8 +274,10 @@ internal class EditListScreenViewModel(
         localListItems.update { list ->
             list.map { if (it.id == itemId) it.copy(count = it.count + 1) else it }
         }
-        shoppingListService.durableCall {
-            increaseItemCount(itemId)
+        viewModelScope.launch {
+            shoppingListService.durableCall {
+                increaseItemCount(itemId)
+            }
         }
     }
 
@@ -262,8 +285,10 @@ internal class EditListScreenViewModel(
         localListItems.update { list ->
             list.map { if (it.id == itemId) it.copy(count = max(it.count - 1, 1)) else it }
         }
-        shoppingListService.durableCall {
-            decreaseItemCount(itemId)
+        viewModelScope.launch {
+            shoppingListService.durableCall {
+                decreaseItemCount(itemId)
+            }
         }
     }
 
@@ -279,8 +304,10 @@ internal class EditListScreenViewModel(
         localListItems.update { list ->
             list.map { if (it.id == from.id) it.copy(order = updatedOrder) else it }.sortedWith(ListItemsComparator)
         }
-        shoppingListService.durableCall {
-            updateItemOrder(from.id, updatedOrder)
+        viewModelScope.launch {
+            shoppingListService.durableCall {
+                updateItemOrder(from.id, updatedOrder)
+            }
         }
     }
 

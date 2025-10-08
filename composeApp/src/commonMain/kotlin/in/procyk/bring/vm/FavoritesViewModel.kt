@@ -19,8 +19,10 @@ internal class FavoritesViewModel(context: Context) : AbstractViewModel(context)
     val favoriteElements: StateFlow<List<FavoriteElement>> = _favoriteElements.asStateFlow()
 
     init {
-        favoriteElementService.durableCall {
-            getFavoriteElements(store.userId).updateFavoriteElements()
+        viewModelScope.launch {
+            favoriteElementService.durableCall {
+                getFavoriteElements(store.userId).updateFavoriteElements()
+            }
         }
     }
 
@@ -52,14 +54,18 @@ internal class FavoritesViewModel(context: Context) : AbstractViewModel(context)
     fun onFavoriteElementCreated() {
         val name = _newFavoriteElementName.value
         _newFavoriteElementName.value = ""
-        favoriteElementService.durableCall {
-            addFavoriteElement(name, store.userId).updateFavoriteElements()
+        viewModelScope.launch {
+            favoriteElementService.durableCall {
+                addFavoriteElement(name, store.userId).updateFavoriteElements()
+            }
         }
     }
 
     fun onFavoriteElementRemoved(elementId: Uuid) {
-        favoriteElementService.durableCall {
-            removeFavoriteElement(elementId).updateFavoriteElements()
+        viewModelScope.launch {
+            favoriteElementService.durableCall {
+                removeFavoriteElement(elementId).updateFavoriteElements()
+            }
         }
     }
 

@@ -18,10 +18,12 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Psychology
+import androidx.compose.material.icons.filled.Unarchive
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.ExposureNeg1
 import androidx.compose.material.icons.outlined.ExposurePlus1
 import androidx.compose.material.icons.outlined.IosShare
+import androidx.compose.material.icons.outlined.Unarchive
 import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.Psychology
@@ -319,6 +321,11 @@ private fun ControlButtons(
         onClick = vm::onShareList,
         icon = Icons.Outlined.IosShare,
         modifier = Modifier.testTag("button-share-list"),
+    )
+    IconButton(
+        onClick = vm::onExtractUncheckedList,
+        icon = Icons.Outlined.Unarchive,
+        modifier = Modifier.testTag("button-extract-list"),
     )
 }
 
