@@ -23,6 +23,7 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.ExposureNeg1
 import androidx.compose.material.icons.outlined.ExposurePlus1
 import androidx.compose.material.icons.outlined.IosShare
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Unarchive
 import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material.icons.twotone.Favorite
@@ -319,7 +320,7 @@ private fun ControlButtons(
     }
     IconButton(
         onClick = vm::onShareList,
-        icon = Icons.Outlined.IosShare,
+        icon = Icons.Outlined.Share,
         modifier = Modifier.testTag("button-share-list"),
     )
     IconButton(
