@@ -37,58 +37,48 @@ internal fun RowScope.AddItemTextField(
     buttonEnabled: Boolean = true,
     buttonModifier: Modifier = Modifier,
 ) {
-    when {
-        loading -> {
-            val infiniteTransition = rememberInfiniteTransition()
-            val progress by infiniteTransition.animateFloat(
-                initialValue = 0f,
-                targetValue = 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(durationMillis = animationDuration, easing = LinearEasing),
-                    repeatMode = RepeatMode.Reverse
-                ),
-            )
-            InputTextField(
-                value = value,
-                onValueChange = onValueChange,
-                onDone = onDone,
-                shape = shape,
-                borderWidth = borderWidth * (0.5f + progress),
-                textFieldModifier = textFieldModifier,
-                brush = when {
-                    progress < 0.5f -> {
-                        val normalizedProgress = progress / 0.5f
-                        Brush.linearGradient(
-                            0f to lerp(backgroundAnimationColor, animationColor, 1f - normalizedProgress),
-                            progress to animationColor,
-                            progress + 0.5f to backgroundAnimationColor,
-                            1f to lerp(backgroundAnimationColor, animationColor, normalizedProgress),
-                        )
-                    }
+    val infiniteTransition = rememberInfiniteTransition()
+    val progress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = animationDuration, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+    )
+    InputTextField(
+        value = value,
+        onValueChange = onValueChange,
+        onDone = onDone,
+        shape = shape,
+        borderWidth = when {
+            loading -> borderWidth * (0.5f + progress)
+            else -> borderWidth
+        },
+        textFieldModifier = textFieldModifier,
+        brush = when {
+            !loading -> SolidColor(BringAppTheme.colors.primary)
+            progress < 0.5f -> {
+                val normalizedProgress = progress / 0.5f
+                Brush.linearGradient(
+                    0f to lerp(backgroundAnimationColor, animationColor, 1f - normalizedProgress),
+                    progress to animationColor,
+                    progress + 0.5f to backgroundAnimationColor,
+                    1f to lerp(backgroundAnimationColor, animationColor, normalizedProgress),
+                )
+            }
 
-                    else -> {
-                        val normalizedProgress = (progress - 0.5f) / 0.5f
-                        Brush.linearGradient(
-                            0f to lerp(animationColor, backgroundAnimationColor, 1f - normalizedProgress),
-                            progress - 0.5f to backgroundAnimationColor,
-                            progress to animationColor,
-                            1f to lerp(animationColor, backgroundAnimationColor, normalizedProgress),
-                        )
-                    }
-                }
-            )
+            else -> {
+                val normalizedProgress = (progress - 0.5f) / 0.5f
+                Brush.linearGradient(
+                    0f to lerp(animationColor, backgroundAnimationColor, 1f - normalizedProgress),
+                    progress - 0.5f to backgroundAnimationColor,
+                    progress to animationColor,
+                    1f to lerp(animationColor, backgroundAnimationColor, normalizedProgress),
+                )
+            }
         }
-
-        else -> InputTextField(
-            value = value,
-            onValueChange = onValueChange,
-            onDone = onDone,
-            shape = shape,
-            borderWidth = borderWidth,
-            textFieldModifier = textFieldModifier
-        )
-    }
-
+    )
 
     IconButton(
         onClick = { onAdd() },

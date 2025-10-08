@@ -101,7 +101,6 @@ internal fun EditListScreen(
                                 .testTag("text-field-add-list-item"),
                             buttonEnabled = !newItemLoading,
                             buttonModifier = Modifier
-                                .focusRequester(focusRequester)
                                 .testTag("button-add-list-item"),
                         )
                         when {
