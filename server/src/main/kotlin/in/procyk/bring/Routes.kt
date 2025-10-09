@@ -11,6 +11,12 @@ internal fun Application.installRoutes(): Routing = routing {
     get("/") {
         call.respond(HttpStatusCode.OK)
     }
+
+    get("/version") {
+        val version = "constant" // System.getenv("VERSION") ?: System.currentTimeMillis().toString()
+        call.respond(version)
+    }
+
     favoriteElementRpc()
     shoppingListRpc()
 }

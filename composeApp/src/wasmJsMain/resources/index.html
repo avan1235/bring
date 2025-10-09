@@ -9,6 +9,82 @@
     <link type="text/css" rel="stylesheet" href="styles.css">
     <script type="application/javascript" src="composeApp.js"></script>
     <meta name="theme-color" content="#FFFFFF">
+    <script>
+        (function() {
+            const CACHE_NAME = 'bring-app-cache';
+            const CACHED_EXTENSIONS = ['.wasm', '.png', '.ttf', '.cvr', '.js', '.css'];
+            const CLIENT_HOST = '${CLIENT_HOST}';
+            const CLIENT_PORT = '${CLIENT_PORT}';
+            const CLIENT_HTTP_PROTOCOL = '${CLIENT_HTTP_PROTOCOL}';
+            const VERSION_ENDPOINT = `${CLIENT_HTTP_PROTOCOL}://${CLIENT_HOST}:${CLIENT_PORT}/version`;
+            const CACHE_VERSION_KEY = 'bring-cache-version';
+
+            function shouldCache(url) {
+                return CACHED_EXTENSIONS.some(ext => url.endsWith(ext));
+            }
+
+            async function getServerVersion() {
+                try {
+                    const response = await fetch(VERSION_ENDPOINT);
+                    return await response.json();
+                } catch (error) {
+                    console.warn('Failed to fetch server version:', error);
+                    return null;
+                }
+            }
+
+            async function clearCache() {
+                if ('caches' in window) {
+                    await caches.delete(CACHE_NAME);
+                    console.log('Cache cleared due to version change');
+                }
+            }
+
+            async function initCache() {
+                if (!('serviceWorker' in navigator) || !('caches' in window)) {
+                    console.log('Service Worker or Cache API not supported');
+                    return;
+                }
+
+                const currentVersion = await getServerVersion();
+                if (!currentVersion) return;
+
+                const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
+
+                if (cachedVersion && cachedVersion !== currentVersion) {
+                    await clearCache();
+                }
+
+                localStorage.setItem(CACHE_VERSION_KEY, currentVersion);
+
+                const cache = await caches.open(CACHE_NAME);
+
+                const originalFetch = window.fetch;
+                window.fetch = async function(resource, init) {
+                    const url = typeof resource === 'string' ? resource : resource.url;
+
+                    if (shouldCache(url)) {
+                        const cachedResponse = await cache.match(resource);
+                        if (cachedResponse) {
+                            return cachedResponse;
+                        }
+
+                        const response = await originalFetch(resource, init);
+                        if (response.ok) {
+                            cache.put(resource, response.clone());
+                        }
+                        return response;
+                    }
+
+                    return originalFetch(resource, init);
+                };
+            }
+
+            initCache().catch(error => {
+                console.error('Failed to initialize cache:', error);
+            });
+        })();
+    </script>
 </head>
 <body>
 <div id="loader-box">

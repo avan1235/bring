@@ -275,3 +275,19 @@ private val libsVersionCode: Int
         file.writeText(updatedFile)
         return code
     }
+
+tasks.named("wasmJsProcessResources") {
+    doLast {
+        val processedResourcesDir = File(project.buildDir, "processedResources/wasmJs/main")
+        val indexHtml = File(processedResourcesDir, "index.html")
+
+        if (indexHtml.exists()) {
+            val content = indexHtml.readText()
+            val updatedContent = content
+                .replace("\${CLIENT_HOST}", env.CLIENT_HOST.value)
+                .replace("\${CLIENT_PORT}", env.CLIENT_PORT.value)
+                .replace("\${CLIENT_HTTP_PROTOCOL}", env.CLIENT_HTTP_PROTOCOL.value)
+            indexHtml.writeText(updatedContent)
+        }
+    }
+}
