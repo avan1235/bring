@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalWasmJsInterop::class, ExperimentalComposeUiApi::class)
+
 package `in`.procyk.bring
 
 import androidx.compose.runtime.*
@@ -19,7 +21,6 @@ import org.w3c.fetch.Response
 import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 
-@OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     val body = document.body ?: error("no <body>")
     val head = document.head ?: error("no <head>")
@@ -33,7 +34,7 @@ fun main() {
                 BringAppTheme(PlatformContext()) { context ->
                     val backgroundColor = BringAppTheme.colors.background
                     LaunchedEffect(backgroundColor) {
-                        head.children.asList().last().remove()
+                        head.children.asList().single { it.getAttribute("name") == "theme-color" }.remove()
                         document.createElement("meta").apply {
                             setAttribute("name", "theme-color")
                             setAttribute("content", backgroundColor.toHex())
