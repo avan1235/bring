@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <script>
-        (function () {
+        (async () => {
             const CACHE_NAME = 'bring-app-cache';
             const CACHED_EXTENSIONS = ['.wasm', '.png', '.ttf', '.cvr', '.js', '.css'];
             const CLIENT_HOST = '${CLIENT_HOST}';
@@ -18,7 +18,7 @@
             async function getServerVersion() {
                 try {
                     const response = await fetch(VERSION_ENDPOINT);
-                    return await response.json();
+                    return await response.text();
                 } catch (error) {
                     console.warn('Failed to fetch server version:', error);
                     return null;
@@ -27,64 +27,48 @@
 
             async function clearCache() {
                 if ('caches' in window) {
-                    await caches.delete(CACHE_NAME);
+                    await window.caches.delete(CACHE_NAME);
                     console.log('Cache cleared due to version change');
                 }
             }
 
-            async function initCache() {
-                if (!('serviceWorker' in navigator) || !('caches' in window)) {
-                    console.log('Service Worker or Cache API not supported');
-                    return;
-                }
-
-                const currentVersion = await getServerVersion();
-                if (!currentVersion) return;
-
-                const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
-
-                if (cachedVersion && cachedVersion !== currentVersion) {
-                    await clearCache();
-                }
-
-                localStorage.setItem(CACHE_VERSION_KEY, currentVersion);
-
-                const cache = await caches.open(CACHE_NAME);
-
-                const originalFetch = window.fetch;
-                window.fetch = async function (resource, init) {
-                    const url = typeof resource === 'string' ? resource : resource.url;
-
-                    if (shouldCache(url)) {
-                        const cachedResponse = await cache.match(resource);
-                        if (cachedResponse) {
-                            return cachedResponse;
-                        }
-
-                        const response = await originalFetch(resource, init);
-                        if (response.ok) {
-                            cache.put(resource, response.clone());
-                        }
-                        return response;
-                    }
-
-                    return originalFetch(resource, init);
-                };
+            if (!('serviceWorker' in navigator) || !('caches' in window)) {
+                console.log('Service Worker or Cache API not supported');
+                return;
             }
 
-            function addComposeApp() {
-                const script = document.createElement('script');
-                script.type = 'application/javascript';
-                script.src = 'composeApp.js';
-                document.head.appendChild(script);
+            const currentVersion = await getServerVersion();
+            if (!currentVersion) return;
+
+            const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
+
+            if (cachedVersion && cachedVersion !== currentVersion) {
+                await clearCache();
             }
 
-            initCache()
-                .then(addComposeApp)
-                .catch(error => {
-                    console.error('Failed to initialize cache:', error);
-                    addComposeApp();
-                });
+            localStorage.setItem(CACHE_VERSION_KEY, currentVersion);
+
+            const cache = await window.caches.open(CACHE_NAME);
+
+            const originalFetch = window.fetch;
+            window.fetch = async function (resource, init) {
+                const url = typeof resource === 'string' ? resource : resource.url;
+
+                if (!shouldCache(url)) {
+                    return await originalFetch(resource, init);
+                }
+
+                const cachedResponse = await cache.match(resource);
+                if (cachedResponse) {
+                    return cachedResponse;
+                }
+
+                const response = await originalFetch(resource, init);
+                if (response.ok) {
+                    await cache.put(resource, response.clone());
+                }
+                return response;
+            };
         })();
     </script>
     <meta charset="UTF-8">
@@ -93,6 +77,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bring!</title>
     <link type="text/css" rel="stylesheet" href="styles.css">
+    <script type="application/javascript" src="composeApp.js"></script>
     <meta name="theme-color" content="#FFFFFF">
 </head>
     <body>
