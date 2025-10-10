@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.kotlinxRpc)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.buildConfig)
     alias(libs.plugins.ktor)
     alias(libs.plugins.graalVM)
     application
@@ -68,6 +69,10 @@ kotlin {
             optIn("kotlinx.serialization.ExperimentalSerializationApi")
         }
     }
+}
+
+buildConfig {
+    buildConfigField("VERSION", env.VERSION.value)
 }
 
 graalvmNative {

@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.buildKonfig) apply false
+    alias(libs.plugins.buildConfig) apply false
     alias(libs.plugins.lumo) apply false
     alias(libs.plugins.graalVM) apply false
     alias(libs.plugins.ktor) apply false
