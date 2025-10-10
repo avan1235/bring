@@ -17,7 +17,7 @@ internal class BringServerHealthcheckIntegrationTest : BringServerIntegrationTes
 
     @Test
     fun `healthcheck with OK status`() = runTest {
-        val status = httpClient.get("/").status
+        val status = httpClient.get("/health").status
 
         assertEquals(HttpStatusCode.Companion.OK, status)
     }
