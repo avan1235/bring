@@ -58,6 +58,7 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/bring:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
+          build-args: VERSION=${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
 
   publish-koyeb:
     needs: build-server

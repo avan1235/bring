@@ -20,6 +20,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - VERSION=${VERSION}
     environment:
       - POSTGRES_HOST=bring-dev-postgres
       - POSTGRES_PORT=${POSTGRES_PORT}

@@ -8,6 +8,9 @@ RUN tar -xf upx.tar.xz && \
     cd upx-*-amd64_linux && \
     mv upx /bin/upx
 COPY . .
+
+ARG VERSION
+
 RUN gradle server:nativeCompile
 RUN /bin/upx --best --lzma ./server/build/native/nativeCompile/server
 

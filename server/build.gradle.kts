@@ -72,7 +72,7 @@ kotlin {
 }
 
 buildConfig {
-    buildConfigField("VERSION", env.VERSION.value)
+    buildConfigField("VERSION", BringVersion)
 }
 
 graalvmNative {
