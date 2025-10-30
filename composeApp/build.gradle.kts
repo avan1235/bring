@@ -5,7 +5,6 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.lang.System.getenv
@@ -266,18 +265,27 @@ private val libsVersionCode: Int
         return code
     }
 
+fun File.fillClientEnvVariables() {
+    if (!exists()) return
+
+    val content = readText()
+    val updatedContent = content
+        .replace("\${CLIENT_HOST}", env.CLIENT_HOST.value)
+        .replace("\${CLIENT_PORT}", env.CLIENT_PORT.value)
+        .replace("\${CLIENT_HTTP_PROTOCOL}", env.CLIENT_HTTP_PROTOCOL.value)
+    writeText(updatedContent)
+}
+
 tasks.named("wasmJsProcessResources") {
     doLast {
-        val processedResourcesDir = File(project.buildDir, "processedResources/wasmJs/main")
-        val indexHtml = File(processedResourcesDir, "index.html")
+        val indexHtml = layout.buildDirectory.file("processedResources/wasmJs/main/index.html").get().asFile
+        indexHtml.fillClientEnvVariables()
+    }
+}
 
-        if (indexHtml.exists()) {
-            val content = indexHtml.readText()
-            val updatedContent = content
-                .replace("\${CLIENT_HOST}", env.CLIENT_HOST.value)
-                .replace("\${CLIENT_PORT}", env.CLIENT_PORT.value)
-                .replace("\${CLIENT_HTTP_PROTOCOL}", env.CLIENT_HTTP_PROTOCOL.value)
-            indexHtml.writeText(updatedContent)
-        }
+tasks.named("jsProcessResources") {
+    doLast {
+        val indexHtml = layout.buildDirectory.file("processedResources/js/main/index.html").get().asFile
+        indexHtml.fillClientEnvVariables()
     }
 }
