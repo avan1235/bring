@@ -68,7 +68,7 @@ jobs:
           export CLIENT_HTTP_PROTOCOL=https
           export CLIENT_WS_PROTOCOL=wss
           chmod +x ./gradlew
-          ./gradlew composeApp:wasmJsBrowserDistribution
+          ./gradlew composeApp:composeCompatibilityBrowserDistribution
         env:
           VERSION: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
 
@@ -83,7 +83,7 @@ jobs:
       - name: Deploy to Netlify
         shell: bash
         run: |
-          netlify deploy --prod --dir='composeApp/build/dist/wasmJs/productionExecutable' --message 'version ${{ github.sha }}'
+          netlify deploy --prod --dir='composeApp/build/dist/composeWebCompatibility/productionExecutable' --message 'version ${{ github.sha }}'
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
