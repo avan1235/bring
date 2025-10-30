@@ -1,7 +1,6 @@
 import buildsrc.convention.Env_gradle.Env.BringPackageName
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem as currentOS
 
@@ -65,8 +64,10 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.cio)
         }
-        iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
+        if (currentOS().isMacOsX) {
+            iosMain.dependencies {
+                implementation(libs.ktor.client.darwin)
+            }
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)
