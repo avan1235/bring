@@ -10,7 +10,7 @@ import net.harawata.appdirs.AppDirsFactory
 import kotlin.uuid.Uuid
 
 @Composable
-actual inline fun <reified T : @Serializable Any> bringCodec(): Codec<T> {
+internal actual inline fun <reified T : @Serializable Any> bringCodec(): Codec<T> {
     val filesDir = AppDirsFactory.getInstance().getUserDataDir(
         ComposeAppConfig.PACKAGE,
         ComposeAppConfig.VERSION,

@@ -13,7 +13,7 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-actual inline fun <reified T : @Serializable Any> bringCodec(): Codec<T> {
+internal actual inline fun <reified T : @Serializable Any> bringCodec(): Codec<T> {
     val fileManager = NSFileManager.defaultManager
     val documentsUrl = fileManager.URLForDirectory(
         directory = NSDocumentDirectory,

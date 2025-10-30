@@ -1,7 +1,8 @@
-@file:OptIn(ExperimentalWasmJsInterop::class, ExperimentalComposeUiApi::class)
+@file:OptIn(ExperimentalComposeUiApi::class)
 
 package `in`.procyk.bring
 
+//import kotlinx.coroutines.await
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalFontFamilyResolver
@@ -13,19 +14,13 @@ import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.vm.PlatformContext
 import kotlinx.browser.document
 import kotlinx.browser.window
-import kotlinx.coroutines.await
-import org.khronos.webgl.ArrayBuffer
-import org.khronos.webgl.Int8Array
 import org.w3c.dom.asList
-import org.w3c.fetch.Response
-import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
-import kotlin.wasm.unsafe.withScopedMemoryAllocator
+
 
 fun main() {
-    val body = document.body ?: error("no <body>")
     val head = document.head ?: error("no <head>")
 
-    ComposeViewport(body) {
+    ComposeViewport {
         val fontFamilyResolver = LocalFontFamilyResolver.current
         var fontsLoaded by remember { mutableStateOf(false) }
 
@@ -54,10 +49,9 @@ fun main() {
         }
 
         LaunchedEffect(Unit) {
-            val notoColorEmojiBytes = loadRes(NotoColorEmoji).toByteArray()
+            val notoColorEmojiBytes = loadRes(NotoColorEmoji)
             val fontFamily = FontFamily(listOf(Font("NotoColorEmoji", notoColorEmojiBytes)))
             fontFamilyResolver.preload(fontFamily)
-            body.children.asList().forEach { it.remove() }
             fontsLoaded = true
         }
     }
@@ -65,31 +59,4 @@ fun main() {
 
 private const val NotoColorEmoji: String = "./NotoColorEmoji.ttf"
 
-private suspend fun loadRes(url: String): ArrayBuffer =
-    window.fetch(url).await<Response>().arrayBuffer().await()
-
-private fun ArrayBuffer.toByteArray(): ByteArray {
-    val source = Int8Array(this, 0, byteLength)
-    return jsInt8ArrayToKotlinByteArray(source)
-}
-
-@JsFun(
-    """ (src, size, dstAddr) => {
-        const mem8 = new Int8Array(wasmExports.memory.buffer, dstAddr, size);
-        mem8.set(src);
-    }
-"""
-)
-private external fun jsExportInt8ArrayToWasm(src: Int8Array, size: Int, dstAddr: Int)
-
-private fun jsInt8ArrayToKotlinByteArray(x: Int8Array): ByteArray {
-    val size = x.length
-
-    @OptIn(UnsafeWasmMemoryApi::class)
-    return withScopedMemoryAllocator { allocator ->
-        val memBuffer = allocator.allocate(size)
-        val dstAddress = memBuffer.address.toInt()
-        jsExportInt8ArrayToWasm(x, size, dstAddress)
-        ByteArray(size) { i -> (memBuffer + i).loadByte() }
-    }
-}
+internal expect suspend fun loadRes(url: String): ByteArray

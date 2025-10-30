@@ -10,7 +10,7 @@ import java.io.File
 import kotlin.uuid.Uuid
 
 @Composable
-actual inline fun <reified T : @Serializable Any> bringCodec(): Codec<T> {
+internal actual inline fun <reified T : @Serializable Any> bringCodec(): Codec<T> {
     val context = LocalContext.current
     val filesDir = context.filesDir
     val file = filesDir.resolve(".bring")

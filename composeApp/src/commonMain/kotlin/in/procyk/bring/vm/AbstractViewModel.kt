@@ -1,6 +1,5 @@
 package `in`.procyk.bring.vm
 
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.Clipboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,7 +26,7 @@ import org.jetbrains.compose.resources.getString
 import kotlin.uuid.Uuid
 
 
-abstract class AbstractViewModel(
+internal abstract class AbstractViewModel(
     val context: Context,
 ) : ViewModel() {
     class Context(
@@ -181,7 +180,7 @@ abstract class AbstractViewModel(
 }
 
 internal inline fun <reified T : Screen> NavBackStackEntry?.navigatesFrom(): Boolean =
-    this?.destination?.route?.split('/')?.getOrNull(0) == T::class.qualifiedName
+    this?.destination?.route?.split('/')?.getOrNull(0)?.split('.')?.lastOrNull() == T::class.simpleName
 
 enum class NavBarTarget {
     Main, Favourites, Settings;

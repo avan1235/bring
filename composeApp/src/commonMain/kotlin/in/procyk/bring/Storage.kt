@@ -90,4 +90,4 @@ data class FavoriteShoppingList(
 }
 
 @Composable
-expect inline fun <reified T : @Serializable Any> bringCodec(): Codec<T>
+internal expect inline fun <reified T : @Serializable Any> bringCodec(): Codec<T>

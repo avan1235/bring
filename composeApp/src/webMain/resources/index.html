@@ -37,16 +37,18 @@
                 return;
             }
 
-            const currentVersion = await getServerVersion();
-            if (!currentVersion) return;
+            const serverVersion = await getServerVersion();
 
             const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
 
-            if (cachedVersion && cachedVersion !== currentVersion) {
+            if (serverVersion) {
+                if (cachedVersion && cachedVersion !== serverVersion) {
+                    await clearCache();
+                }
+                localStorage.setItem(CACHE_VERSION_KEY, serverVersion);
+            } else {
                 await clearCache();
             }
-
-            localStorage.setItem(CACHE_VERSION_KEY, currentVersion);
 
             const cache = await window.caches.open(CACHE_NAME);
 

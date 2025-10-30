@@ -6,5 +6,5 @@ import io.github.xxfast.kstore.storage.StorageCodec
 import kotlinx.serialization.Serializable
 
 @Composable
-actual inline fun <reified T : @Serializable Any> bringCodec(): Codec<T> =
+internal actual inline fun <reified T : @Serializable Any> bringCodec(): Codec<T> =
     StorageCodec(".bring")

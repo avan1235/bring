@@ -1,7 +1,6 @@
 import buildsrc.convention.Env_gradle.Env.BringPackageName
 import buildsrc.convention.Env_gradle.Env.BringVersion
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -62,19 +61,22 @@ kotlin {
         }
     }
 
+    js {
+        browser {
+            commonWebpackConfig {
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    port = env.CORS_PORT.value.toInt()
+                }
+            }
+        }
+        binaries.executable()
+    }
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        outputModuleName = "composeApp"
         browser {
-            val rootDirPath = project.rootDir.path
-            val projectDirPath = project.projectDir.path
             commonWebpackConfig {
-                outputFileName = "composeApp.js"
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        add(rootDirPath)
-                        add(projectDirPath)
-                    }
                     port = env.CORS_PORT.value.toInt()
                 }
             }
@@ -149,9 +151,10 @@ kotlin {
                 implementation(libs.kstore.file)
             }
         }
-        wasmJsMain.dependencies {
+        webMain.dependencies {
             implementation(libs.ktor.client.js)
             implementation(libs.kstore.storage)
+            implementation("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
         }
         androidUnitTest.dependencies {
             implementation(libs.robolectric)
@@ -235,7 +238,6 @@ compose.desktop {
 buildkonfig {
     packageName = BringPackageName
     objectName = "ComposeAppConfig"
-    exposeObjectWithName = "ComposeAppConfig"
 
     defaultConfigs {
         buildConfigField(Type.STRING, "CLIENT_HOST", env.CLIENT_HOST.value)

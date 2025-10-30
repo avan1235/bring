@@ -10,7 +10,7 @@ import java.awt.datatransfer.StringSelection
 actual fun updateListLocationPresentation(listId: String?) {}
 
 @OptIn(ExperimentalComposeUiApi::class)
-actual suspend fun onShareList(listId: String, context: Context) {
+internal actual suspend fun onShareList(listId: String, context: Context) {
     context.clipboard.setClipEntry(ClipEntry(StringSelection(listId)))
     context.showSnackbar(Res.string.copied_list_id_to_clipboard)
 }

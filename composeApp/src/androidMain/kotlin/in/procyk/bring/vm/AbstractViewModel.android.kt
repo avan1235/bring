@@ -10,7 +10,7 @@ import bring.composeapp.generated.resources.copied_list_id_to_clipboard
 
 actual fun updateListLocationPresentation(listId: String?) {}
 
-actual suspend fun onShareList(listId: String, context: AbstractViewModel.Context) {
+internal actual suspend fun onShareList(listId: String, context: AbstractViewModel.Context) {
     val shareIntent = Intent(ACTION_SEND).apply {
         type = "text/plain"
         putExtra(Intent.EXTRA_TEXT, listId)

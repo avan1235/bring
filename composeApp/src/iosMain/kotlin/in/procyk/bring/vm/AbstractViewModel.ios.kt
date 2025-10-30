@@ -14,7 +14,7 @@ import platform.UIKit.UIApplication
 actual fun updateListLocationPresentation(listId: String?) {}
 
 @OptIn(ExperimentalComposeUiApi::class, BetaInteropApi::class)
-actual suspend fun onShareList(listId: String, context: Context) {
+internal actual suspend fun onShareList(listId: String, context: Context) {
     val activityItems = listOf(
         NSString.create(string = "bring://$listId")
     )
