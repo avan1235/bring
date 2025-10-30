@@ -26,8 +26,6 @@ kotlin {
     if (currentOS().isMacOsX) {
         iosArm64()
         iosSimulatorArm64()
-//        macosX64()
-//        macosArm64()
     }
 
     jvmToolchain(21)

@@ -44,14 +44,6 @@ kotlin {
                 isStatic = true
             }
         }
-        listOf<KotlinNativeTarget>(
-//            macosX64(),
-//            macosArm64(),
-        ).forEach { macosTarget ->
-            macosTarget.binaries.executable {
-                entryPoint = "in.procyk.bring.main"
-            }
-        }
     }
 
     jvmToolchain(21)
@@ -165,10 +157,6 @@ kotlin {
             implementation(libs.roborazzi.junit.rule)
 
         }
-//        macosMain.dependencies {
-//            implementation(libs.ktor.client.darwin)
-//            implementation(libs.kstore.file)
-//        }
     }
 }
 
