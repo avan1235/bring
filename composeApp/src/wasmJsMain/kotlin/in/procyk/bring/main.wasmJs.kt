@@ -1,8 +1,6 @@
 package `in`.procyk.bring
 
 
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.platform.Font
 import kotlinx.browser.window
 import kotlinx.coroutines.await
 import org.khronos.webgl.ArrayBuffer

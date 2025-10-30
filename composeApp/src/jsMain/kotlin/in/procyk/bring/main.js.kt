@@ -9,7 +9,7 @@ import org.w3c.fetch.RequestInit
 
 @OptIn(ExperimentalWasmJsInterop::class)
 actual suspend fun loadRes(url: String): ByteArray =
-    window.fetch(url.asDynamic(), RequestInit()).await().arrayBuffer().await().toByteArray()
+    window.fetch(url, js("{}")).await().arrayBuffer().await().toByteArray()
 
 private fun ArrayBuffer.toByteArray(): ByteArray {
     val source = Int8Array(this, 0, byteLength)

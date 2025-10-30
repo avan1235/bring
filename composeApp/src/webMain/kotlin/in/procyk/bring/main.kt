@@ -2,7 +2,6 @@
 
 package `in`.procyk.bring
 
-//import kotlinx.coroutines.await
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalFontFamilyResolver
@@ -15,7 +14,6 @@ import `in`.procyk.bring.vm.PlatformContext
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.asList
-
 
 fun main() {
     val head = document.head ?: error("no <head>")
