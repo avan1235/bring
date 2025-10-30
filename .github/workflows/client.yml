@@ -59,7 +59,7 @@ jobs:
           java-version: 21
           distribution: 'corretto'
 
-      - name: Build Wasm Distribution
+      - name: Build WASM and JS Distribution
         if: job.status == 'success'
         run: |
           export GRADLE_USER_HOME=$(pwd)/.gradle
