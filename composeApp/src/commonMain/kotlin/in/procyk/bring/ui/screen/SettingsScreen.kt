@@ -5,15 +5,21 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.input.KeyboardType.Companion.Password
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import bring.composeapp.generated.resources.*
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
@@ -56,7 +62,8 @@ internal fun SettingsScreen(
                 Res.string.gemini_key,
                 vm.geminiKey,
                 vm::onGeminiKeyChanged,
-                reference = "https://aistudio.google.com/app/apikey"
+                reference = "https://aistudio.google.com/app/apikey",
+                isSecure = true,
             )
         }
         SettingsCategoryName(Res.string.theme)
@@ -183,6 +190,7 @@ private inline fun SettingStringRow(
     value: StateFlow<String>,
     crossinline onValueChange: (String) -> Unit,
     reference: String? = null,
+    isSecure: Boolean = false,
 ) {
     Row(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
@@ -190,12 +198,35 @@ private inline fun SettingStringRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         val value by value.collectAsState()
+        var show by remember { mutableStateOf(false) }
         OutlinedTextField(
             value = value,
             onValueChange = { onValueChange(it) },
             singleLine = true,
             placeholder = { Text(stringResource(label)) },
             modifier = Modifier.weight(1f),
+            keyboardOptions = when {
+                isSecure -> KeyboardOptions(autoCorrectEnabled = false, keyboardType = Password)
+                else -> KeyboardOptions.Default
+            },
+            visualTransformation = when {
+                isSecure && !show -> PasswordVisualTransformation()
+                else -> VisualTransformation.None
+            },
+            trailingIcon = when {
+                isSecure -> {
+                    @Composable {
+                        IconButton(
+                            onClick = { show = !show },
+                            variant = IconButtonVariant.Ghost,
+                        ) {
+                            Icon(if (show) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff)
+                        }
+                    }
+                }
+
+                else -> null
+            },
         )
         reference?.let {
             val uriHandler = LocalUriHandler.current

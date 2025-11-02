@@ -342,7 +342,7 @@ internal val TextFieldMinHeight = 40.dp
 
 internal val TextFieldHorizontalPadding = 16.dp
 internal val TextFieldVerticalPadding = 10.dp
-internal val HorizontalIconPadding = 12.dp
+internal val HorizontalIconPadding = 0.dp
 internal val LabelBottomPadding = 6.dp
 internal val SupportingTopPadding = 4.dp
 internal val PrefixSuffixTextPadding = 2.dp
