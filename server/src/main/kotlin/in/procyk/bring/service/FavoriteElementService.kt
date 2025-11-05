@@ -31,7 +31,7 @@ internal class FavoriteElementServiceImpl : FavoriteElementService {
     override suspend fun getFavoriteElements(
         byUserId: Uuid
     ): Either<UserFavoriteElementsData, GetFavoriteElementsError> {
-        return runNewSuspendedTransactionCatchingAs(GetFavoriteElementsError.Internal) {
+        return txn(GetFavoriteElementsError.Internal) {
             findFavoriteElements(byUserId)
         }
     }
@@ -43,7 +43,7 @@ internal class FavoriteElementServiceImpl : FavoriteElementService {
         if (name.isBlank()) {
             return AddFavoriteElementError.InvalidName.right()
         }
-        return runNewSuspendedTransactionCatchingAs(AddFavoriteElementError.Internal) {
+        return txn(AddFavoriteElementError.Internal) {
             FavoriteElementEntity.new {
                 this.name = name
                 this.byUserId = byUserId.toJavaUuid()
@@ -57,7 +57,7 @@ internal class FavoriteElementServiceImpl : FavoriteElementService {
         elementId: Uuid
     ): Either<UserFavoriteElementsData, RemoveFavoriteElementError> {
         val elementUUID = elementId.toJavaUuid()
-        return runNewSuspendedTransactionCatchingAs(RemoveFavoriteElementError.Internal) {
+        return txn(RemoveFavoriteElementError.Internal) {
             val element = FavoriteElementEntity.findById(elementUUID)
             when {
                 element == null -> RemoveFavoriteElementError.UnknownElementId.right()

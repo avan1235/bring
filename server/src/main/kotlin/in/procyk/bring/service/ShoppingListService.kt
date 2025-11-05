@@ -60,7 +60,7 @@ internal class ShoppingListServiceImpl(
                 return CreateNewShoppingListError.ExtractionError.right()
             })
         }
-        return runNewSuspendedTransactionCatchingAs(CreateNewShoppingListError.Internal) {
+        return txn(CreateNewShoppingListError.Internal) {
             createNewShoppingList(userId, title) { listId ->
                 addEntriesToShoppingListInTransaction(userId.toJavaUuid(), listId, ingredients).left()
             }
@@ -97,7 +97,7 @@ internal class ShoppingListServiceImpl(
         itemId: Uuid,
     ): Either<Unit, RemoveShoppingListItemError> {
         val itemUUID = itemId.toJavaUuid()
-        return runNewSuspendedTransactionCatchingAs(RemoveShoppingListItemError.Internal) {
+        return txn(RemoveShoppingListItemError.Internal) {
             val removed = ShoppingListItemsTable.deleteWhere {
                 ShoppingListItemsTable.id eq itemUUID
             } > 0
@@ -136,7 +136,7 @@ internal class ShoppingListServiceImpl(
     private suspend fun getShoppingListData(
         listId: Uuid,
     ): Either<ShoppingListData, GetShoppingListError> {
-        return runNewSuspendedTransactionCatchingAs(GetShoppingListError.Internal) txn@{
+        return txn(GetShoppingListError.Internal) {
             val list = ShoppingListEntity.findById(listId.toJavaUuid())
                 ?: return@txn GetShoppingListError.UnknownListId.right()
             ShoppingListData(
@@ -163,7 +163,7 @@ internal class ShoppingListServiceImpl(
         userId: Uuid,
         listId: Uuid,
     ): Either<Uuid, ExtractUncheckedShoppingListError> {
-        return runNewSuspendedTransactionCatchingAs(ExtractUncheckedShoppingListError.Internal) txn@{
+        return txn(ExtractUncheckedShoppingListError.Internal) {
             val list = ShoppingListEntity.findById(listId.toJavaUuid())
                 ?: return@txn ExtractUncheckedShoppingListError.UnknownListId.right()
             val unchecked = list.items.filterNot { it.status.isChecked }
@@ -184,7 +184,7 @@ internal class ShoppingListServiceImpl(
         userId: Uuid,
         limit: Int,
     ): Either<UserShoppingListSuggestionsData, GetUserShoppingListSuggestionsError> {
-        return runNewSuspendedTransactionCatchingAs(GetUserShoppingListSuggestionsError.Internal) {
+        return txn(GetUserShoppingListSuggestionsError.Internal) {
             val count = ShoppingListItemsTable.name.count().alias("count")
             ShoppingListItemsTable.select(
                 ShoppingListItemsTable.name, count,
@@ -204,7 +204,7 @@ internal class ShoppingListServiceImpl(
     override suspend fun reorderListItems(
         listId: Uuid,
     ): Either<Unit, ReorderListError> {
-        return runNewSuspendedTransactionCatchingAs(ReorderListError.Internal) {
+        return txn(ReorderListError.Internal) {
             val conn = TransactionManager.current().connection
             val statement = conn.prepareStatement(
                 sql = """
@@ -242,7 +242,7 @@ internal class ShoppingListServiceImpl(
                     .takeIf { it.isNotEmpty() }
             }.getOrNull() ?: return AddEntryToShoppingListError.ExtractionError.right()
         }
-        return runNewSuspendedTransactionCatchingAs(AddEntryToShoppingListError.Internal) txn@{
+        return txn(AddEntryToShoppingListError.Internal) {
             val listId = ShoppingListEntity.findById(listId.toJavaUuid())?.id
                 ?: return@txn AddEntryToShoppingListError.UnknownListId.right()
             addEntriesToShoppingListInTransaction(userId.toJavaUuid(), listId, names).left()
@@ -281,7 +281,7 @@ internal class ShoppingListServiceImpl(
         userId: Uuid,
         itemId: Uuid,
     ): Either<Unit, UpdateItemError> {
-        return runNewSuspendedTransactionCatchingAs(UpdateItemError.Internal) txn@{
+        return txn(UpdateItemError.Internal) {
             val listItem = ShoppingListItemEntity.findById(itemId.toJavaUuid())
                 ?: return@txn UpdateItemError.UnknownItemId.right()
             listItem.status = ShoppingListItemData.CheckedStatusData.Checked(
@@ -295,7 +295,7 @@ internal class ShoppingListServiceImpl(
     override suspend fun markItemAsUnchecked(
         itemId: Uuid,
     ): Either<Unit, UpdateItemError> {
-        return runNewSuspendedTransactionCatchingAs(UpdateItemError.Internal) txn@{
+        return txn(UpdateItemError.Internal) {
             val item = ShoppingListItemEntity.findById(itemId.toJavaUuid())
                 ?: return@txn UpdateItemError.UnknownItemId.right()
             item.status = Unchecked
@@ -307,7 +307,7 @@ internal class ShoppingListServiceImpl(
         itemId: Uuid,
         order: Double,
     ): Either<Unit, UpdateItemError> {
-        return runNewSuspendedTransactionCatchingAs(UpdateItemError.Internal) txn@{
+        return txn(UpdateItemError.Internal) {
             val item = ShoppingListItemEntity.findById(itemId.toJavaUuid())
                 ?: return@txn UpdateItemError.UnknownItemId.right()
             item.order = order
@@ -318,7 +318,7 @@ internal class ShoppingListServiceImpl(
     override suspend fun increaseItemCount(
         itemId: Uuid,
     ): Either<Unit, UpdateItemError> {
-        return runNewSuspendedTransactionCatchingAs(UpdateItemError.Internal) txn@{
+        return txn(UpdateItemError.Internal) {
             val item = ShoppingListItemEntity.findById(itemId.toJavaUuid())
                 ?: return@txn UpdateItemError.UnknownItemId.right()
             item.count = item.count + 1
@@ -329,7 +329,7 @@ internal class ShoppingListServiceImpl(
     override suspend fun decreaseItemCount(
         itemId: Uuid,
     ): Either<Unit, UpdateItemError> {
-        return runNewSuspendedTransactionCatchingAs(UpdateItemError.Internal) txn@{
+        return txn(UpdateItemError.Internal) {
             val item = ShoppingListItemEntity.findById(itemId.toJavaUuid())
                 ?: return@txn UpdateItemError.UnknownItemId.right()
             item.count = max(item.count - 1, 1)
