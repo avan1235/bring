@@ -56,15 +56,9 @@ internal class ShoppingListServiceImpl(
         }
         val (title, ingredients) = when {
             !extractor.supports(input) -> input to emptyList()
-            else -> runCatching {
-                val title = extractor.extractTitle(input)
-                    ?: return CreateNewShoppingListError.ExtractionError.right()
-                val ingredients = extractor.extractIngredients(input)
-                    .map { it.description to 1 }
-                    .takeIf { it.isNotEmpty() }
-                    ?: return CreateNewShoppingListError.ExtractionError.right()
-                title to ingredients
-            }.getOrNull() ?: return CreateNewShoppingListError.ExtractionError.right()
+            else -> extractListEntries(input, onError = {
+                return CreateNewShoppingListError.ExtractionError.right()
+            })
         }
         return runNewSuspendedTransactionCatchingAs(CreateNewShoppingListError.Internal) {
             createNewShoppingList(userId, title) { listId ->
@@ -72,6 +66,17 @@ internal class ShoppingListServiceImpl(
             }
         }
     }
+
+    private suspend inline fun extractListEntries(
+        input: String,
+        onError: () -> Nothing
+    ): Pair<String, List<Pair<String, Int>>> = runCatching {
+        val title = extractor.extractTitle(input) ?: onError()
+        val ingredients = extractor.extractIngredients(input)
+            .map { it.description to 1 }
+            .takeIf { it.isNotEmpty() } ?: onError()
+        title to ingredients
+    }.getOrNull() ?: onError()
 
     private fun <E> createNewShoppingList(
         userId: Uuid,
