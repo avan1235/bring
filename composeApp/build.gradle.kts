@@ -145,7 +145,7 @@ kotlin {
         webMain.dependencies {
             implementation(libs.ktor.client.js)
             implementation(libs.kstore.storage)
-            implementation("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
+            implementation(libs.kotlinx.browser)
         }
         androidUnitTest.dependencies {
             implementation(libs.robolectric)
