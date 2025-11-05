@@ -72,21 +72,13 @@ jobs:
         env:
           VERSION: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          node-version: 20
-
-      - name: Install Netlify CLI
-        run: npm install -g netlify-cli
-
-      - name: Deploy to Netlify
-        shell: bash
-        run: |
-          netlify deploy --prod --dir='composeApp/build/dist/composeWebCompatibility/productionExecutable' --message 'version ${{ github.sha }}'
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./composeApp/build/dist/composeWebCompatibility/productionExecutable
+          force_orphan: true
+          cname: bring.procyk.in
 
   build-android:
     name: Build android release
