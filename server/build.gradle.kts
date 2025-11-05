@@ -17,7 +17,7 @@ group = BringPackageName
 version = BringVersion
 
 application {
-    mainClass.set("in.procyk.bring.ApplicationKt")
+    mainClass = "in.procyk.bring.ApplicationKt"
 }
 
 dependencies {
@@ -79,11 +79,11 @@ graalvmNative {
     binaries {
         named("main") {
             javaLauncher.set(javaToolchains.launcherFor {
-                languageVersion.set(JavaLanguageVersion.of(21))
+                languageVersion = JavaLanguageVersion.of(21)
             })
             resources.autodetect()
-            fallback.set(false)
-            verbose.set(true)
+            fallback = false
+            verbose = true
 
             buildArgs(
                 listOf(
@@ -121,7 +121,7 @@ graalvmNative {
                 }
             )
 
-            imageName.set("server")
+            imageName = "server"
         }
     }
 }
