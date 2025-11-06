@@ -21,8 +21,8 @@ fun main() {
         host = dotenv.env("HOST"),
         port = dotenv.env("PORT")
     ) {
-        installPlugins(dotenv, appModule)
-        installRoutes()
+        plugins(dotenv, appModule)
+        routes()
     }
         .start(wait = true)
 }

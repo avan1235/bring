@@ -13,7 +13,7 @@ import kotlinx.rpc.krpc.serialization.cbor.cbor
 import org.koin.core.module.Module
 import org.koin.ktor.plugin.Koin
 
-internal fun Application.installPlugins(
+internal fun Application.plugins(
     dotenv: Dotenv,
     appModule: Module,
 ) {
