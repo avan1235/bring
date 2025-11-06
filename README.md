@@ -75,21 +75,22 @@ The client application supports:
 bring
 ├─ composeApp           # Client application code
 │  └─ src
-│     ├─ androidMain   # Android-specific code
-│     ├─ commonMain    # Shared client code
-│     ├─ iosMain       # iOS-specific code
-│     ├─ jvmMain       # Desktop-specific code
-│     └─ webMain       # Web-specific code
+│     ├─ androidMain    # Android-specific code
+│     ├─ commonMain     # Shared client code
+│     ├─ iosMain        # iOS-specific code
+│     ├─ jvmMain        # Desktop-specific code
+│     └─ webMain        # Web-specific code
 ├─ server               # Server application code
 │  └─ src
-│     ├─ main         # Server implementation
-│     └─ test         # Server integration tests
+│     ├─ main           # Server implementation
+│     └─ test           # Server integration tests
 ├─ shared               # Shared code between client and server
 │  └─ src
-│     └─ commonMain   # Data models, API definitions
+│     └─ commonMain     # Data models, API definitions
 └─ shared-client        # Client-specific shared code
-    └─ src
-        └─ commonMain   # API clients, network communication
+   └─ src
+      ├─ commonMain     # API clients, network communication
+      └─ ...            # Platform-specific code
 ```
 
 ## 🚀 Getting Started
