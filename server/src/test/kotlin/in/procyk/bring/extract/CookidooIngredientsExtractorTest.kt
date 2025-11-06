@@ -1,9 +1,5 @@
 package `in`.procyk.bring.extract
 
-import org.junit.runner.RunWith
-import org.junit.runners.BlockJUnit4ClassRunner
-
-@RunWith(BlockJUnit4ClassRunner::class)
 internal class CookidooIngredientsExtractorTest : IngredientsExtractorTest(
     CookidooIngredientsExtractor,
     "https://cookidoo.pl/recipes/recipe/pl-PL/r908249",

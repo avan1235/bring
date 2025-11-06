@@ -1,9 +1,5 @@
 package `in`.procyk.bring.extract
 
-import org.junit.runner.RunWith
-import org.junit.runners.BlockJUnit4ClassRunner
-
-@RunWith(BlockJUnit4ClassRunner::class)
 internal class KwestiaSmakuIngredientsExtractorTest : IngredientsExtractorTest(
     KwestiaSmakuIngredientsExtractor,
     "https://www.kwestiasmaku.com/przepis/sernik-baskijski",

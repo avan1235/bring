@@ -1,9 +1,5 @@
 package `in`.procyk.bring.extract
 
-import org.junit.runner.RunWith
-import org.junit.runners.BlockJUnit4ClassRunner
-
-@RunWith(BlockJUnit4ClassRunner::class)
 internal class AniaGotujeIngredientsExtractorTest : IngredientsExtractorTest(
     AniaGotujeIngredientsExtractor,
     "https://aniagotuje.pl/przepis/biala-kielbasa-w-sosie-chrzanowym",

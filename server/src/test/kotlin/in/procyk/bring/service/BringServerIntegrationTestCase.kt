@@ -29,7 +29,6 @@ internal abstract class BringServerIntegrationTestCase {
             Wait.forLogMessage(".*io\\.ktor\\.server\\.Application - Responding at.*", 1),
         )
         .withBuild(true)
-        .withLocalCompose(true)
 
     protected val containerHost: String
         get() = composeContainer.getServiceHost(SERVER_SERVICE_NAME, SERVER_SERVICE_PORT)

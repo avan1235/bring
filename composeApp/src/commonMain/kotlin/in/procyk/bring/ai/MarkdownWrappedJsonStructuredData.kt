@@ -8,7 +8,6 @@ import ai.koog.prompt.structure.json.generator.JsonSchemaGenerator
 import ai.koog.prompt.structure.json.generator.StandardJsonSchemaGenerator
 import ai.koog.prompt.structure.structure
 import ai.koog.prompt.text.TextContentBuilderBase
-import ai.koog.prompt.text.text
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.ClassDiscriminatorMode
 import kotlinx.serialization.json.Json
@@ -71,7 +70,7 @@ internal class MarkdownWrappedJsonStructuredData<TStruct> private constructor(
 
                         examples.forEach { example ->
                             codeblock(
-                                code = text { structure(this@with, example) },
+                                code = ai.koog.prompt.text.text { structure(this@with, example) },
                                 language = "json"
                             )
                         }

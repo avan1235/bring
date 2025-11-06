@@ -4,29 +4,29 @@ android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
 androidx-activityCompose = "1.11.0"
-androidx-lifecycle = "2.9.4"
+androidx-lifecycle = "2.9.5"
 androidx-test-ext = "1.3.0"
-androidx-navigation-compose = "2.9.0-beta03"
+androidx-navigation-compose = "2.9.1"
 buildKonfig = "0.17.1"
-buildConfig = "5.7.0"
-compose-multiplatform = "1.9.0"
-compose-androidx = "1.9.2"
-compose-hot-reload = "1.0.0-rc01"
+buildConfig = "5.7.1"
+compose-multiplatform = "1.9.2"
+androidx-compose-ui = "1.9.4"
+compose-hot-reload = "1.0.0-rc02"
 kotlin = "2.2.21"
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.7.1-0.6.x-compat"
 kotlinx-serialization = "1.9.0"
 kotlinxBrowser = "0.5.0"
 ksoup = "0.2.5"
-ktor = "3.3.0"
-graalVM = "0.11.1"
+ktor = "3.3.2"
+graalVM = "0.11.2"
 kotlinxRpc = "0.10.1"
-logback = "1.5.19"
+logback = "1.5.20"
 postgreNG = "0.8.9"
 exposed = "0.61.0"
 dotenv = "6.5.1"
-appdirs = "1.4.0"
-arrow = "2.1.2"
+appdirs = "1.5.0"
+arrow = "2.2.0"
 koin = "4.1.0-Beta8"
 dotenvGradle = "4.0.0"
 lumo = "1.2.5"
@@ -34,10 +34,10 @@ kstore = "1.0.0"
 reorderable = "3.0.0"
 junit = "5.13.4"
 robolectric = "4.16"
-roborazzi = "1.48.0"
-testcontainers = "1.21.3"
+roborazzi = "1.51.0"
+testcontainers = "2.0.1"
 colorpicker = "1.1.2"
-materialKolor = "3.0.0-alpha04"
+materialKolor = "4.0.3"
 koog = "0.5.0"
 versionCode = "37"
 
@@ -46,9 +46,9 @@ androidx-navigation-compose = { group = "org.jetbrains.androidx.navigation", nam
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
-androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-androidx" }
+androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose-ui" }
 androidx-test-ext-junit = { module = "androidx.test.ext:junit-ktx", version.ref = "androidx-test-ext" }
-androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-androidx" }
+androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose-ui" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinxBrowser" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
@@ -68,7 +68,7 @@ roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = 
 roborazzi-compose = { module = "io.github.takahirom.roborazzi:roborazzi-compose", version.ref = "roborazzi" }
 roborazzi-junit-rule = { module = "io.github.takahirom.roborazzi:roborazzi-junit-rule", version.ref = "roborazzi" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
-testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:testcontainers-junit-jupiter", version.ref = "testcontainers" }
 compose-colorpicker = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 koog-agents = { module = "ai.koog:koog-agents", version.ref = "koog" }
