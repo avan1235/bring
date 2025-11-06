@@ -233,12 +233,10 @@ internal class EditListScreenViewModel(
 
     fun onExtractUncheckedList() {
         viewModelScope.launch {
-            println("extracting ${listId}")
             shoppingListService.durableCall {
                 extractUncheckedShoppingList(userId = store.userId, listId = listId)
             }.fold(
                 ifLeft = {
-                    println("extracted ${it}")
                     context.navigateEditList(it, fetchSuggestions = false)
                 },
                 ifRight = { /* TODO: handle errors */ },
