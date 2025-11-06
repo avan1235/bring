@@ -201,10 +201,10 @@ internal class ShoppingListServiceImpl(
         }
     }
 
-    override suspend fun reorderListItems(
+    private suspend fun reorderListItems(
         listId: Uuid,
-    ): Either<Unit, ReorderListError> {
-        return txn(ReorderListError.Internal) {
+    ): Either<Unit, Unit> {
+        return txn(Unit) {
             val conn = TransactionManager.current().connection
             val statement = conn.prepareStatement(
                 sql = """

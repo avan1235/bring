@@ -176,23 +176,6 @@
     ]
   },
   {
-    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$reorderListItems$rpcMethod",
-    "allPublicMethods": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$reorderListItems$rpcMethod$Companion",
-    "allDeclaredConstructors": true,
-    "methods": [
-      {
-        "name": "serializer",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$addEntryToShoppingList$rpcMethod",
     "allPublicMethods": true,
     "allDeclaredFields": true,
@@ -574,24 +557,6 @@
   },
   {
     "name": "in.procyk.bring.service.ShoppingListService$GetUserShoppingListSuggestionsError$Companion",
-    "allDeclaredConstructors": true,
-    "methods": [
-      {
-        "name": "serializer",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "in.procyk.bring.service.ShoppingListService$ReorderListError",
-    "fields": [
-      {
-        "name": "Companion"
-      }
-    ]
-  },
-  {
-    "name": "in.procyk.bring.service.ShoppingListService$ReorderListError$Companion",
     "allDeclaredConstructors": true,
     "methods": [
       {

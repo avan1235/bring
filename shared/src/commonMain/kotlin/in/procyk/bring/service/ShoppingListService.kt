@@ -50,13 +50,6 @@ interface ShoppingListService {
     ): Either<UserShoppingListSuggestionsData, GetUserShoppingListSuggestionsError>
 
     @Serializable
-    enum class ReorderListError { Internal }
-
-    suspend fun reorderListItems(
-        listId: Uuid,
-    ): Either<Unit, ReorderListError>
-
-    @Serializable
     enum class AddEntryToShoppingListError { Internal, InvalidName, ExtractionError, UnknownListId }
 
     suspend fun addEntryToShoppingList(
