@@ -63,29 +63,30 @@ Web version is publicly available at https://bring.procyk.in
 The client application supports:
 - 📱 Android <a href="https://play.google.com/store/apps/details?id=in.procyk.bring"><img alt="Get it on Google Play" height="32" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"/></a>
 - 🍎 iOS (requires macOS for building)
-- 🖥️ Desktop (Windows, macOS, Linux)
-- 🌐 Web (via WebAssembly)
+- 🖥️ Desktop (Windows, macOS, Linux via JVM)
+- 🌐 Web (via WebAssembly and JavaScript)
 
 ## 🏗️ Project Structure
 
 ```
-bring/
-├── composeApp/           # Client application code
-│   └── src/
-│       ├── androidMain/   # Android-specific code
-│       ├── commonMain/    # Shared client code
-│       ├── iosMain/       # iOS-specific code
-│       ├── jvmMain/       # Desktop-specific code
-│       └── wasmJsMain/    # Web-specific code
-├── server/               # Server application code
-│   └── src/
-│       └── main/         # Server implementation
-├── shared/               # Shared code between client and server
-│   └── src/
-│       └── commonMain/   # Data models, API definitions
-└── shared-client/        # Client-specific shared code
-    └── src/
-        └── commonMain/   # API clients, network communication
+bring
+├─ composeApp           # Client application code
+│  └─ src
+│     ├─ androidMain   # Android-specific code
+│     ├─ commonMain    # Shared client code
+│     ├─ iosMain       # iOS-specific code
+│     ├─ jvmMain       # Desktop-specific code
+│     └─ webMain       # Web-specific code
+├─ server               # Server application code
+│  └─ src
+│     ├─ main         # Server implementation
+│     └─ test         # Server integration tests
+├─ shared               # Shared code between client and server
+│  └─ src
+│     └─ commonMain   # Data models, API definitions
+└─ shared-client        # Client-specific shared code
+    └─ src
+        └─ commonMain   # API clients, network communication
 ```
 
 ## 🚀 Getting Started
