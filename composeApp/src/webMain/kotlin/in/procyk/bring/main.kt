@@ -17,6 +17,7 @@ import org.w3c.dom.asList
 
 fun main() {
     val head = document.head ?: error("no <head>")
+    val platformContext = PlatformContext()
 
     ComposeViewport {
         val fontFamilyResolver = LocalFontFamilyResolver.current
@@ -24,7 +25,7 @@ fun main() {
 
         when {
             fontsLoaded -> {
-                BringAppTheme(PlatformContext()) { context ->
+                BringAppTheme(platformContext) { context ->
                     val backgroundColor = BringAppTheme.colors.background
                     LaunchedEffect(backgroundColor) {
                         head.children.asList().single { it.getAttribute("name") == "theme-color" }.remove()

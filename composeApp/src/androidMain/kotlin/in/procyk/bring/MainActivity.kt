@@ -10,8 +10,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val platformContext = PlatformContext(this)
         setContent {
-            BringApp(PlatformContext(this))
+            BringApp(platformContext)
         }
     }
 }

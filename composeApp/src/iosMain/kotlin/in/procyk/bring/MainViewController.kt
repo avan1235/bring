@@ -11,8 +11,9 @@ fun MainViewController(initListId: String?): UIViewController = object : UIViewC
     override fun viewDidLoad() {
         super.viewDidLoad()
 
+        val platformContext = PlatformContext()
         composeViewController = ComposeUIViewController {
-            BringApp(PlatformContext(), initListId)
+            BringApp(platformContext, initListId)
         }
 
         // Add as child view controller
