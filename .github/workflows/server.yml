@@ -60,29 +60,6 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/bring:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
           build-args: VERSION=${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
 
-  publish-koyeb:
-    needs: build-server
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout to push branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
-          fetch-depth: 0
-
-      - name: Extract version from tag
-        id: extract_version
-        uses: damienaicheh/extract-version-from-tag-action@v1.1.0
-
-      - name: Install and configure Koyeb CLI
-        uses: koyeb-community/install-koyeb-cli@v2
-        with:
-          api_token: "${{ secrets.KOYEB_TOKEN }}"
-          github_token: "${{ secrets.GITHUB_TOKEN }}"
-
-      - name: Deploy
-        run: koyeb services update ${{ secrets.KOYEB_SERVICE_ID }} --docker ${{ secrets.DOCKER_USERNAME }}/bring:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
-
   publish-northflank:
     needs: build-server
     runs-on: ubuntu-latest
