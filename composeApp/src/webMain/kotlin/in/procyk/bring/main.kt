@@ -35,15 +35,13 @@ fun main() {
         when {
             fontsLoaded -> {
                 BringAppTheme(platformContext) { context ->
-                    val themeColorDarkMode by context.store.updates
-                        .mapNotNull { it?.run { themeColor to darkMode } }
-                        .collectAsState(Color.White.toArgb() to System)
-                    val isSystemInDarkTheme = isSystemInDarkTheme()
-                    LaunchedEffect(themeColorDarkMode) {
-                        val color = Color(themeColorDarkMode.first)
+                    val themeColor by context.store.updates
+                        .mapNotNull { it?.themeColor }
+                        .collectAsState(Color.White.toArgb())
+                    LaunchedEffect(themeColor) {
+                        val color = Color(themeColor)
                         sequenceOf(
                             head.replaceThemeColor(color),
-                            head.replaceColorScheme(themeColorDarkMode.second, isSystemInDarkTheme),
                             head.replaceLastStyle(color),
                         ).forEach(head::appendChild)
                     }
@@ -74,21 +72,6 @@ private fun HTMLHeadElement.replaceThemeColor(color: Color): Element {
     return document.createElement("meta").apply {
         setAttribute("name", "theme-color")
         setAttribute("content", color.toHex())
-    }
-}
-
-private fun HTMLHeadElement.replaceColorScheme(theme: Theme, isSystemInDarkTheme: Boolean): Element {
-    children.asList().single { it is HTMLMetaElement && it.getAttribute("name") == "color-scheme" }.remove()
-    return document.createElement("meta").apply {
-        setAttribute("name", "color-scheme")
-        setAttribute(
-            "content",
-            when (theme) {
-                System -> if (isSystemInDarkTheme) "only dark" else "only light"
-                Dark -> "only dark"
-                Light -> "only light"
-            }
-        )
     }
 }
 
