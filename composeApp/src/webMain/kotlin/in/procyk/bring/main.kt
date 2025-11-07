@@ -95,7 +95,7 @@ private fun HTMLHeadElement.replaceColorScheme(theme: Theme, isSystemInDarkTheme
 private fun HTMLHeadElement.replaceLastStyle(color: Color): Element {
     children.asList().last { it.localName == "style" }.remove()
     return document.createElement("style").apply {
-        innerHTML = "html, body { background: ${color.toHex()} !important; }"
+        innerHTML = "html, body { background-color: ${color.toHex()} !important; }"
     }
 }
 
