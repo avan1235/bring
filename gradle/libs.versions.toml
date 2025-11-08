@@ -39,7 +39,7 @@ testcontainers = "2.0.1"
 colorpicker = "1.1.2"
 materialKolor = "4.0.3"
 koog = "0.5.0"
-versionCode = "44"
+versionCode = "45"
 
 [libraries]
 androidx-navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "androidx-navigation-compose" }
