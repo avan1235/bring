@@ -2,30 +2,26 @@
 
 package `in`.procyk.bring
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.window.ComposeViewport
 import com.materialkolor.ktx.toHex
 import `in`.procyk.bring.ui.BringAppTheme
-import `in`.procyk.bring.ui.Theme
-import `in`.procyk.bring.ui.Theme.*
 import `in`.procyk.bring.vm.PlatformContext
 import kotlinx.browser.document
 import kotlinx.browser.window
-import kotlinx.coroutines.flow.mapNotNull
-import org.w3c.dom.Element
+import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLHeadElement
 import org.w3c.dom.HTMLMetaElement
 import org.w3c.dom.asList
 
 fun main() {
     val head = document.head ?: error("no <head>")
+    val body = document.body ?: error("no <body>")
     val platformContext = PlatformContext()
 
     ComposeViewport {
@@ -35,15 +31,10 @@ fun main() {
         when {
             fontsLoaded -> {
                 BringAppTheme(platformContext) { context ->
-                    val themeColor by context.store.updates
-                        .mapNotNull { it?.themeColor }
-                        .collectAsState(Color.White.toArgb())
-                    LaunchedEffect(themeColor) {
-                        val color = Color(themeColor)
-                        sequenceOf(
-                            head.replaceThemeColor(color),
-                            head.replaceLastStyle(color),
-                        ).forEach(head::appendChild)
+                    val backgroundColor = BringAppTheme.colors.background
+                    LaunchedEffect(backgroundColor) {
+                        head.replaceThemeColor(backgroundColor)
+                        body.replaceBackgroundColor(backgroundColor)
                     }
                     BringAppInternal(
                         context = context,
@@ -67,20 +58,20 @@ fun main() {
     }
 }
 
-private fun HTMLHeadElement.replaceThemeColor(color: Color): Element {
+private fun HTMLHeadElement.replaceThemeColor(color: Color) {
     children.asList().single { it is HTMLMetaElement && it.getAttribute("name") == "theme-color" }.remove()
-    return document.createElement("meta").apply {
+    val node = document.createElement("meta").apply {
         setAttribute("name", "theme-color")
         setAttribute("content", color.toHex())
     }
+    appendChild(node)
 }
 
-private fun HTMLHeadElement.replaceLastStyle(color: Color): Element {
-    children.asList().last { it.localName == "style" }.remove()
-    return document.createElement("style").apply {
-        innerHTML = "html, body { background-color: ${color.toHex()} !important; }"
-    }
+private fun HTMLElement.replaceBackgroundColor(color: Color) {
+    setAttribute("style", "background-color: rgb(${color.red.in255()}, ${color.green.in255()}, ${color.blue.in255()});")
 }
+
+private fun Float.in255(): Int = (this * 255).toInt()
 
 private const val NotoColorEmoji: String = "./NotoColorEmoji.ttf"
 
