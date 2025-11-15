@@ -26,6 +26,10 @@ interface ShoppingListService {
         itemId: Uuid,
     ): Either<Unit, RemoveShoppingListItemError>
 
+    suspend fun refreshShoppingList(
+        listId: Uuid,
+    )
+
     @Serializable
     enum class GetShoppingListError { Internal, UnknownListId }
 

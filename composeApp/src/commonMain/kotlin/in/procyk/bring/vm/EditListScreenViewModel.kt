@@ -22,6 +22,7 @@ import `in`.procyk.bring.service.ShoppingListService
 import `in`.procyk.bring.service.ShoppingListService.GetShoppingListError
 import io.ktor.client.*
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
@@ -29,6 +30,7 @@ import kotlinx.serialization.Serializable
 import kotlin.math.max
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.measureTime
 import kotlin.uuid.Uuid
 
 internal class EditListScreenViewModel(
@@ -154,6 +156,9 @@ internal class EditListScreenViewModel(
     private val _newItemLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val newItemLoading: StateFlow<Boolean> = _newItemLoading.asStateFlow()
 
+    private val _refreshingCount: MutableStateFlow<Int> = MutableStateFlow(0)
+    val isRefreshing: StateFlow<Boolean> = _refreshingCount.map { it > 0 }.state(false)
+
     val enableEditMode: StateFlow<Boolean> = storeFlow.map { it.enableEditMode }.state(store.enableEditMode)
 
     private val _showFab: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -241,6 +246,20 @@ internal class EditListScreenViewModel(
                 },
                 ifRight = { /* TODO: handle errors */ },
             )
+        }
+    }
+
+    fun onRefresh() {
+        viewModelScope.launch {
+            _refreshingCount.update { it + 1 }
+            try {
+                val spent = measureTime {
+                    shoppingListService.durableCall { refreshShoppingList(listId) }
+                }
+                delay(1.seconds - spent)
+            } finally {
+                _refreshingCount.update { it - 1 }
+            }
         }
     }
 

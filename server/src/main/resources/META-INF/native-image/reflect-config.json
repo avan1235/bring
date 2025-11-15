@@ -125,6 +125,23 @@
     ]
   },
   {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$refreshShoppingList$rpcMethod",
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$refreshShoppingList$rpcMethod$Companion",
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "serializer",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$getShoppingList$rpcMethod",
     "allPublicMethods": true,
     "allDeclaredFields": true,

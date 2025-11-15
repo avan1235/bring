@@ -13,12 +13,9 @@ import `in`.procyk.bring.db.ShoppingListItemEntity
 import `in`.procyk.bring.db.ShoppingListItemsTable
 import `in`.procyk.bring.extract.*
 import `in`.procyk.bring.service.ShoppingListService.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.datetime.toDeprecatedInstant
@@ -30,15 +27,20 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
-import kotlin.time.Clock
+import kotlin.time.Clock.System.now
+import kotlin.time.Instant
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
 
 internal class ShoppingListServiceImpl(
     private val applicationScope: CoroutineScope,
+    private val listUpdateRequests: ConcurrentHashMap<Uuid, MutableStateFlow<UpdateRequest>>,
     private val listUpdates: ConcurrentHashMap<Uuid, SharedFlow<Either<ShoppingListData, GetShoppingListError>?>>,
 ) : ShoppingListService {
+
+    @JvmInline
+    value class UpdateRequest(val at: Instant = now())
 
     private val extractor: IngredientsExtractor = AggregateIngredientsExtractor(
         AniaGotujeIngredientsExtractor,
@@ -87,7 +89,7 @@ internal class ShoppingListServiceImpl(
         val listId = ShoppingListEntity.new {
             this.name = name
             this.byUserId = userUUID
-            this.createdAt = Clock.System.now().toDeprecatedInstant()
+            this.createdAt = now().toDeprecatedInstant()
         }.id
         addEntries(listId).onRight { return it.right() }
         return listId.value.toKotlinUuid().left()
@@ -108,18 +110,25 @@ internal class ShoppingListServiceImpl(
         }
     }
 
+    override suspend fun refreshShoppingList(listId: Uuid) {
+        listUpdateRequests.computeIfAbsent(listId) { MutableStateFlow(UpdateRequest()) }.emit(UpdateRequest())
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getShoppingList(
         listId: Uuid,
     ): Flow<Either<ShoppingListData, GetShoppingListError>> {
         return flow {
-            listUpdates.getOrPut(listId) {
-                callbackFlow {
-                    val channelName = "event_${listId.toHexDashString().replace('-', '_')}"
-                    val listener = Database.createListener(channelName) { payload ->
-                        trySendBlocking(payload)
+            listUpdates.computeIfAbsent(listId) {
+                listUpdateRequests.computeIfAbsent(listId) { MutableStateFlow(UpdateRequest()) }.flatMapLatest {
+                    callbackFlow {
+                        val channelName = "event_${listId.toHexDashString().replace('-', '_')}"
+                        val listener = Database.createListener(channelName) { payload ->
+                            trySendBlocking(payload)
+                        }
+                        trySendBlocking("init")
+                        awaitClose { listener.close() }
                     }
-                    trySendBlocking("")
-                    awaitClose { listener.close() }
                 }.onStart {
                     normalizeListItemsOrder(listId).onRight { currentCoroutineContext().cancel() }
                 }.map {
@@ -169,7 +178,7 @@ internal class ShoppingListServiceImpl(
             val unchecked = list.items.filterNot { it.status.isChecked }
             createNewShoppingList(userId, list.name) { listId ->
                 val userUUID = userId.toJavaUuid()
-                val createdAt = Clock.System.now()
+                val createdAt = now()
                 unchecked.forEach {
                     it.listId = listId
                     it.byUserId = userUUID
@@ -264,7 +273,7 @@ internal class ShoppingListServiceImpl(
             ?.let { it as? Double }
             ?.let { it + 1.0 }
             ?: 0.0
-        val createdAt = Clock.System.now()
+        val createdAt = now()
         items.forEachIndexed { idx, (name, count) ->
             ShoppingListItemEntity.new {
                 this.name = name
@@ -285,7 +294,7 @@ internal class ShoppingListServiceImpl(
             val listItem = ShoppingListItemEntity.findById(itemId.toJavaUuid())
                 ?: return@txn UpdateItemError.UnknownItemId.right()
             listItem.status = ShoppingListItemData.CheckedStatusData.Checked(
-                changedAt = kotlin.time.Clock.System.now(),
+                changedAt = now(),
                 byUserId = userId,
             )
             Unit.left()

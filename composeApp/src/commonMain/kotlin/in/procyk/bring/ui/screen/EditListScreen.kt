@@ -13,22 +13,18 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Psychology
-import androidx.compose.material.icons.filled.Unarchive
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.ExposureNeg1
-import androidx.compose.material.icons.outlined.ExposurePlus1
-import androidx.compose.material.icons.outlined.IosShare
-import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material.icons.outlined.Unarchive
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.Psychology
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +50,7 @@ import sh.calvin.reorderable.ReorderableLazyListState
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
 @Composable
 internal fun EditListScreen(
     padding: PaddingValues,
@@ -69,60 +65,66 @@ internal fun EditListScreen(
     LaunchedEffect(listState.firstVisibleItemIndex) {
         vm.onShowFab(show = listState.firstVisibleItemIndex > 0)
     }
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(vertical = 12.dp, horizontal = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        state = listState,
+    val isRefreshing by vm.isRefreshing.collectAsState()
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = vm::onRefresh,
     ) {
-        item(key = "input") {
-            val enableEditMode by vm.enableEditMode.collectAsState()
-            AnimatedVisibility(visible = enableEditMode) {
-                BoxWithConstraints {
-                    val individualButtons = maxWidth > 480.dp
-                    Row(
-                        modifier = Modifier.padding(4.dp).fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val newItemName by vm.newItemName.collectAsState()
-                        val newItemLoading by vm.newItemLoading.collectAsState()
-                        AddItemTextField(
-                            value = newItemName,
-                            onValueChange = vm::onNewItemNameChange,
-                            loading = newItemLoading,
-                            onAdd = {
-                                vm.onCreateNewItem()
-                                focusRequester.requestFocus()
-                            },
-                            onDone = { vm.onCreateNewItem() },
-                            textFieldModifier = Modifier
-                                .focusRequester(focusRequester)
-                                .testTag("text-field-add-list-item"),
-                            buttonEnabled = !newItemLoading,
-                            buttonModifier = Modifier
-                                .testTag("button-add-list-item"),
-                        )
-                        when {
-                            individualButtons -> Row {
-                                ControlButtons(vm)
-                            }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(vertical = 12.dp, horizontal = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            state = listState,
+        ) {
+            item(key = "input") {
+                val enableEditMode by vm.enableEditMode.collectAsState()
+                AnimatedVisibility(visible = enableEditMode) {
+                    BoxWithConstraints {
+                        val individualButtons = maxWidth > 480.dp
+                        Row(
+                            modifier = Modifier.padding(4.dp).fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            val newItemName by vm.newItemName.collectAsState()
+                            val newItemLoading by vm.newItemLoading.collectAsState()
+                            AddItemTextField(
+                                value = newItemName,
+                                onValueChange = vm::onNewItemNameChange,
+                                loading = newItemLoading,
+                                onAdd = {
+                                    vm.onCreateNewItem()
+                                    focusRequester.requestFocus()
+                                },
+                                onDone = { vm.onCreateNewItem() },
+                                textFieldModifier = Modifier
+                                    .focusRequester(focusRequester)
+                                    .testTag("text-field-add-list-item"),
+                                buttonEnabled = !newItemLoading,
+                                buttonModifier = Modifier
+                                    .testTag("button-add-list-item"),
+                            )
+                            when {
+                                individualButtons -> Row {
+                                    ControlButtons(vm)
+                                }
 
-                            else -> {
-                                var isExpanded by remember { mutableStateOf(false) }
-                                Box {
-                                    IconButton(
-                                        onClick = { isExpanded = !isExpanded },
-                                        modifier = Modifier.testTag("button-expand-options"),
-                                        icon = Icons.Default.MoreVert,
-                                    )
-                                    DropdownMenu(
-                                        modifier = Modifier.padding(horizontal = 8.dp),
-                                        expanded = isExpanded,
-                                        shape = RoundedCornerShape(16.dp),
-                                        onDismissRequest = { isExpanded = false },
-                                    ) {
-                                        ControlButtons(vm)
+                                else -> {
+                                    var isExpanded by remember { mutableStateOf(false) }
+                                    Box {
+                                        IconButton(
+                                            onClick = { isExpanded = !isExpanded },
+                                            modifier = Modifier.testTag("button-expand-options"),
+                                            icon = Icons.Default.MoreVert,
+                                        )
+                                        DropdownMenu(
+                                            modifier = Modifier.padding(horizontal = 8.dp),
+                                            expanded = isExpanded,
+                                            shape = RoundedCornerShape(16.dp),
+                                            onDismissRequest = { isExpanded = false },
+                                        ) {
+                                            ControlButtons(vm)
+                                        }
                                     }
                                 }
                             }
@@ -130,72 +132,72 @@ internal fun EditListScreen(
                     }
                 }
             }
-        }
-        item(key = "favorite_elements_and_suggestions") {
-            val enableEditMode by vm.enableEditMode.collectAsState()
-            val showSuggestions by vm.showSuggestions.collectAsState()
-            val showFavoriteElements by vm.showFavoriteElements.collectAsState()
-            AnimatedVisibility(visible = enableEditMode && (showSuggestions || showFavoriteElements)) {
-                val suggestedItems by vm.suggestedItems.collectAsState()
-                FlowRowItems(
-                    items = suggestedItems,
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    name = { it.name },
-                    id = { it.id },
-                    visible = { !it.used }) { vm.onCreateNewItemFromSuggestion(it.name) }
-            }
-        }
-        items(items, key = { it.id }) { item ->
-            ReorderableItemRow(
-                modifier = Modifier.testTag("list-item"),
-                state = reorderableLazyListState,
-                key = item.id
-            ) {
+            item(key = "favorite_elements_and_suggestions") {
                 val enableEditMode by vm.enableEditMode.collectAsState()
-                Row(
-                    modifier = Modifier.weight(1f).animateItem(),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
+                val showSuggestions by vm.showSuggestions.collectAsState()
+                val showFavoriteElements by vm.showFavoriteElements.collectAsState()
+                AnimatedVisibility(visible = enableEditMode && (showSuggestions || showFavoriteElements)) {
+                    val suggestedItems by vm.suggestedItems.collectAsState()
+                    FlowRowItems(
+                        items = suggestedItems,
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        name = { it.name },
+                        id = { it.id },
+                        visible = { !it.used }) { vm.onCreateNewItemFromSuggestion(it.name) }
+                }
+            }
+            items(items, key = { it.id }) { item ->
+                ReorderableItemRow(
+                    modifier = Modifier.testTag("list-item"),
+                    state = reorderableLazyListState,
+                    key = item.id
                 ) {
-                    val interactionSource = remember { MutableInteractionSource() }
-                    Checkbox(
-                        checked = item.status.isChecked,
-                        onCheckedChange = { vm.onChecked(item.id, it) },
-                        interactionSource = interactionSource,
-                        modifier = Modifier.testTag("checkbox-list-item")
-                    )
-                    Box(
-                        modifier = Modifier.clickable(
-                            interactionSource = interactionSource,
-                            indication = null,
-                            onClick = { vm.onChecked(item.id, !item.status.isChecked) }).weight(1f)
+                    val enableEditMode by vm.enableEditMode.collectAsState()
+                    Row(
+                        modifier = Modifier.weight(1f).animateItem(),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        AnimatedStrikethroughText(
-                            text = item.name + if (item.count > 1) " (${item.count})" else "",
-                            isChecked = when (item.status) {
-                                is Checked -> true
-                                is Unchecked -> false
-                            },
+                        val interactionSource = remember { MutableInteractionSource() }
+                        Checkbox(
+                            checked = item.status.isChecked,
+                            onCheckedChange = { vm.onChecked(item.id, it) },
+                            interactionSource = interactionSource,
+                            modifier = Modifier.testTag("checkbox-list-item")
+                        )
+                        Box(
+                            modifier = Modifier.clickable(
+                                interactionSource = interactionSource,
+                                indication = null,
+                                onClick = { vm.onChecked(item.id, !item.status.isChecked) }).weight(1f)
+                        ) {
+                            AnimatedStrikethroughText(
+                                text = item.name + if (item.count > 1) " (${item.count})" else "",
+                                isChecked = when (item.status) {
+                                    is Checked -> true
+                                    is Unchecked -> false
+                                },
+                            )
+                        }
+                        AnimatedVisibilityGhostButton(
+                            visible = enableEditMode && item.count > 1,
+                            icon = Icons.Outlined.ExposureNeg1,
+                            testTag = "button-decrease-item-count",
+                            onClick = { vm.onDecreaseItemCount(item.id) },
+                        )
+                        AnimatedVisibilityGhostButton(
+                            visible = enableEditMode,
+                            onClick = { vm.onIncreaseItemCount(item.id) },
+                            testTag = "button-increase-item-count",
+                            icon = Icons.Outlined.ExposurePlus1,
+                        )
+                        AnimatedVisibilityGhostButton(
+                            visible = enableEditMode,
+                            icon = Icons.Outlined.Close,
+                            testTag = "button-remove-item",
+                            onClick = { vm.onRemoved(item.id) },
                         )
                     }
-                    AnimatedVisibilityGhostButton(
-                        visible = enableEditMode && item.count > 1,
-                        icon = Icons.Outlined.ExposureNeg1,
-                        testTag = "button-decrease-item-count",
-                        onClick = { vm.onDecreaseItemCount(item.id) },
-                    )
-                    AnimatedVisibilityGhostButton(
-                        visible = enableEditMode,
-                        onClick = { vm.onIncreaseItemCount(item.id) },
-                        testTag = "button-increase-item-count",
-                        icon = Icons.Outlined.ExposurePlus1,
-                    )
-                    AnimatedVisibilityGhostButton(
-                        visible = enableEditMode,
-                        icon = Icons.Outlined.Close,
-                        testTag = "button-remove-item",
-                        onClick = { vm.onRemoved(item.id) },
-                    )
                 }
             }
         }
