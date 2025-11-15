@@ -121,7 +121,7 @@ internal class ShoppingListServiceImpl(
                     trySendBlocking("")
                     awaitClose { listener.close() }
                 }.onStart {
-                    reorderListItems(listId).onRight { currentCoroutineContext().cancel() }
+                    normalizeListItemsOrder(listId).onRight { currentCoroutineContext().cancel() }
                 }.map {
                     getShoppingListData(listId)
                 }
@@ -201,7 +201,7 @@ internal class ShoppingListServiceImpl(
         }
     }
 
-    private suspend fun reorderListItems(
+    private suspend fun normalizeListItemsOrder(
         listId: Uuid,
     ): Either<Unit, Unit> {
         return txn(Unit) {
