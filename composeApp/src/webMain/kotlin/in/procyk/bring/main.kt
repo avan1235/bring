@@ -59,12 +59,24 @@ fun main() {
 }
 
 private fun HTMLHeadElement.replaceThemeColor(color: Color) {
-    children.asList().single { it is HTMLMetaElement && it.getAttribute("name") == "theme-color" }.remove()
-    val node = document.createElement("meta").apply {
-        setAttribute("name", "theme-color")
-        setAttribute("content", color.toHex())
+    children.asList()
+        .filterIsInstance<HTMLMetaElement>()
+        .filter { it.getAttribute("name") == "theme-color" }
+        .forEach { it.remove() }
+
+    fun addThemeColor(content: String, media: String? = null) {
+        val node = document.createElement("meta").apply {
+            setAttribute("name", "theme-color")
+            setAttribute("content", content)
+            if (media != null) setAttribute("media", media)
+        }
+        appendChild(node)
     }
-    appendChild(node)
+
+    val hex = color.toHex()
+    addThemeColor(hex)
+    addThemeColor(hex, "(prefers-color-scheme: light)")
+    addThemeColor(hex, "(prefers-color-scheme: dark)")
 }
 
 private fun HTMLElement.replaceBackgroundColor(color: Color) {
