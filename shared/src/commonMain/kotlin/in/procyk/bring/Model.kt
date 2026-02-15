@@ -1,5 +1,6 @@
 package `in`.procyk.bring
 
+import `in`.procyk.bring.service.LoyaltyCardService
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.cbor.CborLabel
 import kotlin.time.Instant
@@ -7,6 +8,7 @@ import kotlin.uuid.Uuid
 
 const val ShoppingListRpcPath: String = "/shoppingList"
 const val FavoriteElementRpcPath: String = "/favoriteElement"
+const val LoyaltyCardRpcPath: String = "/loyaltyCard"
 
 val ListIdRegex: Regex = Regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
 
@@ -66,3 +68,24 @@ data class ShoppingListItemData(
             }
     }
 }
+
+@Serializable
+data class Code(
+    @CborLabel(0) val rawText: String,
+    @CborLabel(1) val format: Format,
+) {
+    @Serializable
+    enum class Format {
+        QR_CODE, DATA_MATRIX, AZTEC, PDF_417, MAXICODE, CODE_128, CODE_39, CODE_93, EAN_13, EAN_8, UPC_A, UPC_E, ITF, CODABAR, RSS_14, RSS_EXPANDED, UPC_EAN_EXTENSION;
+    }
+}
+
+@Serializable
+data class LoyaltyCardData(
+    @CborLabel(0) val id: Uuid,
+    @CborLabel(1) val label: String,
+    @CborLabel(2) val byUserId: Uuid,
+    @Serializable(InstantSerializer::class)
+    @CborLabel(3) val createdAt: Instant,
+    @CborLabel(4) val code: Code,
+)

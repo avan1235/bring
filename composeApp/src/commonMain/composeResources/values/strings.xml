@@ -2,6 +2,7 @@
     <string name="app_name">Bring!</string>
     <string name="new_list">New List</string>
     <string name="shopping_list">Shopping List</string>
+    <string name="cards">Cards</string>
     <string name="loading_list">Loading Shopping List...</string>
     <string name="create_list">Create New List</string>
     <string name="create">Create</string>
@@ -25,6 +26,7 @@
     <string name="favorite_shopping_lists">Favorite shopping lists</string>
     <string name="favorite_list_elements">Favorite list elements</string>
     <string name="copied_list_id_to_clipboard">Copied List ID to clipboard</string>
+    <string name="copied_card_id_to_clipboard">Copied Loyalty Card ID to clipboard</string>
     <string name="copied_list_url_to_clipboard">Copied List URL to clipboard</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
@@ -36,4 +38,11 @@
     <string name="use_haptics">Use haptic feedback</string>
     <string name="use_bottom_navigation">Use bottom navigation</string>
     <string name="miscellaneous">Miscellaneous</string>
+    <string name="share_all">Share All</string>
+    <string name="import_action">Import</string>
+    <string name="scan">Scan</string>
+    <string name="add_loyalty_card">Add Loyalty Card</string>
+    <string name="import_loyalty_card">Import Loyalty Card</string>
+    <string name="select_file">Select File</string>
+    <string name="close">Close</string>
 </resources>

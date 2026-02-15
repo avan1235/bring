@@ -91,7 +91,7 @@ internal fun AlertDialog(
     AlertDialogComponent(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            Button(variant = ButtonVariant.PrimaryElevated, text = confirmButtonText, onClick = onConfirmClick)
+            Button(variant = ButtonVariant.PrimaryOutlined, text = confirmButtonText, onClick = onConfirmClick)
         },
         modifier = Modifier,
         dismissButton =

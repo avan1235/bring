@@ -36,4 +36,13 @@
     <string name="use_haptics">触覚フィードバックを使用する</string>
     <string name="use_bottom_navigation">下部ナビゲーションを使用する</string>
     <string name="miscellaneous">その他</string>
+    <string name="cards">カード</string>
+    <string name="copied_card_id_to_clipboard">ポイントカードIDをクリップボードにコピーしました</string>
+    <string name="share_all">すべて共有</string>
+    <string name="import_action">インポート</string>
+    <string name="scan">スキャン</string>
+    <string name="add_loyalty_card">ポイントカードを追加</string>
+    <string name="import_loyalty_card">ポイントカードをインポート</string>
+    <string name="select_file">ファイルを選択</string>
+    <string name="close">閉じる</string>
 </resources>

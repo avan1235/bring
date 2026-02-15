@@ -32,6 +32,7 @@ data class BringStore(
     @CborLabel(10) val useGemini: Boolean = false,
     @CborLabel(11) val useHaptics: Boolean = true,
     @CborLabel(12) val useBottomNavigation: Boolean = defaultUseBottomNavigation,
+    @CborLabel(13) val loyaltyCardsIds: Set<Uuid> = emptySet(),
 ) {
     companion object {
         val Default: BringStore = BringStore()
