@@ -50,6 +50,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(libs.ktor.serialization.kotlinx.cbor)
+            implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.shared.resources)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.rpc.core)

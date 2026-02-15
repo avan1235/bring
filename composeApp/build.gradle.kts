@@ -110,6 +110,8 @@ kotlin {
             implementation(libs.compose.colorpicker)
             implementation(libs.materialKolor)
             implementation(libs.koog.agents)
+            implementation(libs.filekit.core)
+            implementation(libs.filekit.dialogs)
 
             implementation(projects.shared)
             implementation(projects.sharedClient)

@@ -74,6 +74,13 @@
         "allDeclaredConstructors": true
     },
     {
+        "name": "in.procyk.bring.db.LoyaltyCardEntity",
+        "allPublicMethods": true,
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "allDeclaredConstructors": true
+    },
+    {
         "name": "in.procyk.bring.ShoppingListData",
         "allDeclaredConstructors": true,
         "fields": [
@@ -354,6 +361,82 @@
         ]
     },
     {
+        "name": "in.procyk.bring.service.LoyaltyCardService$$rpcServiceStub",
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$$rpcServiceStub$createLoyaltyCard$rpcMethod",
+        "allPublicMethods": true,
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$$rpcServiceStub$createLoyaltyCard$rpcMethod$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$$rpcServiceStub$getLoyaltyCard$rpcMethod",
+        "allPublicMethods": true,
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$$rpcServiceStub$getLoyaltyCard$rpcMethod$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$$rpcServiceStub$removeLoyaltyCard$rpcMethod",
+        "allPublicMethods": true,
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$$rpcServiceStub$removeLoyaltyCard$rpcMethod$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$$rpcServiceStub$generateCode$rpcMethod",
+        "allPublicMethods": true,
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$$rpcServiceStub$generateCode$rpcMethod$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
         "name": "in.procyk.bring.ShoppingListData$Companion",
         "allDeclaredConstructors": true,
         "methods": [
@@ -412,6 +495,62 @@
     },
     {
         "name": "in.procyk.bring.FavoriteElement$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.LoyaltyCardData",
+        "allDeclaredConstructors": true,
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.LoyaltyCardData$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.Code",
+        "allDeclaredConstructors": true,
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.Code$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.Code$Format",
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.Code$Format$Companion",
         "allDeclaredConstructors": true,
         "methods": [
             {
@@ -664,6 +803,78 @@
     },
     {
         "name": "in.procyk.bring.service.FavoriteElementService$RemoveFavoriteElementError$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$AddLoyaltyCardError",
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$AddLoyaltyCardError$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$GetLoyaltyCardError",
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$GetLoyaltyCardError$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$RemoveLoyaltyCardError",
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$RemoveLoyaltyCardError$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$GenerateCodeError",
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.LoyaltyCardService$GenerateCodeError$Companion",
         "allDeclaredConstructors": true,
         "methods": [
             {

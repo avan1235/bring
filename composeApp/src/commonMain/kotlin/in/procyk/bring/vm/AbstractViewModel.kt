@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import bring.composeapp.generated.resources.Res
+import bring.composeapp.generated.resources.cards
 import bring.composeapp.generated.resources.favorites
 import bring.composeapp.generated.resources.settings
 import `in`.procyk.bring.*
@@ -53,8 +54,9 @@ internal abstract class AbstractViewModel(
                 entry.navigatesFrom<Screen.EditList>() -> NavBarTarget.Main
                 entry.navigatesFrom<Screen.CreateList>() -> NavBarTarget.Main
                 entry.navigatesFrom<Screen.Settings>() -> NavBarTarget.Settings
+                entry.navigatesFrom<Screen.LoyaltyCards>() -> NavBarTarget.LoyaltyCards
                 entry.navigatesFrom<Screen.Favorites>() -> NavBarTarget.Favourites
-                else -> NavBarTarget.Main
+                else -> error("Unknown screen target: $entry")
             }
 
         }.stateIn(
@@ -66,6 +68,7 @@ internal abstract class AbstractViewModel(
         fun onNavBarTargetSelected(target: NavBarTarget) {
             val current = navBarTarget.value
             when (target) {
+                NavBarTarget.LoyaltyCards if target != current -> navigateCards()
                 NavBarTarget.Favourites if target != current -> navigateFavourites()
                 NavBarTarget.Settings if target != current -> navigateSettings()
                 NavBarTarget.Main -> when {
@@ -91,6 +94,16 @@ internal abstract class AbstractViewModel(
                 when (val lastListId = storeFlow.value.lastListId) {
                     null -> navigateCreateList(cleanLastListId = false)
                     else -> navigateEditList(lastListId, fetchSuggestions = false)
+                }
+            }
+        }
+
+        fun navigateCards() {
+            appScope.launch {
+                updateListLocationPresentation(null)
+                _topBarText.value = getString(Res.string.cards)
+                withContext(Dispatchers.Main) {
+                    navController.navigate(Screen.LoyaltyCards)
                 }
             }
         }
@@ -183,9 +196,11 @@ internal inline fun <reified T : Screen> NavBackStackEntry?.navigatesFrom(): Boo
     this?.destination?.route?.split('/')?.getOrNull(0)?.split('.')?.lastOrNull() == T::class.simpleName
 
 enum class NavBarTarget {
-    Main, Favourites, Settings;
+    Main, LoyaltyCards, Favourites, Settings;
 }
 
 internal expect fun updateListLocationPresentation(listId: String?)
 
 internal expect suspend fun onShareList(listId: String, context: Context)
+
+internal expect suspend fun onShareLoyaltyCard(cardId: String, context: Context)

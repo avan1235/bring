@@ -25,6 +25,7 @@
     <string name="favorite_shopping_lists">Ulubione listy zakupów</string>
     <string name="favorite_list_elements">Ulubione elementy listy</string>
     <string name="copied_list_id_to_clipboard">Skopiowano ID listy do schowka</string>
+    <string name="copied_card_id_to_clipboard">Skopiowano ID karty lojalnościowej do schowka</string>
     <string name="copied_list_url_to_clipboard">Skopiowano URL listy do schowka</string>
     <string name="save">Zapisz</string>
     <string name="cancel">Anuluj</string>
@@ -36,4 +37,12 @@
     <string name="use_haptics">Użyj wibracji</string>
     <string name="use_bottom_navigation">Użyj dolnej nawigacji</string>
     <string name="miscellaneous">Różne</string>
+    <string name="cards">Karty</string>
+    <string name="share_all">Udostępnij Wszystkie</string>
+    <string name="import_action">Importuj</string>
+    <string name="scan">Skanuj</string>
+    <string name="add_loyalty_card">Dodaj Kartę Lojalnościową</string>
+    <string name="import_loyalty_card">Importuj Kartę Lojalnościową</string>
+    <string name="select_file">Wybierz Plik</string>
+    <string name="close">Zamknij</string>
 </resources>

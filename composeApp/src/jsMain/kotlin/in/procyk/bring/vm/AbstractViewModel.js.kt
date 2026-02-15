@@ -13,3 +13,10 @@ internal actual suspend fun onShareList(listId: String, context: Context) {
     context.clipboard.setClipEntry(clipEntry)
     context.showSnackbar(Res.string.copied_list_url_to_clipboard)
 }
+
+@OptIn(ExperimentalComposeUiApi::class)
+internal actual suspend fun onShareLoyaltyCard(cardId: String, context: Context) {
+    val clipEntry = withPlainText(cardId)
+    context.clipboard.setClipEntry(clipEntry)
+    context.showSnackbar(Res.string.copied_list_url_to_clipboard)
+}

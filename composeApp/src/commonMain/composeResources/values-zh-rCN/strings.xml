@@ -36,4 +36,13 @@
     <string name="use_haptics">使用触觉反馈</string>
     <string name="use_bottom_navigation">使用底部导航</string>
     <string name="miscellaneous">其他</string>
+    <string name="cards">卡片</string>
+    <string name="copied_card_id_to_clipboard">会员卡ID已复制到剪贴板</string>
+    <string name="share_all">全部分享</string>
+    <string name="import_action">导入</string>
+    <string name="scan">扫描</string>
+    <string name="add_loyalty_card">添加会员卡</string>
+    <string name="import_loyalty_card">导入会员卡</string>
+    <string name="select_file">选择文件</string>
+    <string name="close">关闭</string>
 </resources>

@@ -36,4 +36,13 @@
     <string name="use_haptics">Haptisches Feedback verwenden</string>
     <string name="use_bottom_navigation">Untere Navigationsleiste verwenden</string>
     <string name="miscellaneous">Sonstiges</string>
+    <string name="cards">Karten</string>
+    <string name="copied_card_id_to_clipboard">Treuekarten-ID in die Zwischenablage kopiert</string>
+    <string name="share_all">Alle teilen</string>
+    <string name="import_action">Importieren</string>
+    <string name="scan">Scannen</string>
+    <string name="add_loyalty_card">Treuekarte hinzufügen</string>
+    <string name="import_loyalty_card">Treuekarte importieren</string>
+    <string name="select_file">Datei auswählen</string>
+    <string name="close">Schließen</string>
 </resources>

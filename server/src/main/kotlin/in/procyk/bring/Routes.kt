@@ -1,6 +1,7 @@
 package `in`.procyk.bring
 
 import `in`.procyk.bring.rpc.favoriteElementRpc
+import `in`.procyk.bring.rpc.loyaltyCardRpc
 import `in`.procyk.bring.rpc.shoppingListRpc
 import `in`.procyk.bring.server.BuildConfig
 import io.ktor.http.*
@@ -21,6 +22,7 @@ internal fun Application.routes() = routing {
     get("/health") {
         call.respond(HttpStatusCode.OK)
     }
+    loyaltyCardRpc()
     favoriteElementRpc()
     shoppingListRpc()
 }

@@ -36,4 +36,13 @@
     <string name="use_haptics">Использовать тактильную отдачу</string>
     <string name="use_bottom_navigation">Использовать нижнюю навигацию</string>
     <string name="miscellaneous">Разное</string>
+    <string name="cards">Карты</string>
+    <string name="copied_card_id_to_clipboard">ID карты лояльности скопирован в буфер обмена</string>
+    <string name="share_all">Поделиться всеми</string>
+    <string name="import_action">Импортировать</string>
+    <string name="scan">Сканировать</string>
+    <string name="add_loyalty_card">Добавить карту лояльности</string>
+    <string name="import_loyalty_card">Импортировать карту лояльности</string>
+    <string name="select_file">Выбрать файл</string>
+    <string name="close">Закрыть</string>
 </resources>

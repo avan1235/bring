@@ -53,6 +53,9 @@ dependencies {
     implementation(libs.ksoup)
     implementation(libs.ksoup.network)
 
+    implementation(libs.zxing.core)
+    implementation(libs.pngj)
+
     testImplementation(libs.kotlin.test)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.junit.jupiter)

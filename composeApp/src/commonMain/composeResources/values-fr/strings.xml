@@ -36,4 +36,13 @@
     <string name="use_haptics">Utiliser le retour haptique</string>
     <string name="use_bottom_navigation">Utiliser la barre de navigation inférieure</string>
     <string name="miscellaneous">Divers</string>
+    <string name="cards">Cartes</string>
+    <string name="copied_card_id_to_clipboard">ID de carte de fidélité copié dans le presse-papiers</string>
+    <string name="share_all">Tout Partager</string>
+    <string name="import_action">Importer</string>
+    <string name="scan">Scanner</string>
+    <string name="add_loyalty_card">Ajouter une Carte de Fidélité</string>
+    <string name="import_loyalty_card">Importer une Carte de Fidélité</string>
+    <string name="select_file">Sélectionner un Fichier</string>
+    <string name="close">Fermer</string>
 </resources>
