@@ -2,6 +2,7 @@
     <string name="app_name">Bring!</string>
     <string name="new_list">New List</string>
     <string name="shopping_list">Shopping List</string>
+    <string name="cards">Cards</string>
     <string name="loading_list">Loading Shopping List...</string>
     <string name="create_list">Create New List</string>
     <string name="create">Create</string>

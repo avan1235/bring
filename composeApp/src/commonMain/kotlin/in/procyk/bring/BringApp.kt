@@ -12,9 +12,13 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CardMembership
+import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Summarize
+import androidx.compose.material.icons.twotone.CardMembership
+import androidx.compose.material.icons.twotone.CreditCard
 import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material.icons.twotone.Summarize
@@ -34,6 +38,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import bring.composeapp.generated.resources.Res
+import bring.composeapp.generated.resources.cards
 import bring.composeapp.generated.resources.favorites
 import bring.composeapp.generated.resources.settings
 import bring.composeapp.generated.resources.shopping_list
@@ -42,6 +47,7 @@ import `in`.procyk.bring.ui.components.*
 import `in`.procyk.bring.ui.components.snackbar.Snackbar
 import `in`.procyk.bring.ui.components.snackbar.SnackbarHost
 import `in`.procyk.bring.ui.components.topbar.TopBarDefaults
+import `in`.procyk.bring.ui.screen.CardsScreen
 import `in`.procyk.bring.ui.screen.CreateListScreen
 import `in`.procyk.bring.ui.screen.EditListScreen
 import `in`.procyk.bring.ui.screen.FavoritesScreen
@@ -57,6 +63,11 @@ internal fun BringApp(
     platformContext: PlatformContext,
     initListId: String? = null,
 ) {
+
+    @Composable
+    fun foo() {
+
+    }
     BringAppTheme(platformContext) { context ->
         BringAppInternal(context, initListId)
     }
@@ -153,6 +164,10 @@ internal fun BringAppInternal(
                     }
                     EditListScreen(padding, vm)
                 }
+                composable<Screen.Cards> {
+                    val vm = viewModel { CardsViewModel(context) }
+                    CardsScreen(padding, vm)
+                }
                 composable<Screen.Favorites> {
                     val vm = viewModel { FavoritesViewModel(context) }
                     FavoritesScreen(padding, vm)
@@ -209,7 +224,7 @@ private fun Navigation(
     NavigationBar(
         modifier = when {
             useBottomNavigation -> Modifier
-            else -> Modifier.size(224.dp, 48.dp)
+            else -> Modifier.size(300.dp, 48.dp)
         },
         windowInsets = when {
             useBottomNavigation -> NavigationBarDefaults.windowInsets
@@ -231,7 +246,7 @@ private fun Navigation(
                                 color = if (selected) BringAppTheme.colors.primary.copy(alpha = 0.16f) else Color.Transparent,
                                 shape = RoundedCornerShape(16.dp),
                             )
-                            .padding(horizontal = 24.dp, vertical = 4.dp),
+                            .padding(horizontal = 18.dp, vertical = 4.dp),
                     )
                 },
                 selected = selected,
@@ -254,6 +269,7 @@ private const val ScreenChangeAnimationDurationMillis: Int = 400
 private val NavBarTarget.outlinedIcon: ImageVector
     get() = when (this) {
         NavBarTarget.Main -> Icons.TwoTone.Summarize
+        NavBarTarget.Cards -> Icons.TwoTone.CreditCard
         NavBarTarget.Favourites -> Icons.TwoTone.Favorite
         NavBarTarget.Settings -> Icons.TwoTone.Settings
     }
@@ -261,6 +277,7 @@ private val NavBarTarget.outlinedIcon: ImageVector
 private val NavBarTarget.filledIcon: ImageVector
     get() = when (this) {
         NavBarTarget.Main -> Icons.Filled.Summarize
+        NavBarTarget.Cards -> Icons.Filled.CreditCard
         NavBarTarget.Favourites -> Icons.Filled.Favorite
         NavBarTarget.Settings -> Icons.Filled.Settings
     }
@@ -268,6 +285,7 @@ private val NavBarTarget.filledIcon: ImageVector
 private val NavBarTarget.label: StringResource
     get() = when (this) {
         NavBarTarget.Main -> Res.string.shopping_list
+        NavBarTarget.Cards -> Res.string.cards
         NavBarTarget.Favourites -> Res.string.favorites
         NavBarTarget.Settings -> Res.string.settings
     }
@@ -284,8 +302,9 @@ private fun AnimatedContentTransitionScope<NavBackStackEntry>.towards(): SlideDi
 private fun NavBackStackEntry.toScreenOrderOrNull(): Int? = when {
     navigatesFrom<Screen.CreateList>() -> 0
     navigatesFrom<Screen.EditList>() -> 1
-    navigatesFrom<Screen.Favorites>() -> 2
-    navigatesFrom<Screen.Settings>() -> 3
+    navigatesFrom<Screen.Cards>() -> 2
+    navigatesFrom<Screen.Favorites>() -> 3
+    navigatesFrom<Screen.Settings>() -> 4
     else -> null
 }
 
@@ -300,6 +319,9 @@ internal sealed class Screen {
 
     @Serializable
     data object Favorites : Screen()
+
+    @Serializable
+    data object Cards : Screen()
 
     @Serializable
     data class EditList(val listId: String, val fetchSuggestionsAndFavoriteElements: Boolean) : Screen()
