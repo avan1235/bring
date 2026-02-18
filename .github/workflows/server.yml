@@ -41,6 +41,7 @@ jobs:
           ./gradlew server:test
         env:
           VERSION: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
+          TESTCONTAINERS_RYUK_DISABLED: true
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v5
