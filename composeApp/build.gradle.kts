@@ -53,25 +53,13 @@ kotlin {
     }
 
     js {
-        browser {
-            commonWebpackConfig {
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    port = env.CORS_PORT.value.toInt()
-                }
-            }
-        }
+        browser()
         binaries.executable()
     }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        browser {
-            commonWebpackConfig {
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    port = env.CORS_PORT.value.toInt()
-                }
-            }
-        }
+        browser()
         binaries.executable()
     }
 
