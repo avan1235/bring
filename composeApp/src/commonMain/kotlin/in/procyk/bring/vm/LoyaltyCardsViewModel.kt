@@ -12,8 +12,6 @@ import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.uuid.Uuid
 
 internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(context) {
@@ -45,9 +43,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
     val selectedCard: StateFlow<Card?> = _selectedCard.asStateFlow()
 
     private val _isLoadingCards: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isLoadingCards: StateFlow<Boolean> = _isLoadingCards.debounce {
-        if (!it) 200.milliseconds else Duration.ZERO
-    }.state(false)
+    val isLoadingCards: StateFlow<Boolean> = _isLoadingCards.asStateFlow()
 
     init {
         viewModelScope.launch {
