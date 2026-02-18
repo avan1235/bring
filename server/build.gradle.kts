@@ -96,6 +96,7 @@ graalvmNative {
                     "--initialize-at-build-time=kotlinx.io",
                     "--initialize-at-build-time=org.slf4j.LoggerFactory",
                     "--initialize-at-build-time=org.slf4j.helpers.Reporter",
+                    "--initialize-at-build-time=org.slf4j.MarkerFactory",
 
                     "--initialize-at-build-time=kotlinx.serialization.modules.SerializersModuleKt",
                     "--initialize-at-build-time=kotlinx.serialization.internal",
