@@ -81,7 +81,7 @@ internal fun SettingsScreen(
         Spacer(modifier = Modifier.weight(1f))
         Spacer(modifier = Modifier.height(16.dp))
         BottomBanner(
-            title = "Find Me On",
+            title = Res.string.find_me_on,
             BottomBannerItem("https://github.com/avan1235/", BringIcons.GitHub),
             BottomBannerItem("https://www.linkedin.com/in/maciej-procyk/", BringIcons.LinkedIn),
             BottomBannerItem("https://procyk.in", BringIcons.Html),

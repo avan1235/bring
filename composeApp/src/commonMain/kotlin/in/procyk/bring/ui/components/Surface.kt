@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.selection.selectable
@@ -63,6 +64,7 @@ internal fun Surface(
 @Composable
 internal fun Surface(
     onClick: () -> Unit,
+    onLongClick: () -> Unit = onClick,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     shape: Shape = RectangleShape,
@@ -85,10 +87,11 @@ internal fun Surface(
                         border = border,
                         shadowElevation = shadowElevation,
                     )
-                    .clickable(
+                    .combinedClickable(
                         interactionSource = interactionSource,
                         indication = ripple(color = contentColor),
                         enabled = enabled,
+                        onLongClick = onLongClick,
                         onClick = onClick,
                     ),
             propagateMinConstraints = true,

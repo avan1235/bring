@@ -45,4 +45,7 @@
     <string name="import_loyalty_card">导入会员卡</string>
     <string name="select_file">选择文件</string>
     <string name="close">关闭</string>
+    <string name="remove">删除</string>
+    <string name="ok">确定</string>
+    <string name="find_me_on">在这里找到我</string>
 </resources>

@@ -100,7 +100,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
         }
     }
 
-    fun addLoyaltyCardFromFile() {
+    fun addLoyaltyCardFromFile(afterAdded: () -> Unit = {}) {
         val userId = store.userId
         val label = userInput.value
         viewModelScope.launch {
@@ -112,17 +112,30 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
                     ifLeft = { cardId -> updateConfig { it.copy(loyaltyCardsIds = it.loyaltyCardsIds + cardId) } },
                     ifRight = { /* TODO: handle errors */ }
                 )
+            afterAdded()
         }
     }
 
-    fun addLoyaltyCardByCardId() {
+    fun addLoyaltyCardByCardId(afterAdded: () -> Unit = {}) {
         val cardIds = userInput.value
         val cardUuids = cardIds.split(CARD_ID_SEPARATOR).mapNotNull { runCatching { Uuid.parse(it) }.getOrNull() }
         updateConfig { it.copy(loyaltyCardsIds = it.loyaltyCardsIds + cardUuids) }
+        afterAdded()
     }
 
     fun resetUserInput() {
         onUserInputChange("")
+    }
+
+    fun removeCard(card: Card) {
+        unselectCard()
+        updateConfig { it.copy(loyaltyCardsIds = it.loyaltyCardsIds - card.data.id) }
+        if (card.data.byUserId == store.userId) viewModelScope.launch {
+            loyaltyCardService.durableCall { removeLoyaltyCard(card.data.id) }.fold(
+                ifLeft = {},
+                ifRight = { /* TODO: handle errors */ }
+            )
+        }
     }
 
     fun onUserInputChange(value: String) {

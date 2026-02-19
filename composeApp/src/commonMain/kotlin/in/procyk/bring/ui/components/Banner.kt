@@ -8,6 +8,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import `in`.procyk.bring.LocalBringStore
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 data class BottomBannerItem(
     val url: String,
@@ -16,7 +18,7 @@ data class BottomBannerItem(
 
 @Composable
 internal fun BottomBanner(
-    title: String?,
+    title: StringResource?,
     vararg items: BottomBannerItem,
 ) {
     Column(
@@ -26,7 +28,7 @@ internal fun BottomBanner(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        title?.let { Text(it) }
+        title?.let { Text(stringResource(it)) }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)

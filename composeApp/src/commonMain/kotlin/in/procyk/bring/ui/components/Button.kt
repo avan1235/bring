@@ -32,6 +32,7 @@ internal fun Button(
     loading: Boolean = false,
     variant: ButtonVariant = ButtonVariant.Primary,
     onClick: () -> Unit = {},
+    onLongClick: () -> Unit = onClick,
     contentPadding: PaddingValues = ButtonDefaults.contentPadding,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: (@Composable () -> Unit)? = null,
@@ -43,6 +44,7 @@ internal fun Button(
         loading = loading,
         style = buttonStyleFor(variant),
         onClick = onClick,
+        onLongClick = onLongClick,
         contentPadding = contentPadding,
         interactionSource = interactionSource,
         content = content,
@@ -57,6 +59,7 @@ internal fun ButtonComponent(
     loading: Boolean = false,
     style: ButtonStyle,
     onClick: () -> Unit,
+    onLongClick: () -> Unit = onClick,
     contentPadding: PaddingValues = ButtonDefaults.contentPadding,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: (@Composable () -> Unit)? = null,
@@ -81,6 +84,7 @@ internal fun ButtonComponent(
 
     Surface(
         onClick = LocalBringStore.current.onClickWithHaptics(onClick),
+        onLongClick = LocalBringStore.current.onClickWithHaptics(onLongClick),
         modifier =
             modifier
                 .defaultMinSize(minHeight = ButtonDefaults.MinHeight)

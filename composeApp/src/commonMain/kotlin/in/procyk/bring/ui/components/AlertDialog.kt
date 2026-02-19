@@ -18,6 +18,7 @@ import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import bring.composeapp.generated.resources.*
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.LocalContentColor
 import `in`.procyk.bring.ui.components.AlertDialogDefaults.ButtonsCrossAxisSpacing
@@ -31,6 +32,7 @@ import `in`.procyk.bring.ui.components.AlertDialogDefaults.IconPadding
 import `in`.procyk.bring.ui.components.AlertDialogDefaults.TextPadding
 import `in`.procyk.bring.ui.components.AlertDialogDefaults.TitlePadding
 import `in`.procyk.bring.ui.foundation.ProvideContentColorTextStyle
+import org.jetbrains.compose.resources.stringResource
 import kotlin.math.max
 
 @Composable
@@ -39,8 +41,8 @@ internal fun AlertDialog(
     onConfirmClick: () -> Unit,
     title: String,
     text: String,
-    confirmButtonText: String = "OK",
-    dismissButtonText: String? = "Cancel",
+    confirmButtonText: String = stringResource(Res.string.ok),
+    dismissButtonText: String? = stringResource(Res.string.cancel),
     icon: (@Composable () -> Unit)? = null,
     shape: Shape = DialogShape,
     containerColor: Color = BringAppTheme.colors.surface,
@@ -76,8 +78,8 @@ internal fun AlertDialog(
     onConfirmClick: () -> Unit,
     title: String,
     text: @Composable (() -> Unit)?,
-    confirmButtonText: String = "OK",
-    dismissButtonText: String? = "Cancel",
+    confirmButtonText: String = stringResource(Res.string.ok),
+    dismissButtonText: String? = stringResource(Res.string.cancel),
     icon: (@Composable () -> Unit)? = null,
     shape: Shape = DialogShape,
     containerColor: Color = BringAppTheme.colors.surface,
@@ -141,21 +143,21 @@ internal fun BasicAlertDialog(
 }
 
 @Composable
-private fun AlertDialogComponent(
+internal fun AlertDialogComponent(
     onDismissRequest: () -> Unit,
     confirmButton: @Composable () -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     dismissButton: @Composable (() -> Unit)?,
-    icon: @Composable (() -> Unit)?,
+    icon: @Composable (() -> Unit)? = null,
     title: @Composable (() -> Unit)?,
     text: @Composable (() -> Unit)?,
-    shape: Shape,
-    containerColor: Color,
-    iconContentColor: Color,
-    titleContentColor: Color,
-    textContentColor: Color,
-    elevation: Dp,
-    properties: DialogProperties,
+    shape: Shape = DialogShape,
+    containerColor: Color = BringAppTheme.colors.surface,
+    iconContentColor: Color = BringAppTheme.colors.primary,
+    titleContentColor: Color = BringAppTheme.colors.primary,
+    textContentColor: Color = BringAppTheme.colors.primary,
+    elevation: Dp = DialogElevation,
+    properties: DialogProperties = DialogProperties(),
     content: @Composable (() -> Unit)? = null,
 ) {
     BasicAlertDialog(

@@ -45,4 +45,7 @@
     <string name="import_loyalty_card">ポイントカードをインポート</string>
     <string name="select_file">ファイルを選択</string>
     <string name="close">閉じる</string>
+    <string name="remove">削除</string>
+    <string name="ok">OK</string>
+    <string name="find_me_on">リンク:</string>
 </resources>

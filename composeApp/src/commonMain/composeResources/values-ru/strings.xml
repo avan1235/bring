@@ -45,4 +45,7 @@
     <string name="import_loyalty_card">Импортировать карту лояльности</string>
     <string name="select_file">Выбрать файл</string>
     <string name="close">Закрыть</string>
+    <string name="remove">Удалить</string>
+    <string name="ok">ОК</string>
+    <string name="find_me_on">Найти меня:</string>
 </resources>

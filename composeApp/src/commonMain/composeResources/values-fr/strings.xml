@@ -45,4 +45,7 @@
     <string name="import_loyalty_card">Importer une Carte de Fidélité</string>
     <string name="select_file">Sélectionner un Fichier</string>
     <string name="close">Fermer</string>
+    <string name="remove">Supprimer</string>
+    <string name="ok">OK</string>
+    <string name="find_me_on">Retrouvez-moi sur</string>
 </resources>

@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Label
+import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.NewLabel
 import androidx.compose.material.icons.outlined.QrCodeScanner
@@ -16,15 +18,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.decodeToImageBitmap
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import bring.composeapp.generated.resources.Res
-import bring.composeapp.generated.resources.add_loyalty_card
-import bring.composeapp.generated.resources.cancel
-import bring.composeapp.generated.resources.close
-import bring.composeapp.generated.resources.import_action
-import bring.composeapp.generated.resources.import_loyalty_card
-import bring.composeapp.generated.resources.scan
-import bring.composeapp.generated.resources.select_file
+import bring.composeapp.generated.resources.*
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.LocalColors
 import `in`.procyk.bring.ui.components.*
@@ -34,7 +30,10 @@ import `in`.procyk.bring.ui.components.textfield.OutlinedTextField
 import `in`.procyk.bring.ui.screen.InputDialogAction.AddFromFile
 import `in`.procyk.bring.ui.screen.InputDialogAction.ImportById
 import `in`.procyk.bring.vm.LoyaltyCardsViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 internal fun LoyaltyCardsScreen(
@@ -71,12 +70,26 @@ internal fun LoyaltyCardsScreen(
                 shape = RoundedCornerShape(8.dp),
                 onClick = { vm.selectCard(it) }
             ) {
-                Text(
-                    text = it.data.label,
-                    maxLines = 1,
-                    style = BringAppTheme.typography.h3,
-                    modifier = Modifier.padding(16.dp),
-                )
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    var isFilled by remember { mutableStateOf(false) }
+                    IconButton(
+                        variant = IconButtonVariant.Ghost,
+                        onClick = { isFilled = !isFilled },
+                    ) {
+                        Icon(if (isFilled) Icons.AutoMirrored.Filled.Label else Icons.AutoMirrored.Outlined.Label)
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = it.data.label,
+                        maxLines = 1,
+                        style = BringAppTheme.typography.h3,
+                    )
+                }
             }
         }
         item(key = "loyalty-cards-actions") {
@@ -110,6 +123,7 @@ internal fun LoyaltyCardsScreen(
                     },
                     variant = IconButtonVariant.Primary,
                     onClick = { userInputDialogAction = AddFromFile },
+                    modifier = Modifier.testTag("button-scan-loyalty-card"),
                 )
                 IconButton(
                     content = {
@@ -129,15 +143,43 @@ internal fun LoyaltyCardsScreen(
         }
     }
     userInputDialogAction?.let { action ->
-        AlertDialog(
+        AlertDialogComponent(
             onDismissRequest = { userInputDialogAction = null; vm.resetUserInput() },
-            onConfirmClick = when (action) {
-                ImportById -> vm::addLoyaltyCardByCardId
-                AddFromFile -> vm::addLoyaltyCardFromFile
+            confirmButton = {
+                Button(
+                    variant = ButtonVariant.PrimaryOutlined,
+                    text = when (action) {
+                        AddFromFile -> stringResource(Res.string.select_file)
+                        ImportById -> stringResource(Res.string.import_action)
+                    },
+                    onClick = when (action) {
+                        ImportById -> fun() = vm.addLoyaltyCardByCardId { userInputDialogAction = null }
+                        AddFromFile -> fun() = vm.addLoyaltyCardFromFile { userInputDialogAction = null }
+                    })
             },
-            title = when (action) {
-                AddFromFile -> stringResource(Res.string.add_loyalty_card)
-                ImportById -> stringResource(Res.string.import_loyalty_card)
+            dismissButton = {
+                Button(
+                    variant = ButtonVariant.Ghost,
+                    text = stringResource(Res.string.cancel),
+                    onClick = { userInputDialogAction = null; vm.resetUserInput() }
+                )
+            },
+            icon = when (action) {
+                AddFromFile -> {
+                    { Icon(Icons.Outlined.QrCodeScanner) }
+                }
+
+                ImportById -> {
+                    { Icon(Icons.Outlined.EditNote) }
+                }
+            },
+            title = {
+                Text(
+                    text = when (action) {
+                        AddFromFile -> stringResource(Res.string.add_loyalty_card)
+                        ImportById -> stringResource(Res.string.import_loyalty_card)
+                    }
+                )
             },
             text = {
                 val userInput by vm.userInput.collectAsState()
@@ -153,21 +195,41 @@ internal fun LoyaltyCardsScreen(
                             modifier = Modifier.padding(start = 16.dp),
                         )
                     },
-                    singleLine = true
+                    singleLine = true,
+                    modifier = Modifier.testTag("text-field-loyalty-card-user-input")
                 )
             },
-            confirmButtonText = when (action) {
-                AddFromFile -> stringResource(Res.string.select_file)
-                ImportById -> stringResource(Res.string.import_action)
-            },
-            dismissButtonText = stringResource(Res.string.cancel),
         )
     }
     selectedCard?.let {
-        AlertDialog(
-            onDismissRequest = vm::unselectCard,
-            onConfirmClick = vm::unselectCard,
-            title = it.data.label,
+        var showRemoveNotification by remember { mutableStateOf(false) }
+        val scope = rememberCoroutineScope()
+        AlertDialogComponent(
+            onDismissRequest = { -> vm.unselectCard() },
+            confirmButton = {
+                Button(
+                    variant = ButtonVariant.PrimaryOutlined,
+                    text = stringResource(Res.string.close),
+                    onClick = { vm.unselectCard() })
+            },
+            dismissButton = {
+                Button(
+                    variant = ButtonVariant.Ghost,
+                    text = stringResource(Res.string.remove),
+                    onClick = {
+                        scope.launch {
+                            showRemoveNotification = true
+                            try {
+                                delay(1.seconds)
+                            } finally {
+                                showRemoveNotification = false
+                            }
+                        }
+                    },
+                    onLongClick = { vm.removeCard(it) }
+                )
+            },
+            title = { Text(text = it.data.label) },
             text = {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -189,13 +251,21 @@ internal fun LoyaltyCardsScreen(
                                 .requiredWidth(256.dp)
                         )
                     }
+                    AnimatedVisibility(showRemoveNotification) {
+                        Text(
+                            text = stringResource(Res.string.long_click_to_remove),
+                            style = BringAppTheme.typography.body1,
+                            color = BringAppTheme.colors.textSecondary,
+                        )
+                    }
                     AnimatedVisibility(visibleDetails) {
-                        Text(it.data.code.rawText, style = BringAppTheme.typography.body1)
+                        Text(
+                            text = it.data.code.rawText,
+                            style = BringAppTheme.typography.body1,
+                        )
                     }
                 }
             },
-            confirmButtonText = stringResource(Res.string.close),
-            dismissButtonText = null,
         )
     }
 }
