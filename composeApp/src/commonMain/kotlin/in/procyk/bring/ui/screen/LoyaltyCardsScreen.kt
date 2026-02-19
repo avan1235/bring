@@ -66,7 +66,8 @@ internal fun LoyaltyCardsScreen(
             ElevatedCard(
                 modifier = Modifier
                     .fillParentMaxWidth()
-                    .animateItem(),
+                    .animateItem()
+                    .testTag("loyalty-card"),
                 shape = RoundedCornerShape(8.dp),
                 onClick = { vm.selectCard(it) }
             ) {
@@ -196,7 +197,6 @@ internal fun LoyaltyCardsScreen(
                         )
                     },
                     singleLine = true,
-                    modifier = Modifier.testTag("text-field-loyalty-card-user-input")
                 )
             },
         )

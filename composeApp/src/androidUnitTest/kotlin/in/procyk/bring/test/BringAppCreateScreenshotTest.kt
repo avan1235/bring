@@ -201,6 +201,15 @@ internal fun ComposeTestRule.navigateFavoritesScreen() {
     waitUntilExactlyOneTestTagExists("screen-favorites")
 }
 
+internal fun ComposeTestRule.navigateLoyaltyCardsScreen() {
+    onNodeWithTag("button-navigate-loyaltycards")
+        .assertExists()
+        .assertHasClickAction()
+        .performClick()
+
+    waitUntilExactlyOneTestTagExists("screen-loyalty-cards")
+}
+
 internal fun ComposeTestRule.navigateSettingsScreen() {
     onNodeWithTag("button-navigate-settings")
         .assertExists()
