@@ -31,6 +31,7 @@ abstract class PGNotifyListener(
     override fun close() {
         pgConnection.createStatement().use { it.executeUpdate("UNLISTEN $channelName") }
         pgConnection.removeNotificationListener(uniqueName)
+        pgConnection.close()
     }
 
     protected abstract fun notification(payload: String)
