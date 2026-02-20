@@ -2,14 +2,25 @@
 
 package `in`.procyk.bring.ui.screen
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,34 +30,47 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Psychology
-import androidx.compose.material.icons.outlined.*
-import androidx.compose.material.icons.rounded.DragHandle
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.ExposureNeg1
+import androidx.compose.material.icons.outlined.ExposurePlus1
+import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.Unarchive
 import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.Psychology
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.GestureEnd
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.GestureThresholdActivate
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import `in`.procyk.bring.LocalBringStore
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Checked
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Unchecked
-import `in`.procyk.bring.ui.BringAppTheme
-import `in`.procyk.bring.ui.components.*
+import `in`.procyk.bring.ui.components.AddItemTextField
+import `in`.procyk.bring.ui.components.AnimatedStrikethroughText
+import `in`.procyk.bring.ui.components.AppScreen
+import `in`.procyk.bring.ui.components.Checkbox
+import `in`.procyk.bring.ui.components.CompactButtonPadding
+import `in`.procyk.bring.ui.components.FlowRowItems
+import `in`.procyk.bring.ui.components.Icon
+import `in`.procyk.bring.ui.components.IconButton
+import `in`.procyk.bring.ui.components.IconButtonVariant
+import `in`.procyk.bring.ui.components.ReorderableItemRow
+import `in`.procyk.bring.ui.components.compactButtonMinSize
 import `in`.procyk.bring.ui.components.progressindicators.LinearProgressIndicator
 import `in`.procyk.bring.vm.EditListScreenViewModel
 import kotlinx.coroutines.launch
-import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.ReorderableLazyListState
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.uuid.Uuid
 
@@ -264,43 +288,6 @@ private inline fun RowScope.AnimatedVisibilityGhostButton(
 private val FabPadding = 20.dp
 
 @Composable
-private fun LazyItemScope.ReorderableItemRow(
-    state: ReorderableLazyListState,
-    key: Any,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    animateItemModifier: Modifier = Modifier.animateItem(),
-    content: @Composable RowScope.(isDragging: Boolean) -> Unit,
-) {
-    ReorderableItem(state, key, modifier, enabled, animateItemModifier) { isDragging ->
-        val haptics = LocalHapticFeedback.current
-        val useHaptics = LocalBringStore.current.useHaptics
-        LaunchedEffect(isDragging) {
-            when {
-                !useHaptics -> return@LaunchedEffect
-                isDragging -> haptics.performHapticFeedback(GestureThresholdActivate)
-                else -> haptics.performHapticFeedback(GestureEnd)
-            }
-        }
-        Row(
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.background(BringAppTheme.colors.surface).fillMaxWidth()
-        ) {
-            IconButton(
-                modifier = Modifier.draggableHandle().compactButtonMinSize(),
-                variant = IconButtonVariant.Ghost,
-                contentPadding = CompactButtonPadding,
-            ) {
-                Icon(Icons.Rounded.DragHandle)
-            }
-            content(isDragging)
-        }
-    }
-}
-
-
-@Composable
 private fun ControlButtons(
     vm: EditListScreenViewModel,
 ) {
@@ -345,5 +332,3 @@ private fun IconButton(
         Icon(icon)
     }
 }
-
-private val CompactButtonPadding = PaddingValues(0.dp)

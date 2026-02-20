@@ -6,10 +6,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.automirrored.outlined.Label
+import androidx.compose.material.icons.automirrored.twotone.Label
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.NewLabel
 import androidx.compose.material.icons.outlined.QrCodeScanner
@@ -17,12 +18,14 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.decodeToImageBitmap
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import bring.composeapp.generated.resources.*
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.LocalColors
+import `in`.procyk.bring.ui.LocalContentColor
 import `in`.procyk.bring.ui.components.*
 import `in`.procyk.bring.ui.components.card.ElevatedCard
 import `in`.procyk.bring.ui.components.progressindicators.CircularProgressIndicator
@@ -33,7 +36,9 @@ import `in`.procyk.bring.vm.LoyaltyCardsViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.time.Duration.Companion.seconds
+import kotlin.uuid.Uuid
 
 @Composable
 internal fun LoyaltyCardsScreen(
@@ -43,14 +48,19 @@ internal fun LoyaltyCardsScreen(
     val onSurfaceColor = LocalColors.current.onSurface
     LaunchedEffect(onSurfaceColor) { vm.updateCodeColor(onSurfaceColor) }
 
-    var userInputDialogAction by remember { mutableStateOf<InputDialogAction?>(null) }
+    var dialogAction by remember { mutableStateOf<InputDialogAction?>(null) }
     val cards by vm.cards.collectAsState()
     val selectedCard by vm.selectedCard.collectAsState()
     val isLoadingCards by vm.isLoadingCards.collectAsState()
+    val listState = rememberLazyListState()
+    val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->
+        vm.onUpdatedItemOrder(from.key as Uuid, to.key as Uuid, cards)
+    }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
+        state = listState,
     ) {
         if (isLoadingCards) item(key = "loyalty-cards-loading-indicator") {
             Row(
@@ -62,34 +72,61 @@ internal fun LoyaltyCardsScreen(
                 CircularProgressIndicator(modifier = Modifier.size(32.dp))
             }
         }
-        items(cards, key = { it.data.id }) {
-            ElevatedCard(
+        items(cards, key = { it.data.id }) { card ->
+            ReorderableItemRow(
+                state = reorderableLazyListState,
+                key = card.data.id,
                 modifier = Modifier
                     .fillParentMaxWidth()
                     .animateItem()
-                    .testTag("loyalty-card"),
-                shape = RoundedCornerShape(8.dp),
-                onClick = { vm.selectCard(it) }
+                    .testTag("loyalty-card")
             ) {
-                Row(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    onClick = { vm.selectCard(card) }
                 ) {
-                    var isFilled by remember { mutableStateOf(false) }
-                    IconButton(
-                        variant = IconButtonVariant.Ghost,
-                        onClick = { isFilled = !isFilled },
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Icon(if (isFilled) Icons.AutoMirrored.Filled.Label else Icons.AutoMirrored.Outlined.Label)
+                        val selectedColor by vm.cardColor(card).collectAsState()
+                        val previousColor = remember { mutableStateOf<Color?>(null) }
+                        IconButton(
+                            variant = IconButtonVariant.Ghost,
+                            onClick = { previousColor.value = selectedColor },
+                        ) {
+                            Icon(
+                                imageVector = if (selectedColor != Color.Unspecified) Icons.AutoMirrored.TwoTone.Label else Icons.AutoMirrored.Outlined.Label,
+                                tint = if (selectedColor != Color.Unspecified) selectedColor else LocalContentColor.current
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = card.data.label,
+                            maxLines = 1,
+                            style = BringAppTheme.typography.h3,
+                            modifier = Modifier.weight(1f, fill = true)
+                        )
+                        IconButton(
+                            variant = IconButtonVariant.Ghost,
+                            onClick = { vm.shareCard(card) },
+                        ) {
+                            Icon(Icons.Outlined.Share)
+                        }
+                        SelectColorDialog(
+                            selectedColor = selectedColor,
+                            previousColor = previousColor,
+                            onColorSaved = {
+                                vm.onCardColorUpdated(card.data.id, it)
+                            },
+                            onColorReset = {
+                                vm.onCardColorUpdated(card.data.id, null)
+                            }
+                        )
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = it.data.label,
-                        maxLines = 1,
-                        style = BringAppTheme.typography.h3,
-                    )
                 }
             }
         }
@@ -123,7 +160,7 @@ internal fun LoyaltyCardsScreen(
                         }
                     },
                     variant = IconButtonVariant.Primary,
-                    onClick = { userInputDialogAction = AddFromFile },
+                    onClick = { dialogAction = AddFromFile },
                     modifier = Modifier.testTag("button-scan-loyalty-card"),
                 )
                 IconButton(
@@ -137,35 +174,35 @@ internal fun LoyaltyCardsScreen(
                         }
                     },
                     variant = IconButtonVariant.PrimaryOutlined,
-                    onClick = { userInputDialogAction = ImportById },
+                    onClick = { dialogAction = ImportById },
                 )
             }
 
         }
     }
-    userInputDialogAction?.let { action ->
+    dialogAction?.let { currentAction ->
         AlertDialogComponent(
-            onDismissRequest = { userInputDialogAction = null; vm.resetUserInput() },
+            onDismissRequest = { dialogAction = null; vm.resetUserInput() },
             confirmButton = {
                 Button(
                     variant = ButtonVariant.PrimaryOutlined,
-                    text = when (action) {
+                    text = when (currentAction) {
                         AddFromFile -> stringResource(Res.string.select_file)
                         ImportById -> stringResource(Res.string.import_action)
                     },
-                    onClick = when (action) {
-                        ImportById -> fun() = vm.addLoyaltyCardByCardId { userInputDialogAction = null }
-                        AddFromFile -> fun() = vm.addLoyaltyCardFromFile { userInputDialogAction = null }
+                    onClick = when (currentAction) {
+                        ImportById -> fun() = vm.addLoyaltyCardByCardId { dialogAction = null }
+                        AddFromFile -> fun() = vm.addLoyaltyCardFromFile { dialogAction = null }
                     })
             },
             dismissButton = {
                 Button(
                     variant = ButtonVariant.Ghost,
                     text = stringResource(Res.string.cancel),
-                    onClick = { userInputDialogAction = null; vm.resetUserInput() }
+                    onClick = { dialogAction = null; vm.resetUserInput() }
                 )
             },
-            icon = when (action) {
+            icon = when (currentAction) {
                 AddFromFile -> {
                     { Icon(Icons.Outlined.QrCodeScanner) }
                 }
@@ -176,7 +213,7 @@ internal fun LoyaltyCardsScreen(
             },
             title = {
                 Text(
-                    text = when (action) {
+                    text = when (currentAction) {
                         AddFromFile -> stringResource(Res.string.add_loyalty_card)
                         ImportById -> stringResource(Res.string.import_loyalty_card)
                     }
@@ -189,7 +226,7 @@ internal fun LoyaltyCardsScreen(
                     onValueChange = vm::onUserInputChange,
                     leadingIcon = {
                         Icon(
-                            imageVector = when (action) {
+                            imageVector = when (currentAction) {
                                 AddFromFile -> Icons.Outlined.NewLabel
                                 ImportById -> Icons.Outlined.EditNote
                             },

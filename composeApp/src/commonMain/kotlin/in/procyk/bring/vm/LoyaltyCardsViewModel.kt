@@ -3,6 +3,7 @@ package `in`.procyk.bring.vm
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.viewModelScope
+import `in`.procyk.bring.LoyaltyCard
 import `in`.procyk.bring.LoyaltyCardData
 import `in`.procyk.bring.LoyaltyCardRpcPath
 import `in`.procyk.bring.service.LoyaltyCardService
@@ -18,15 +19,10 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     data class Card(
         val data: LoyaltyCardData,
-        val code: ByteArray
-    ) {
-        override fun hashCode(): Int = data.id.hashCode()
-        override fun equals(other: Any?): Boolean = when {
-            this === other -> true
-            other == null || this::class != other::class -> false
-            else -> (other as? Card)?.let { it.data.id == data.id } == true
-        }
-    }
+        val code: ByteArray,
+        val order: Double,
+        val color: Color?,
+    )
 
     private val loyaltyCardService = durableRpcService<LoyaltyCardService>(LoyaltyCardRpcPath)
 
@@ -47,22 +43,23 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     init {
         viewModelScope.launch {
-            val cache = mutableMapOf<Pair<Uuid, Color>, Card>()
+            val cache = mutableMapOf<Pair<LoyaltyCard, Color>, Card>()
             combine(
-                context.storeFlow.map { it.loyaltyCardsIds },
+                context.storeFlow.map { it.loyaltyCards },
                 codeColor.filterNotNull(),
-            ) { a, b -> a to b }.distinctUntilChanged().collectLatest { (cardIds, color) ->
+            ) { a, b -> a to b }.distinctUntilChanged().collectLatest { (cards, color) ->
                 _isLoadingCards.value = true
                 try {
-                    _cards.value = cardIds.mapNotNull { cardId ->
-                        val key = cardId to color
+                    val sortedCards = cards.mapNotNull { card ->
+                        val key = card to color
                         cache[key] ?: run {
-                            val card = loyaltyCardService.durableCall { getLoyaltyCard(cardId) }
-                                .leftOrNull()
-                                ?: return@run null
+                            val cardData =
+                                loyaltyCardService.durableCall { getLoyaltyCard(card.cardId) }
+                                    .leftOrNull()
+                                    ?: return@run null
                             val code = loyaltyCardService.durableCall {
                                 generateCode(
-                                    code = card.code,
+                                    code = cardData.code,
                                     color = color.toArgb(),
                                     width = 800,
                                     height = 400
@@ -70,10 +67,14 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
                             }
                                 .leftOrNull()
                                 ?: return@run null
-                            Card(card, code)
+                            Card(
+                                data = cardData,
+                                code = code,
+                                order = card.order,
+                                color = card.color?.let(::Color)
+                            )
                         }?.also { cache[key] = it }
                     }
-                        .asSequence()
                         .withIndex()
                         .groupBy { it.value.data.label }
                         .flatMap { (_, indexedCards) ->
@@ -90,8 +91,9 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
                                 }
                             }
                         }
-                        .sortedBy { it.index }
+                        .sortedByDescending { it.value.order }
                         .map { it.value }
+                    _cards.value = sortedCards
                     resetUserInput()
                 } finally {
                     _isLoadingCards.value = false
@@ -104,12 +106,13 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
         val userId = store.userId
         val label = userInput.value
         viewModelScope.launch {
-            val file = FileKit.openFilePicker(type = FileKitType.File("png", "PNG")) ?: return@launch
+            val file =
+                FileKit.openFilePicker(type = FileKitType.File("png", "PNG")) ?: return@launch
             val image = file.readBytes()
             loyaltyCardService
                 .durableCall { createLoyaltyCard(label, image, userId) }
                 .fold(
-                    ifLeft = { cardId -> updateConfig { it.copy(loyaltyCardsIds = it.loyaltyCardsIds + cardId) } },
+                    ifLeft = { updateConfigWithLoyaltyCardIds(listOf(it)) },
                     ifRight = { /* TODO: handle errors */ }
                 )
             afterAdded()
@@ -118,9 +121,22 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     fun addLoyaltyCardByCardId(afterAdded: () -> Unit = {}) {
         val cardIds = userInput.value
-        val cardUuids = cardIds.split(CARD_ID_SEPARATOR).mapNotNull { runCatching { Uuid.parse(it) }.getOrNull() }
-        updateConfig { it.copy(loyaltyCardsIds = it.loyaltyCardsIds + cardUuids) }
+        val cardUuids = cardIds.split(CARD_ID_SEPARATOR)
+            .mapNotNull { runCatching { Uuid.parse(it) }.getOrNull() }
+        updateConfigWithLoyaltyCardIds(cardUuids)
         afterAdded()
+    }
+
+    private fun updateConfigWithLoyaltyCardIds(cardIds: List<Uuid>) {
+        updateConfig { config ->
+            val maxOrder = config.loyaltyCards.maxOfOrNull { it.order } ?: 0.0
+            val prevCardIds = config.loyaltyCards.map { it.cardId }
+            config.copy(
+                loyaltyCards = config.loyaltyCards + cardIds
+                    .filter { it !in prevCardIds }
+                    .mapIndexed { idx, cardId -> LoyaltyCard(cardId, maxOrder + 1.0 + idx) }
+            )
+        }
     }
 
     fun resetUserInput() {
@@ -129,13 +145,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     fun removeCard(card: Card) {
         unselectCard()
-        updateConfig { it.copy(loyaltyCardsIds = it.loyaltyCardsIds - card.data.id) }
-        if (card.data.byUserId == store.userId) viewModelScope.launch {
-            loyaltyCardService.durableCall { removeLoyaltyCard(card.data.id) }.fold(
-                ifLeft = {},
-                ifRight = { /* TODO: handle errors */ }
-            )
-        }
+        updateConfig { it.copy(loyaltyCards = it.loyaltyCards.filter { it.cardId != card.data.id }) }
     }
 
     fun onUserInputChange(value: String) {
@@ -162,9 +172,39 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     fun shareAllCards() {
         viewModelScope.launch {
-            val cardIds = cards.value.joinToString(separator = CARD_ID_SEPARATOR) { it.data.id.toHexDashString() }
+            val cardIds =
+                cards.value.joinToString(separator = CARD_ID_SEPARATOR) { it.data.id.toHexDashString() }
             onShareLoyaltyCard(cardIds, context)
         }
+    }
+
+    fun onUpdatedItemOrder(fromKey: Uuid, toKey: Uuid, cards: List<Card>) {
+        val (fromIndex, from) = cards.withIndex()
+            .firstOrNull { (_, item) -> item.data.id == fromKey } ?: return
+        val (toIndex, to) = cards.withIndex().firstOrNull { (_, item) -> item.data.id == toKey }
+            ?: return
+        val relativeOrder = when {
+            toIndex < fromIndex -> cards.getOrNull(toIndex - 1)?.order ?: (to.order + 1.0)
+            toIndex > fromIndex -> cards.getOrNull(toIndex + 1)?.order ?: (to.order - 1.0)
+            else -> return
+        }
+        val updatedOrder = (to.order + relativeOrder) / 2.0
+        _cards.update { cards ->
+            cards.map { if (it.data.id == from.data.id) it.copy(order = updatedOrder) else it }
+                .sortedByDescending { it.order }
+        }
+        updateConfig {
+            it.copy(loyaltyCards = it.loyaltyCards.map { if (it.cardId == from.data.id) it.copy(order = updatedOrder) else it })
+        }
+    }
+
+    fun cardColor(card: Card): StateFlow<Color> =
+        storeFlow
+            .map { it.loyaltyCards.find { it.cardId == card.data.id }?.color?.let(::Color) ?: Color.Unspecified }
+            .state(Color.Unspecified)
+
+    fun onCardColorUpdated(cardId: Uuid, color: Color?) {
+        updateConfig { it.copy(loyaltyCards = it.loyaltyCards.map { if (it.cardId == cardId) it.copy(color = color?.toArgb()) else it }) }
     }
 }
 

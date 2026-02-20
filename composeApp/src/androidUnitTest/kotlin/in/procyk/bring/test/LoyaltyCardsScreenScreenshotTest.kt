@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import `in`.procyk.bring.LoyaltyCard
 import org.junit.Test
 import kotlin.uuid.Uuid
 
@@ -29,12 +30,14 @@ internal class LoyaltyCardsScreenScreenshotTest : BringAppCreateScreenshotTest()
         config = {
             copy(
                 themeColor = Color.Red.toArgb(),
-                loyaltyCardsIds = setOf(
-                    Uuid.parse("002a42bd-2454-4843-ae4c-6cf4346a2dcd"),
-                    Uuid.parse("8f33ffbf-d32c-420a-a472-be31a2527b54"),
-                    Uuid.parse("3f9f4a91-8862-4289-b8a8-1efe70774bfc"),
-                    Uuid.parse("011bcb54-58e9-45bd-ab75-8f11454ddad0"),
-                )
+                loyaltyCards = "ded26ce9-a424-4888-a87c-cb0c13f0f125;450a3662-c8bb-4da9-8fee-13f71480ceaa;656bcca2-2856-42b5-ae9f-dfdf3b209005;cd048d2e-3c1c-4c26-b7af-1f2ab02330ad"
+                    .split(';')
+                    .mapIndexed { idx, uuid ->
+                        LoyaltyCard(
+                            Uuid.parse(uuid),
+                            idx.toDouble() + 1.0,
+                        )
+                    }
             )
         },
         text = {

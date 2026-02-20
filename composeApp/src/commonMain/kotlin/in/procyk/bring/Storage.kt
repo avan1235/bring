@@ -12,6 +12,8 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.platform.LocalHapticFeedback
 import `in`.procyk.bring.ui.Theme
 import `in`.procyk.bring.ui.defaultUseBottomNavigation
+import `in`.procyk.bring.vm.LoyaltyCardsViewModel
+import `in`.procyk.bring.vm.LoyaltyCardsViewModel.Card
 import io.github.xxfast.kstore.Codec
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.cbor.CborLabel
@@ -28,11 +30,11 @@ data class BringStore(
     @CborLabel(7) val showFavoriteElements: Boolean = true,
     @CborLabel(8) val themeColor: Int = Color.White.toArgb(),
     @CborLabel(9) val darkMode: Theme = Theme.System,
-    @CborLabel(9) val geminiKey: String = "",
+    @CborLabel(14) val geminiKey: String = "",
     @CborLabel(10) val useGemini: Boolean = false,
     @CborLabel(11) val useHaptics: Boolean = true,
     @CborLabel(12) val useBottomNavigation: Boolean = defaultUseBottomNavigation,
-    @CborLabel(13) val loyaltyCardsIds: Set<Uuid> = emptySet(),
+    @CborLabel(17) val loyaltyCards: List<LoyaltyCard> = emptyList(),
 ) {
     companion object {
         val Default: BringStore = BringStore()
@@ -70,7 +72,8 @@ data class BringStore(
     }
 }
 
-val LocalBringStore: ProvidableCompositionLocal<BringStore> = staticCompositionLocalOf { BringStore.Default }
+val LocalBringStore: ProvidableCompositionLocal<BringStore> =
+    staticCompositionLocalOf { BringStore.Default }
 
 @Serializable
 data class FavoriteShoppingList(
@@ -89,6 +92,13 @@ data class FavoriteShoppingList(
     override fun hashCode(): Int =
         listId.hashCode()
 }
+
+@Serializable
+data class LoyaltyCard(
+    @CborLabel(0) val cardId: Uuid,
+    @CborLabel(1) val order: Double,
+    @CborLabel(2) val color: Int? = null,
+)
 
 @Composable
 internal expect inline fun <reified T : @Serializable Any> bringCodec(): Codec<T>

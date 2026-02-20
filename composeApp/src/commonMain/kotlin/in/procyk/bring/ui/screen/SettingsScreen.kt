@@ -22,8 +22,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import bring.composeapp.generated.resources.*
-import com.github.skydoves.colorpicker.compose.HsvColorPicker
-import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import `in`.procyk.bring.LocalBringStore
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.Theme
@@ -247,7 +245,7 @@ private inline fun SettingColorPickerRow(
     crossinline onColorChanged: (Color) -> Unit,
 ) {
     val selectedColor by selectedColor.collectAsState()
-    var previousColor by remember { mutableStateOf<Color?>(null) }
+    val previousColor = remember { mutableStateOf<Color?>(null) }
 
     Row(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
@@ -259,44 +257,19 @@ private inline fun SettingColorPickerRow(
             modifier = Modifier.clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = { previousColor = selectedColor }
+                onClick = { previousColor.value = selectedColor }
             )
                 .weight(1f),
         )
         IconButton(
             variant = IconButtonVariant.PrimaryGhost,
-            onClick = { previousColor = selectedColor },
+            onClick = { previousColor.value = selectedColor },
             interactionSource = interactionSource,
         ) {
             Icon(Icons.Filled.Palette)
         }
     }
 
-    AnimatedVisibility(previousColor != null) {
-        val controller = rememberColorPickerController()
-        AlertDialog(
-            onDismissRequest = {
-                previousColor?.let(onColorChanged)
-                previousColor = null
-            },
-            onConfirmClick = {
-                previousColor = null
-            },
-            title = stringResource(Res.string.select_color),
-            text = {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    HsvColorPicker(
-                        modifier = Modifier.fillMaxWidth().height(240.dp).padding(10.dp),
-                        controller = controller,
-                        initialColor = selectedColor,
-                        onColorChanged = { onColorChanged(it.color) }
-                    )
-                }
-            },
-            confirmButtonText = stringResource(Res.string.save),
-            dismissButtonText = stringResource(Res.string.cancel),
-        )
-    }
+    SelectColorDialog(selectedColor, previousColor) { onColorChanged(it) }
 }
+

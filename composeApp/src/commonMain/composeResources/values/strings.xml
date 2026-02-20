@@ -30,7 +30,8 @@
     <string name="copied_list_url_to_clipboard">Copied List URL to clipboard</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
-    <string name="select_color">Select Theme Color</string>
+    <string name="clear">Clear</string>
+    <string name="select_color">Select Color</string>
     <string name="theme_color">Theme Color</string>
     <string name="dark_mode">Dark Mode</string>
     <string name="gemini_key">Gemini Key</string>
