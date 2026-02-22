@@ -5,6 +5,8 @@ import ar.com.hjg.pngj.ImageLineInt
 import ar.com.hjg.pngj.PngWriter
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
+import com.google.zxing.pdf417.encoder.Compaction
+import com.google.zxing.pdf417.encoder.Dimensions
 import `in`.procyk.bring.Code
 import java.io.ByteArrayOutputStream
 
@@ -19,6 +21,8 @@ data object CodeGenerator {
         val encodeHints = mapOf(
             EncodeHintType.CHARACTER_SET to "UTF-8",
             EncodeHintType.MARGIN to 0,
+            EncodeHintType.PDF417_DIMENSIONS to Dimensions(2, Int.MAX_VALUE, 12, Int.MAX_VALUE),
+            EncodeHintType.PDF417_COMPACTION to Compaction.TEXT,
         )
 
         val bitMatrix = MultiFormatWriter().encode(
