@@ -3,9 +3,7 @@ package `in`.procyk.bring.vm
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.viewModelScope
-import `in`.procyk.bring.LoyaltyCard
-import `in`.procyk.bring.LoyaltyCardData
-import `in`.procyk.bring.LoyaltyCardRpcPath
+import `in`.procyk.bring.*
 import `in`.procyk.bring.service.LoyaltyCardService
 import `in`.procyk.bring.service.LoyaltyCardService.GetLoyaltyCardError
 import io.github.vinceglb.filekit.FileKit
@@ -20,9 +18,11 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     data class Card(
         val data: LoyaltyCardData,
-        val order: Double,
+        override val order: Double,
         val color: Color?,
-    )
+    ) : Orderable, Identifiable {
+        override val id get() = data.id
+    }
 
     private val loyaltyCardService = durableRpcService<LoyaltyCardService>(LoyaltyCardRpcPath)
 
@@ -41,7 +41,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
     init {
         viewModelScope.launch {
             val cache = mutableMapOf<Uuid, Card>()
-            context.storeFlow.map { it.loyaltyCards }.distinctUntilChanged().collectLatest { cards ->
+            context.storeFlow.map { it.loyaltyCards }.distinctUntilIdsChanged().collectLatest { cards ->
                 _isLoadingCards.value = true
                 try {
                     val sortedCards = cards.mapNotNull { card ->
@@ -88,7 +88,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
                                 }
                             }
                         }
-                        .sortedBy { it.value.order }
+                        .sortedBy { it.value }
                         .map { it.value }
                     _cards.value = sortedCards
                     resetUserInput()
@@ -177,22 +177,13 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
     }
 
     fun onUpdatedItemOrder(fromKey: Uuid, toKey: Uuid, cards: List<Card>) {
-        val (fromIndex, from) = cards.withIndex()
-            .firstOrNull { (_, item) -> item.data.id == fromKey } ?: return
-        val (toIndex, to) = cards.withIndex().firstOrNull { (_, item) -> item.data.id == toKey }
-            ?: return
-        val relativeOrder = when {
-            toIndex < fromIndex -> cards.getOrNull(toIndex - 1)?.order ?: (to.order - 1.0)
-            toIndex > fromIndex -> cards.getOrNull(toIndex + 1)?.order ?: (to.order + 1.0)
-            else -> return
-        }
-        val updatedOrder = (to.order + relativeOrder) / 2.0
-        _cards.update { cards ->
-            cards.map { if (it.data.id == from.data.id) it.copy(order = updatedOrder) else it }
-                .sortedByDescending { it.order }
-        }
-        updateConfig {
-            it.copy(loyaltyCards = it.loyaltyCards.map { if (it.cardId == from.data.id) it.copy(order = updatedOrder) else it })
+        onUpdatedItemOrder(fromKey, toKey, cards) { from, updatedOrder ->
+            _cards.update { cards ->
+                cards.map { if (it.id == from.id) it.copy(order = updatedOrder) else it }.sorted()
+            }
+            updateConfig {
+                it.copy(loyaltyCards = it.loyaltyCards.map { if (it.cardId == from.data.id) it.copy(order = updatedOrder) else it })
+            }
         }
     }
 

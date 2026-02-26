@@ -1,7 +1,6 @@
 package `in`.procyk.bring.service
 
 import arrow.core.Either
-import `in`.procyk.bring.Code
 import `in`.procyk.bring.LoyaltyCardData
 import kotlinx.rpc.annotations.Rpc
 import kotlinx.serialization.Serializable
@@ -33,14 +32,4 @@ interface LoyaltyCardService {
         cardId: Uuid,
         byUserId: Uuid,
     ): Either<Unit, RemoveLoyaltyCardError>
-
-    @Serializable
-    enum class GenerateCodeError { Internal }
-
-    suspend fun generateCode(
-        code: Code,
-        color: Int,
-        width: Int,
-        height: Int,
-    ): Either<ByteArray, GenerateCodeError>
 }

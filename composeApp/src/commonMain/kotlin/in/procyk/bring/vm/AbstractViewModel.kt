@@ -24,6 +24,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.rpc.annotations.Rpc
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 
 
@@ -44,7 +46,11 @@ internal abstract class AbstractViewModel(
 
         val useBottomNavigation: StateFlow<Boolean> = storeFlow
             .map { it.useBottomNavigation }
-            .stateIn(appScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 1_000), storeFlow.value.useBottomNavigation)
+            .stateIn(
+                appScope,
+                SharingStarted.WhileSubscribed(stopTimeoutMillis = 1_000),
+                storeFlow.value.useBottomNavigation
+            )
 
         private val _topBarText = MutableStateFlow(ComposeAppConfig.APP_NAME)
         val topBarText: StateFlow<String> = _topBarText.asStateFlow()
@@ -198,6 +204,36 @@ internal inline fun <reified T : Screen> NavBackStackEntry?.navigatesFrom(): Boo
 enum class NavBarTarget {
     Main, LoyaltyCards, Favourites, Settings;
 }
+
+inline fun <T> onUpdatedItemOrder(
+    fromKey: Uuid,
+    toKey: Uuid,
+    items: List<T>,
+    crossinline updateOrder: (from: T, updatedOrder: Double) -> Unit,
+) where T : Orderable, T : Identifiable {
+    val (fromIndex, from) = items.withIndex().firstOrNull { (_, item) -> item.id == fromKey } ?: return
+    val (toIndex, to) = items.withIndex().firstOrNull { (_, item) -> item.id == toKey } ?: return
+    val relativeOrder = when {
+        toIndex < fromIndex -> items.getOrNull(toIndex - 1)?.order ?: (to.order + 1.0)
+        toIndex > fromIndex -> items.getOrNull(toIndex + 1)?.order ?: (to.order - 1.0)
+        else -> return
+    }
+    val updatedOrder = (to.order + relativeOrder) / 2.0
+    updateOrder(from, updatedOrder)
+}
+
+fun <T, U> Flow<U>.debounceSameIds(delay: Duration): Flow<U> where T : Identifiable, U : Iterable<T> {
+    var lastIds = setOf<Uuid>()
+    return debounce {
+        val ids = it.mapTo(HashSet()) { it.id }
+        val sameIds = lastIds == ids
+        lastIds = ids
+        if (sameIds) delay else 0.seconds
+    }
+}
+
+fun <T, U> Flow<U>.distinctUntilIdsChanged(): Flow<U> where T : Identifiable, U : Iterable<T> =
+    distinctUntilChanged { old, new -> old.mapTo(HashSet()) { it.id } == new.mapTo(HashSet()) { it.id } }
 
 internal expect fun updateListLocationPresentation(listId: String?)
 

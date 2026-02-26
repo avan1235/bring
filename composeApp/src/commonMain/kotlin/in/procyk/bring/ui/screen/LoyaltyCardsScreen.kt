@@ -53,13 +53,14 @@ internal fun LoyaltyCardsScreen(
     }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         state = listState,
     ) {
         if (isLoadingCards) item(key = "loyalty-cards-loading-indicator") {
             Row(
                 modifier = Modifier
+                    .padding(start = 16.dp)
                     .fillParentMaxWidth()
                     .animateItem(),
                 horizontalArrangement = Arrangement.Center,
@@ -72,6 +73,7 @@ internal fun LoyaltyCardsScreen(
                 state = reorderableLazyListState,
                 key = card.data.id,
                 modifier = Modifier
+                    .padding(start = 4.dp)
                     .fillParentMaxWidth()
                     .animateItem()
                     .testTag("loyalty-card")
@@ -79,7 +81,7 @@ internal fun LoyaltyCardsScreen(
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 4.dp, end = 16.dp),
+                        .padding(start = 4.dp),
                     shape = RoundedCornerShape(8.dp),
                     onClick = { vm.selectCard(card) }
                 ) {
@@ -131,7 +133,8 @@ internal fun LoyaltyCardsScreen(
             Row(
                 modifier = Modifier
                     .padding(
-                        if (isLoadingCards || cards.isNotEmpty()) 8.dp else 0.dp
+                        start = 16.dp,
+                        top = if (isLoadingCards || cards.isNotEmpty()) 8.dp else 0.dp
                     )
                     .fillParentMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,

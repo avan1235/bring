@@ -11,6 +11,15 @@ const val LoyaltyCardRpcPath: String = "/loyaltyCard"
 
 val ListIdRegex: Regex = Regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
 
+interface Identifiable {
+    val id: Uuid
+}
+
+interface Orderable : Comparable<Orderable> {
+    val order: Double
+    override fun compareTo(other: Orderable): Int = other.order.compareTo(order)
+}
+
 @Serializable
 data class ShoppingListData(
     @CborLabel(0) val id: Uuid,
@@ -39,15 +48,15 @@ data class FavoriteElement(
 
 @Serializable
 data class ShoppingListItemData(
-    @CborLabel(0) val id: Uuid,
+    @CborLabel(0) override val id: Uuid,
     @CborLabel(1) val name: String,
     @CborLabel(2) val byUserId: Uuid,
     @Serializable(InstantSerializer::class)
     @CborLabel(3) val createdAt: Instant,
-    @CborLabel(4) val order: Double,
+    @CborLabel(4) override val order: Double,
     @CborLabel(5) val status: CheckedStatusData,
     @CborLabel(6) val count: Int = 1,
-) {
+) : Orderable, Identifiable {
     @Serializable
     sealed class CheckedStatusData {
         @Serializable

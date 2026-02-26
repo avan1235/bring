@@ -96,7 +96,7 @@ internal class EditListScreenViewModel(
             getShoppingList(listId).collectLatest {
                 it.fold(
                     ifLeft = {
-                        val updatedList = it.copy(items = it.items.sortedWith(ListItemsComparator))
+                        val updatedList = it.copy(items = it.items.sorted())
                         fetchedList.update { updatedList }
                     },
                     ifRight = {
@@ -118,13 +118,10 @@ internal class EditListScreenViewModel(
 
     init {
         viewModelScope.launch {
-            var lastElementsIds = setOf<Uuid>()
-            fetchedList.mapNotNull { it?.items }.distinctUntilChanged().debounce {
-                val elementsIds = it.mapTo(HashSet()) { it.id }
-                val reorderedOnly = lastElementsIds == elementsIds
-                lastElementsIds = elementsIds
-                if (reorderedOnly) 1.seconds else 0.seconds
-            }.collectLatest { localListItems.value = it }
+            fetchedList.mapNotNull { it?.items }
+                .distinctUntilChanged()
+                .debounceSameIds(delay = 1.seconds)
+                .collectLatest { localListItems.value = it }
         }
         viewModelScope.launch {
             fetchedList.mapNotNull { it?.name }.distinctUntilChanged().collectLatest {
@@ -266,7 +263,7 @@ internal class EditListScreenViewModel(
     fun onChecked(itemId: Uuid, checked: Boolean) {
         val localStatus = if (checked) Checked(Clock.System.now(), store.userId) else Unchecked
         localListItems.update { list ->
-            list.map { if (it.id == itemId) it.copy(status = localStatus) else it }.sortedWith(ListItemsComparator)
+            list.map { if (it.id == itemId) it.copy(status = localStatus) else it }.sorted()
         }
         viewModelScope.launch {
             when {
@@ -310,20 +307,14 @@ internal class EditListScreenViewModel(
     }
 
     fun onUpdatedItemOrder(fromKey: Uuid, toKey: Uuid, items: List<ShoppingListItemData>) {
-        val (fromIndex, from) = items.withIndex().firstOrNull { (_, item) -> item.id == fromKey } ?: return
-        val (toIndex, to) = items.withIndex().firstOrNull { (_, item) -> item.id == toKey } ?: return
-        val relativeOrder = when {
-            toIndex < fromIndex -> items.getOrNull(toIndex - 1)?.order ?: (to.order + 1.0)
-            toIndex > fromIndex -> items.getOrNull(toIndex + 1)?.order ?: (to.order - 1.0)
-            else -> return
-        }
-        val updatedOrder = (to.order + relativeOrder) / 2.0
-        localListItems.update { list ->
-            list.map { if (it.id == from.id) it.copy(order = updatedOrder) else it }.sortedWith(ListItemsComparator)
-        }
-        viewModelScope.launch {
-            shoppingListService.durableCall {
-                updateItemOrder(from.id, updatedOrder)
+        onUpdatedItemOrder(fromKey, toKey, items) { from, updatedOrder ->
+            localListItems.update { list ->
+                list.map { if (it.id == from.id) it.copy(order = updatedOrder) else it }.sorted()
+            }
+            viewModelScope.launch {
+                shoppingListService.durableCall {
+                    updateItemOrder(from.id, updatedOrder)
+                }
             }
         }
     }
@@ -332,9 +323,6 @@ internal class EditListScreenViewModel(
         _showFab.update { show }
     }
 }
-
-private val ListItemsComparator: Comparator<ShoppingListItemData> =
-    compareByDescending(ShoppingListItemData::order).thenByDescending(ShoppingListItemData::createdAt)
 
 private suspend fun HttpClient.getSuggestionsFromGemini(
     apiKey: String,

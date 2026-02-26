@@ -6,7 +6,6 @@ import arrow.core.right
 import `in`.procyk.bring.Code
 import `in`.procyk.bring.LoyaltyCardData
 import `in`.procyk.bring.code.CodeDetector
-import `in`.procyk.bring.code.CodeGenerator
 import `in`.procyk.bring.code.deserialize
 import `in`.procyk.bring.code.serialize
 import `in`.procyk.bring.db.LoyaltyCardEntity
@@ -66,17 +65,6 @@ internal class LoyaltyCardServiceImpl : LoyaltyCardService {
             }
         }
     }
-
-    override suspend fun generateCode(
-        code: Code,
-        color: Int,
-        width: Int,
-        height: Int,
-    ): Either<ByteArray, GenerateCodeError> =
-        runCatching { CodeGenerator.generatePng(code, color, width = width, height = height) }.fold(
-            onSuccess = { it.left() },
-            onFailure = { GenerateCodeError.Internal.right() }
-        )
 }
 
 private fun LoyaltyCardEntity.toLoyaltyCardData(): LoyaltyCardData =

@@ -12,8 +12,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.platform.LocalHapticFeedback
 import `in`.procyk.bring.ui.Theme
 import `in`.procyk.bring.ui.defaultUseBottomNavigation
-import `in`.procyk.bring.vm.LoyaltyCardsViewModel
-import `in`.procyk.bring.vm.LoyaltyCardsViewModel.Card
 import io.github.xxfast.kstore.Codec
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.cbor.CborLabel
@@ -96,9 +94,11 @@ data class FavoriteShoppingList(
 @Serializable
 data class LoyaltyCard(
     @CborLabel(0) val cardId: Uuid,
-    @CborLabel(1) val order: Double,
+    @CborLabel(1) override val order: Double,
     @CborLabel(2) val color: Int? = null,
-)
+) : Orderable, Identifiable {
+    override val id get() = cardId
+}
 
 @Composable
 internal expect inline fun <reified T : @Serializable Any> bringCodec(): Codec<T>
