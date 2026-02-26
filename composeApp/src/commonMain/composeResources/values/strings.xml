@@ -41,13 +41,13 @@
     <string name="miscellaneous">Miscellaneous</string>
     <string name="share_all">Share All</string>
     <string name="import_action">Import</string>
-    <string name="scan">Scan</string>
+    <string name="scan">Scan Screenshot</string>
     <string name="add_loyalty_card">Add Loyalty Card</string>
     <string name="import_loyalty_card">Import Loyalty Card</string>
     <string name="select_file">Select File</string>
     <string name="close">Close</string>
     <string name="remove">Remove</string>
-    <string name="long_click_to_remove">Long Click to Remove</string>
+    <string name="long_click_to_remove">Press to Remove</string>
     <string name="ok">OK</string>
     <string name="find_me_on">Find Me On</string>
 </resources>

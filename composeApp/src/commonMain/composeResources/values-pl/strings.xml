@@ -29,6 +29,7 @@
     <string name="copied_list_url_to_clipboard">Skopiowano URL listy do schowka</string>
     <string name="save">Zapisz</string>
     <string name="cancel">Anuluj</string>
+    <string name="clear">Wyczyść</string>
     <string name="select_color">Wybierz kolor motywu</string>
     <string name="theme_color">Kolor motywu</string>
     <string name="dark_mode">Tryb ciemny</string>
@@ -40,12 +41,13 @@
     <string name="cards">Karty</string>
     <string name="share_all">Udostępnij Wszystkie</string>
     <string name="import_action">Importuj</string>
-    <string name="scan">Skanuj</string>
+    <string name="scan">Skanuj zrzut ekranu</string>
     <string name="add_loyalty_card">Dodaj Kartę Lojalnościową</string>
     <string name="import_loyalty_card">Importuj Kartę Lojalnościową</string>
     <string name="select_file">Wybierz Plik</string>
     <string name="close">Zamknij</string>
     <string name="remove">Usuń</string>
+    <string name="long_click_to_remove">Naciśnij, aby usunąć</string>
     <string name="ok">OK</string>
     <string name="find_me_on">Znajdź mnie na</string>
 </resources>

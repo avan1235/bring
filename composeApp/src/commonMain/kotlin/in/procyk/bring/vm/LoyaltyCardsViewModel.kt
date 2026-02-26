@@ -7,6 +7,7 @@ import `in`.procyk.bring.LoyaltyCard
 import `in`.procyk.bring.LoyaltyCardData
 import `in`.procyk.bring.LoyaltyCardRpcPath
 import `in`.procyk.bring.service.LoyaltyCardService
+import `in`.procyk.bring.service.LoyaltyCardService.GetLoyaltyCardError
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.openFilePicker
@@ -19,15 +20,11 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     data class Card(
         val data: LoyaltyCardData,
-        val code: ByteArray,
         val order: Double,
         val color: Color?,
     )
 
     private val loyaltyCardService = durableRpcService<LoyaltyCardService>(LoyaltyCardRpcPath)
-
-    private val _codeColor: MutableStateFlow<Color?> = MutableStateFlow(null)
-    val codeColor: StateFlow<Color?> = _codeColor.asStateFlow()
 
     private val _cards: MutableStateFlow<List<Card>> = MutableStateFlow(emptyList())
     val cards: StateFlow<List<Card>> = _cards.asStateFlow()
@@ -43,38 +40,38 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     init {
         viewModelScope.launch {
-            val cache = mutableMapOf<Pair<LoyaltyCard, Color>, Card>()
-            combine(
-                context.storeFlow.map { it.loyaltyCards },
-                codeColor.filterNotNull(),
-            ) { a, b -> a to b }.distinctUntilChanged().collectLatest { (cards, color) ->
+            val cache = mutableMapOf<Uuid, Card>()
+            context.storeFlow.map { it.loyaltyCards }.distinctUntilChanged().collectLatest { cards ->
                 _isLoadingCards.value = true
                 try {
                     val sortedCards = cards.mapNotNull { card ->
-                        val key = card to color
+                        val key = card.cardId
                         cache[key] ?: run {
                             val cardData =
                                 loyaltyCardService.durableCall { getLoyaltyCard(card.cardId) }
-                                    .leftOrNull()
-                                    ?: return@run null
-                            val code = loyaltyCardService.durableCall {
-                                generateCode(
-                                    code = cardData.code,
-                                    color = color.toArgb(),
-                                    width = 800,
-                                    height = 400
-                                )
-                            }
-                                .leftOrNull()
-                                ?: return@run null
+                                    .fold(
+                                        ifLeft = { it },
+                                        ifRight = {
+                                            when (it) {
+                                                GetLoyaltyCardError.Internal -> {
+                                                    /* TODO: handle errors */
+                                                }
+
+                                                GetLoyaltyCardError.UnknownCardId -> updateConfig { store ->
+                                                    store.copy(loyaltyCards = store.loyaltyCards.filter { it.cardId != card.cardId })
+                                                }
+                                            }
+                                            return@run null
+                                        }
+                                    )
                             Card(
                                 data = cardData,
-                                code = code,
                                 order = card.order,
                                 color = card.color?.let(::Color)
                             )
                         }?.also { cache[key] = it }
                     }
+                        .asSequence()
                         .withIndex()
                         .groupBy { it.value.data.label }
                         .flatMap { (_, indexedCards) ->
@@ -91,7 +88,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
                                 }
                             }
                         }
-                        .sortedByDescending { it.value.order }
+                        .sortedBy { it.value.order }
                         .map { it.value }
                     _cards.value = sortedCards
                     resetUserInput()
@@ -146,6 +143,11 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
     fun removeCard(card: Card) {
         unselectCard()
         updateConfig { it.copy(loyaltyCards = it.loyaltyCards.filter { it.cardId != card.data.id }) }
+        viewModelScope.launch {
+            loyaltyCardService
+                .durableCall { removeLoyaltyCard(card.data.id, store.userId) }
+                .onRight { /* TODO: handle errors */ }
+        }
     }
 
     fun onUserInputChange(value: String) {
@@ -158,10 +160,6 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     fun selectCard(card: Card) {
         _selectedCard.update { card }
-    }
-
-    fun updateCodeColor(color: Color?) {
-        _codeColor.update { color }
     }
 
     fun shareCard(card: Card) {
@@ -184,8 +182,8 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
         val (toIndex, to) = cards.withIndex().firstOrNull { (_, item) -> item.data.id == toKey }
             ?: return
         val relativeOrder = when {
-            toIndex < fromIndex -> cards.getOrNull(toIndex - 1)?.order ?: (to.order + 1.0)
-            toIndex > fromIndex -> cards.getOrNull(toIndex + 1)?.order ?: (to.order - 1.0)
+            toIndex < fromIndex -> cards.getOrNull(toIndex - 1)?.order ?: (to.order - 1.0)
+            toIndex > fromIndex -> cards.getOrNull(toIndex + 1)?.order ?: (to.order + 1.0)
             else -> return
         }
         val updatedOrder = (to.order + relativeOrder) / 2.0

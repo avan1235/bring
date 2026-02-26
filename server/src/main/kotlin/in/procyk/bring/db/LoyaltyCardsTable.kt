@@ -13,7 +13,8 @@ internal object LoyaltyCardsTable : UUIDTable(name = "loyalty_cards") {
     val byUserId = uuid("by_user_id").index()
     val createdAt = timestamp("created_at")
     val codeFormat = enumeration("code_format", Code.Format::class)
-    val codeRawText = text("code_raw_text", eagerLoading = true)
+    val codeText = text("code_text", eagerLoading = true)
+    val codeBits = binary("code_bits")
 }
 
 internal class LoyaltyCardEntity(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -23,5 +24,6 @@ internal class LoyaltyCardEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var byUserId by LoyaltyCardsTable.byUserId
     var createdAt by LoyaltyCardsTable.createdAt
     var codeFormat by LoyaltyCardsTable.codeFormat
-    var codeRawText by LoyaltyCardsTable.codeRawText
+    var codeText by LoyaltyCardsTable.codeText
+    var codeBits by LoyaltyCardsTable.codeBits
 }

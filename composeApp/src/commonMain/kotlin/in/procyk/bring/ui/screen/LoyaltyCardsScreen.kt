@@ -1,7 +1,6 @@
 package `in`.procyk.bring.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,7 +18,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.decodeToImageBitmap
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import bring.composeapp.generated.resources.*
@@ -45,9 +43,6 @@ internal fun LoyaltyCardsScreen(
     padding: PaddingValues,
     vm: LoyaltyCardsViewModel
 ) = AppScreen("screen-loyalty-cards", padding) {
-    val onSurfaceColor = LocalColors.current.onSurface
-    LaunchedEffect(onSurfaceColor) { vm.updateCodeColor(onSurfaceColor) }
-
     var dialogAction by remember { mutableStateOf<InputDialogAction?>(null) }
     val cards by vm.cards.collectAsState()
     val selectedCard by vm.selectedCard.collectAsState()
@@ -82,7 +77,9 @@ internal fun LoyaltyCardsScreen(
                     .testTag("loyalty-card")
             ) {
                 ElevatedCard(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 4.dp, end = 16.dp),
                     shape = RoundedCornerShape(8.dp),
                     onClick = { vm.selectCard(card) }
                 ) {
@@ -132,7 +129,11 @@ internal fun LoyaltyCardsScreen(
         }
         item(key = "loyalty-cards-actions") {
             Row(
-                modifier = Modifier.fillParentMaxWidth(),
+                modifier = Modifier
+                    .padding(
+                        if (isLoadingCards || cards.isNotEmpty()) 8.dp else 0.dp
+                    )
+                    .fillParentMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 IconButton(
@@ -145,7 +146,7 @@ internal fun LoyaltyCardsScreen(
                             Icon(Icons.Outlined.Share)
                         }
                     },
-                    variant = IconButtonVariant.PrimaryOutlined,
+                    variant = IconButtonVariant.PrimaryGhost,
                     onClick = vm::shareAllCards,
                 )
                 IconButton(
@@ -173,7 +174,7 @@ internal fun LoyaltyCardsScreen(
                             Icon(Icons.Outlined.EditNote)
                         }
                     },
-                    variant = IconButtonVariant.PrimaryOutlined,
+                    variant = IconButtonVariant.PrimaryGhost,
                     onClick = { dialogAction = ImportById },
                 )
             }
@@ -278,14 +279,14 @@ internal fun LoyaltyCardsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Image(
-                            bitmap = it.code.decodeToImageBitmap(),
-                            contentDescription = null,
+                        CodeGenerator(
+                            code = it.data.code,
+                            color = LocalColors.current.onSurface,
+                            width = 256.dp,
                             modifier = Modifier.clickable(
                                 interactionSource = null,
                                 indication = null,
                             ) { visibleDetails = !visibleDetails }
-                                .requiredWidth(256.dp)
                         )
                     }
                     AnimatedVisibility(showRemoveNotification) {
@@ -297,7 +298,7 @@ internal fun LoyaltyCardsScreen(
                     }
                     AnimatedVisibility(visibleDetails) {
                         Text(
-                            text = it.data.code.rawText,
+                            text = it.data.code.text,
                             style = BringAppTheme.typography.body1,
                         )
                     }

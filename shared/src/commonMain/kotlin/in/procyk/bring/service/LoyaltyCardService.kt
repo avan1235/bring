@@ -31,6 +31,7 @@ interface LoyaltyCardService {
 
     suspend fun removeLoyaltyCard(
         cardId: Uuid,
+        byUserId: Uuid,
     ): Either<Unit, RemoveLoyaltyCardError>
 
     @Serializable

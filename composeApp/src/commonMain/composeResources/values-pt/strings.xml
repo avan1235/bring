@@ -28,6 +28,7 @@
     <string name="copied_list_url_to_clipboard">URL da lista copiada para a área de transferência</string>
     <string name="save">Salvar</string>
     <string name="cancel">Cancelar</string>
+    <string name="clear">Limpar</string>
     <string name="select_color">Selecionar Cor do Tema</string>
     <string name="theme_color">Cor do Tema</string>
     <string name="dark_mode">Modo Escuro</string>
@@ -40,12 +41,13 @@
     <string name="copied_card_id_to_clipboard">ID do cartão de fidelidade copiado para a área de transferência</string>
     <string name="share_all">Compartilhar Tudo</string>
     <string name="import_action">Importar</string>
-    <string name="scan">Escanear</string>
+    <string name="scan">Escanear captura de tela</string>
     <string name="add_loyalty_card">Adicionar Cartão de Fidelidade</string>
     <string name="import_loyalty_card">Importar Cartão de Fidelidade</string>
     <string name="select_file">Selecionar Arquivo</string>
     <string name="close">Fechar</string>
     <string name="remove">Remover</string>
+    <string name="long_click_to_remove">Pressione para remover</string>
     <string name="ok">OK</string>
     <string name="find_me_on">Encontre-me em</string>
 </resources>

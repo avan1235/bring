@@ -28,6 +28,7 @@
     <string name="copied_list_url_to_clipboard">Listen-URL in die Zwischenablage kopiert</string>
     <string name="save">Speichern</string>
     <string name="cancel">Abbrechen</string>
+    <string name="clear">Löschen</string>
     <string name="select_color">Themenfarbe auswählen</string>
     <string name="theme_color">Themenfarbe</string>
     <string name="dark_mode">Dunkelmodus</string>
@@ -40,12 +41,13 @@
     <string name="copied_card_id_to_clipboard">Treuekarten-ID in die Zwischenablage kopiert</string>
     <string name="share_all">Alle teilen</string>
     <string name="import_action">Importieren</string>
-    <string name="scan">Scannen</string>
+    <string name="scan">Screenshot scannen</string>
     <string name="add_loyalty_card">Treuekarte hinzufügen</string>
     <string name="import_loyalty_card">Treuekarte importieren</string>
     <string name="select_file">Datei auswählen</string>
     <string name="close">Schließen</string>
     <string name="remove">Entfernen</string>
+    <string name="long_click_to_remove">Zum Entfernen drücken</string>
     <string name="ok">OK</string>
     <string name="find_me_on">Finde mich auf</string>
 </resources>

@@ -1,6 +1,5 @@
 package `in`.procyk.bring
 
-import `in`.procyk.bring.service.LoyaltyCardService
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.cbor.CborLabel
 import kotlin.time.Instant
@@ -71,21 +70,55 @@ data class ShoppingListItemData(
 
 @Serializable
 data class Code(
-    @CborLabel(0) val rawText: String,
+    @CborLabel(0) val text: String,
     @CborLabel(1) val format: Format,
+    @CborLabel(2) val bits: Bits,
 ) {
     @Serializable
     enum class Format {
         QR_CODE, DATA_MATRIX, AZTEC, PDF_417, MAXICODE, CODE_128, CODE_39, CODE_93, EAN_13, EAN_8, UPC_A, UPC_E, ITF, CODABAR, RSS_14, RSS_EXPANDED, UPC_EAN_EXTENSION;
     }
+
+    @Serializable
+    data class Bits(
+        @CborLabel(0) val width: Int,
+        @CborLabel(1) val height: Int,
+        @CborLabel(2) val data: BooleanArray,
+    ) {
+        constructor(width: Int, height: Int, data: (Int, Int) -> Boolean) :
+                this(width, height, BooleanArray(width * height).apply {
+                    for (y in 0..<height) for (x in 0..<width) this[y * width + x] = data(x, y)
+                })
+
+        operator fun get(x: Int, y: Int): Boolean = data[y * width + x]
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+
+            other as Bits
+
+            if (width != other.width) return false
+            if (height != other.height) return false
+            if (!data.contentEquals(other.data)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = width
+            result = 31 * result + height
+            result = 31 * result + data.contentHashCode()
+            return result
+        }
+    }
+
+    operator fun get(x: Int, y: Int): Boolean = bits[x, y]
 }
 
 @Serializable
 data class LoyaltyCardData(
     @CborLabel(0) val id: Uuid,
     @CborLabel(1) val label: String,
-    @CborLabel(2) val byUserId: Uuid,
-    @Serializable(InstantSerializer::class)
-    @CborLabel(3) val createdAt: Instant,
-    @CborLabel(4) val code: Code,
+    @CborLabel(2) val code: Code,
 )

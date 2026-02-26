@@ -7,10 +7,11 @@ import `in`.procyk.bring.Code
 import `in`.procyk.bring.LoyaltyCardData
 import `in`.procyk.bring.code.CodeDetector
 import `in`.procyk.bring.code.CodeGenerator
+import `in`.procyk.bring.code.deserialize
+import `in`.procyk.bring.code.serialize
 import `in`.procyk.bring.db.LoyaltyCardEntity
 import `in`.procyk.bring.service.LoyaltyCardService.*
 import kotlinx.datetime.toDeprecatedInstant
-import kotlinx.datetime.toStdlibInstant
 import kotlin.time.Clock
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
@@ -34,7 +35,8 @@ internal class LoyaltyCardServiceImpl : LoyaltyCardService {
                 this.byUserId = byUserId.toJavaUuid()
                 this.createdAt = Clock.System.now().toDeprecatedInstant()
                 this.codeFormat = code.format
-                this.codeRawText = code.rawText
+                this.codeText = code.text
+                this.codeBits = code.bits.serialize()
             }.id.value.toKotlinUuid().left()
         }
     }
@@ -52,12 +54,14 @@ internal class LoyaltyCardServiceImpl : LoyaltyCardService {
 
     override suspend fun removeLoyaltyCard(
         cardId: Uuid,
+        byUserId: Uuid,
     ): Either<Unit, RemoveLoyaltyCardError> {
         val cardUUID = cardId.toJavaUuid()
         return txn(RemoveLoyaltyCardError.Internal) {
             val card = LoyaltyCardEntity.findById(cardUUID)
             when {
                 card == null -> RemoveLoyaltyCardError.UnknownCardId.right()
+                card.byUserId != byUserId.toJavaUuid() -> Unit.left()
                 else -> card.delete().left()
             }
         }
@@ -79,10 +83,9 @@ private fun LoyaltyCardEntity.toLoyaltyCardData(): LoyaltyCardData =
     LoyaltyCardData(
         id = id.value.toKotlinUuid(),
         label = label,
-        byUserId = byUserId.toKotlinUuid(),
-        createdAt = createdAt.toStdlibInstant(),
         code = Code(
-            rawText = codeRawText,
+            text = codeText,
+            bits = codeBits.deserialize(),
             format = codeFormat,
         )
     )

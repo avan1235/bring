@@ -28,6 +28,7 @@
     <string name="copied_list_url_to_clipboard">列表URL已复制到剪贴板</string>
     <string name="save">保存</string>
     <string name="cancel">取消</string>
+    <string name="clear">清除</string>
     <string name="select_color">选择主题颜色</string>
     <string name="theme_color">主题颜色</string>
     <string name="dark_mode">深色模式</string>
@@ -40,12 +41,13 @@
     <string name="copied_card_id_to_clipboard">会员卡ID已复制到剪贴板</string>
     <string name="share_all">全部分享</string>
     <string name="import_action">导入</string>
-    <string name="scan">扫描</string>
+    <string name="scan">扫描截图</string>
     <string name="add_loyalty_card">添加会员卡</string>
     <string name="import_loyalty_card">导入会员卡</string>
     <string name="select_file">选择文件</string>
     <string name="close">关闭</string>
     <string name="remove">删除</string>
+    <string name="long_click_to_remove">按下以移除</string>
     <string name="ok">确定</string>
     <string name="find_me_on">在这里找到我</string>
 </resources>
