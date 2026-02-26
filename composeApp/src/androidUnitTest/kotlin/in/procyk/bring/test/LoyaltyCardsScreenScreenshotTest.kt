@@ -30,7 +30,7 @@ internal class LoyaltyCardsScreenScreenshotTest : BringAppCreateScreenshotTest()
         config = {
             copy(
                 themeColor = Color.Red.toArgb(),
-                loyaltyCards = "ded26ce9-a424-4888-a87c-cb0c13f0f125;450a3662-c8bb-4da9-8fee-13f71480ceaa;656bcca2-2856-42b5-ae9f-dfdf3b209005;cd048d2e-3c1c-4c26-b7af-1f2ab02330ad"
+                loyaltyCards = "76798ee6-6385-4bc6-964a-e6a8a8938981;6022262e-b31a-450c-a83b-6c9f93bfa529;8441fed0-b99b-49e9-9cb7-b7e9effb8774"
                     .split(';')
                     .mapIndexed { idx, uuid ->
                         LoyaltyCard(
@@ -71,6 +71,6 @@ internal class LoyaltyCardsScreenScreenshotTest : BringAppCreateScreenshotTest()
     ) {
         navigateLoyaltyCardsScreen()
 
-        waitUntilNodeCount("loyalty-card", 4)
+        waitUntilNodeCount("loyalty-card", 3)
     }
 }
