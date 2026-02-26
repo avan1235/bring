@@ -156,7 +156,8 @@ internal class EditListScreenViewModel(
     private val _refreshingCount: MutableStateFlow<Int> = MutableStateFlow(0)
     val isRefreshing: StateFlow<Boolean> = _refreshingCount.map { it > 0 }.state(false)
 
-    val enableEditMode: StateFlow<Boolean> = storeFlow.map { it.enableEditMode }.state(store.enableEditMode)
+    val enableEditMode: StateFlow<Boolean> =
+        storeFlow.map { it.enableShoppingListEditMode }.state(store.enableShoppingListEditMode)
 
     private val _showFab: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val showFab: StateFlow<Boolean> =

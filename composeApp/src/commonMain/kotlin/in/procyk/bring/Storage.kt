@@ -20,7 +20,7 @@ import kotlin.uuid.Uuid
 @Serializable
 data class BringStore(
     @CborLabel(0) val userId: Uuid = Uuid.random(),
-    @CborLabel(1) val enableEditMode: Boolean = true,
+    @CborLabel(1) val enableShoppingListEditMode: Boolean = true,
     @CborLabel(2) val showUncheckedFirst: Boolean = false,
     @CborLabel(3) val showSuggestions: Boolean = true,
     @CborLabel(4) val lastListId: String? = null,
@@ -33,6 +33,8 @@ data class BringStore(
     @CborLabel(11) val useHaptics: Boolean = true,
     @CborLabel(12) val useBottomNavigation: Boolean = defaultUseBottomNavigation,
     @CborLabel(17) val loyaltyCards: List<LoyaltyCard> = emptyList(),
+    @CborLabel(18) val enableCardsEditMode: Boolean = true,
+    @CborLabel(19) val showCardsLabels: Boolean = true,
 ) {
     companion object {
         val Default: BringStore = BringStore()

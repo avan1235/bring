@@ -2,6 +2,7 @@
     <string name="app_name">Bring!</string>
     <string name="new_list">Nueva Lista</string>
     <string name="shopping_list">Lista de Compras</string>
+    <string name="cards">Tarjetas</string>
     <string name="loading_list">Cargando Lista de Compras...</string>
     <string name="create_list">Crear Nueva Lista</string>
     <string name="create">Crear</string>
@@ -11,8 +12,8 @@
     <string name="favorites">Favoritos</string>
     <string name="enable_edit_mode">Habilitar modo de edición</string>
     <string name="show_unchecked_first">Mostrar primero artículos sin marcar</string>
-    <string name="show_favorite_elements">Mostrar elementos favoritos</string>
     <string name="show_suggestions">Mostrar sugerencias de artículos</string>
+    <string name="show_favorite_elements">Mostrar elementos favoritos</string>
     <string name="theme">Tema</string>
     <string name="system_theme">Sistema</string>
     <string name="light_theme">Claro</string>
@@ -25,6 +26,7 @@
     <string name="favorite_shopping_lists">Listas de compras favoritas</string>
     <string name="favorite_list_elements">Elementos de lista favoritos</string>
     <string name="copied_list_id_to_clipboard">ID de lista copiado al portapapeles</string>
+    <string name="copied_card_id_to_clipboard">ID de tarjeta de fidelidad copiado al portapapeles</string>
     <string name="copied_list_url_to_clipboard">URL de lista copiada al portapapeles</string>
     <string name="save">Guardar</string>
     <string name="cancel">Cancelar</string>
@@ -37,8 +39,6 @@
     <string name="use_haptics">Usar retroalimentación háptica</string>
     <string name="use_bottom_navigation">Usar navegación inferior</string>
     <string name="miscellaneous">Varios</string>
-    <string name="cards">Tarjetas</string>
-    <string name="copied_card_id_to_clipboard">ID de tarjeta de fidelidad copiado al portapapeles</string>
     <string name="share_all">Compartir Todo</string>
     <string name="import_action">Importar</string>
     <string name="scan">Escanear captura de pantalla</string>
@@ -50,4 +50,5 @@
     <string name="long_click_to_remove">Presiona para eliminar</string>
     <string name="ok">Aceptar</string>
     <string name="find_me_on">Encuéntrame en</string>
+    <string name="show_color_labels">Mostrar etiquetas de color</string>
 </resources>

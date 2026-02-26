@@ -8,8 +8,14 @@ import kotlinx.coroutines.flow.map
 
 internal class SettingsViewModel(context: Context) : AbstractViewModel(context) {
 
-    val enableEditMode: StateFlow<Boolean> =
-        storeFlow.map { it.enableEditMode }.state(storeFlow.value.enableEditMode)
+    val enableShoppingListEditMode: StateFlow<Boolean> =
+        storeFlow.map { it.enableShoppingListEditMode }.state(storeFlow.value.enableShoppingListEditMode)
+
+    val enableCardsEditMode: StateFlow<Boolean> =
+        storeFlow.map { it.enableCardsEditMode }.state(storeFlow.value.enableCardsEditMode)
+
+    val showCardsLabels: StateFlow<Boolean> =
+        storeFlow.map { it.showCardsLabels }.state(storeFlow.value.showCardsLabels)
 
     val showUncheckedFirst: StateFlow<Boolean> =
         storeFlow.map { it.showUncheckedFirst }.state(storeFlow.value.showUncheckedFirst)
@@ -38,8 +44,16 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
     val useBottomNavigation: StateFlow<Boolean> =
         context.useBottomNavigation
 
-    fun onEditModeChanged(value: Boolean) {
-        updateConfig { it.copy(enableEditMode = value) }
+    fun onShoppingListEditModeChanged(value: Boolean) {
+        updateConfig { it.copy(enableShoppingListEditMode = value) }
+    }
+
+    fun onCardsEditModeChanged(value: Boolean) {
+        updateConfig { it.copy(enableCardsEditMode = value) }
+    }
+
+    fun onShowCardsLabelsChanged(value: Boolean) {
+        updateConfig { it.copy(showCardsLabels = value) }
     }
 
     fun onShowUncheckedFirstChanged(value: Boolean) {

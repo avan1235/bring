@@ -46,7 +46,7 @@ internal fun LazyItemScope.ReorderableItemRow(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.background(BringAppTheme.colors.surface).fillMaxWidth()
         ) {
-            IconButton(
+            if (enabled) IconButton(
                 modifier = Modifier.draggableHandle().compactButtonMinSize(),
                 variant = IconButtonVariant.Ghost,
                 contentPadding = CompactButtonPadding,

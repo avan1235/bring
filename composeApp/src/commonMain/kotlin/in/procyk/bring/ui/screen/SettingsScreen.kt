@@ -50,7 +50,7 @@ internal fun SettingsScreen(
     ) {
         Spacer(modifier = Modifier.height(16.dp))
         SettingsCategoryName(Res.string.shopping_list)
-        SettingSwitchRow(Res.string.enable_edit_mode, vm.enableEditMode, vm::onEditModeChanged)
+        SettingSwitchRow(Res.string.enable_edit_mode, vm.enableShoppingListEditMode, vm::onShoppingListEditModeChanged)
         SettingSwitchRow(Res.string.show_unchecked_first, vm.showUncheckedFirst, vm::onShowUncheckedFirstChanged)
         SettingSwitchRow(Res.string.show_favorite_elements, vm.showFavoriteElements, vm::onShowFavoriteElementsChanged)
         SettingSwitchRow(Res.string.show_suggestions, vm.showSuggestions, vm::onShowSuggestionsChanged)
@@ -64,6 +64,9 @@ internal fun SettingsScreen(
                 isSecure = true,
             )
         }
+        SettingsCategoryName(Res.string.cards)
+        SettingSwitchRow(Res.string.enable_edit_mode, vm.enableCardsEditMode, vm::onCardsEditModeChanged)
+        SettingSwitchRow(Res.string.show_color_labels, vm.showCardsLabels, vm::onShowCardsLabelsChanged)
         SettingsCategoryName(Res.string.theme)
         SettingSelectionRow(Res.string.dark_mode, vm.theme, vm::onThemeChanged, Theme.entries, optionLabel = {
             when (it) {

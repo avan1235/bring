@@ -2,6 +2,7 @@
     <string name="app_name">Bring!</string>
     <string name="new_list">Nuova Lista</string>
     <string name="shopping_list">Lista della Spesa</string>
+    <string name="cards">Carte</string>
     <string name="loading_list">Caricamento Lista della Spesa...</string>
     <string name="create_list">Crea Nuova Lista</string>
     <string name="create">Crea</string>
@@ -25,6 +26,7 @@
     <string name="favorite_shopping_lists">Liste della spesa preferite</string>
     <string name="favorite_list_elements">Elementi di lista preferiti</string>
     <string name="copied_list_id_to_clipboard">ID della lista copiato negli appunti</string>
+    <string name="copied_card_id_to_clipboard">ID della carta fedeltà copiato negli appunti</string>
     <string name="copied_list_url_to_clipboard">URL della lista copiato negli appunti</string>
     <string name="save">Salva</string>
     <string name="cancel">Annulla</string>
@@ -37,8 +39,6 @@
     <string name="use_haptics">Usa il feedback aptico</string>
     <string name="use_bottom_navigation">Usa la navigazione inferiore</string>
     <string name="miscellaneous">Varie</string>
-    <string name="cards">Carte</string>
-    <string name="copied_card_id_to_clipboard">ID della carta fedeltà copiato negli appunti</string>
     <string name="share_all">Condividi Tutto</string>
     <string name="import_action">Importa</string>
     <string name="scan">Scansiona screenshot</string>
@@ -50,4 +50,5 @@
     <string name="long_click_to_remove">Premi per rimuovere</string>
     <string name="ok">OK</string>
     <string name="find_me_on">Trovami su</string>
+    <string name="show_color_labels">Mostra etichette colorate</string>
 </resources>

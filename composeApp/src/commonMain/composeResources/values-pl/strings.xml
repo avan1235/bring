@@ -2,6 +2,7 @@
     <string name="app_name">Bring!</string>
     <string name="new_list">Nowa lista</string>
     <string name="shopping_list">Lista zakupów</string>
+    <string name="cards">Karty</string>
     <string name="loading_list">Ładowanie listy zakupów...</string>
     <string name="create_list">Utwórz nową listę</string>
     <string name="create">Utwórz</string>
@@ -38,7 +39,6 @@
     <string name="use_haptics">Użyj wibracji</string>
     <string name="use_bottom_navigation">Użyj dolnej nawigacji</string>
     <string name="miscellaneous">Różne</string>
-    <string name="cards">Karty</string>
     <string name="share_all">Udostępnij Wszystkie</string>
     <string name="import_action">Importuj</string>
     <string name="scan">Skanuj zrzut ekranu</string>
@@ -50,4 +50,5 @@
     <string name="long_click_to_remove">Naciśnij, aby usunąć</string>
     <string name="ok">OK</string>
     <string name="find_me_on">Znajdź mnie na</string>
+    <string name="show_color_labels">Pokaż etykiety kolorów</string>
 </resources>

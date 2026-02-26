@@ -47,6 +47,7 @@ internal fun LoyaltyCardsScreen(
     val cards by vm.cards.collectAsState()
     val selectedCard by vm.selectedCard.collectAsState()
     val isLoadingCards by vm.isLoadingCards.collectAsState()
+    val enableEditMode by vm.enableEditMode.collectAsState()
     val listState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->
         vm.onUpdatedItemOrder(from.key as Uuid, to.key as Uuid, cards)
@@ -72,16 +73,17 @@ internal fun LoyaltyCardsScreen(
             ReorderableItemRow(
                 state = reorderableLazyListState,
                 key = card.data.id,
+                enabled = enableEditMode,
                 modifier = Modifier
-                    .padding(start = 4.dp)
+                    .padding(start = if (enableEditMode) 4.dp else 16.dp)
                     .fillParentMaxWidth()
                     .animateItem()
                     .testTag("loyalty-card")
             ) {
+                if (enableEditMode) Spacer(Modifier.width(4.dp))
                 ElevatedCard(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 4.dp),
+                        .fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     onClick = { vm.selectCard(card) }
                 ) {
@@ -92,14 +94,24 @@ internal fun LoyaltyCardsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         val selectedColor by vm.cardColor(card).collectAsState()
+                        val showCardsLabels by vm.showCardsLabels.collectAsState()
                         val previousColor = remember { mutableStateOf<Color?>(null) }
-                        IconButton(
-                            variant = IconButtonVariant.Ghost,
-                            onClick = { previousColor.value = selectedColor },
-                        ) {
-                            Icon(
+                        when {
+                            !showCardsLabels -> {}
+                            enableEditMode -> IconButton(
+                                variant = IconButtonVariant.Ghost,
+                                onClick = { previousColor.value = selectedColor },
+                            ) {
+                                Icon(
+                                    imageVector = if (selectedColor != Color.Unspecified) Icons.AutoMirrored.TwoTone.Label else Icons.AutoMirrored.Outlined.Label,
+                                    tint = if (selectedColor != Color.Unspecified) selectedColor else LocalContentColor.current
+                                )
+                            }
+
+                            else -> Icon(
                                 imageVector = if (selectedColor != Color.Unspecified) Icons.AutoMirrored.TwoTone.Label else Icons.AutoMirrored.Outlined.Label,
-                                tint = if (selectedColor != Color.Unspecified) selectedColor else LocalContentColor.current
+                                tint = if (selectedColor != Color.Unspecified) selectedColor else LocalContentColor.current,
+                                modifier = Modifier.padding(8.dp)
                             )
                         }
                         Spacer(modifier = Modifier.width(8.dp))
@@ -129,7 +141,7 @@ internal fun LoyaltyCardsScreen(
                 }
             }
         }
-        item(key = "loyalty-cards-actions") {
+        if (enableEditMode) item(key = "loyalty-cards-actions") {
             Row(
                 modifier = Modifier
                     .padding(

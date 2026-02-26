@@ -38,6 +38,10 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
     private val _isLoadingCards: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoadingCards: StateFlow<Boolean> = _isLoadingCards.asStateFlow()
 
+    val enableEditMode: StateFlow<Boolean> = storeFlow.map { it.enableCardsEditMode }.state(store.enableCardsEditMode)
+
+    val showCardsLabels: StateFlow<Boolean> = storeFlow.map { it.showCardsLabels }.state(store.showCardsLabels)
+
     init {
         viewModelScope.launch {
             val cache = mutableMapOf<Uuid, Card>()
