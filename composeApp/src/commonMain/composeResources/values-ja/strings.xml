@@ -47,7 +47,7 @@
     <string name="select_file">ファイルを選択</string>
     <string name="close">閉じる</string>
     <string name="remove">削除</string>
-    <string name="long_click_to_remove">押して削除</string>
+    <string name="long_click_to_remove">長押しして削除</string>
     <string name="ok">OK</string>
     <string name="find_me_on">リンク:</string>
     <string name="show_color_labels">カラーラベルを表示</string>

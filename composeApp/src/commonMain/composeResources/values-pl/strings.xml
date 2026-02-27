@@ -47,7 +47,7 @@
     <string name="select_file">Wybierz Plik</string>
     <string name="close">Zamknij</string>
     <string name="remove">Usuń</string>
-    <string name="long_click_to_remove">Naciśnij, aby usunąć</string>
+    <string name="long_click_to_remove">Przytrzymaj, aby usunąć</string>
     <string name="ok">OK</string>
     <string name="find_me_on">Znajdź mnie na</string>
     <string name="show_color_labels">Pokaż etykiety kolorów</string>

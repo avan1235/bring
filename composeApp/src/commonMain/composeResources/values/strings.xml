@@ -47,7 +47,7 @@
     <string name="select_file">Select File</string>
     <string name="close">Close</string>
     <string name="remove">Remove</string>
-    <string name="long_click_to_remove">Press to Remove</string>
+    <string name="long_click_to_remove">Press Long to Remove</string>
     <string name="ok">OK</string>
     <string name="find_me_on">Find Me On</string>
     <string name="show_color_labels">Show color labels</string>

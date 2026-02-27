@@ -47,7 +47,7 @@
     <string name="select_file">Выбрать файл</string>
     <string name="close">Закрыть</string>
     <string name="remove">Удалить</string>
-    <string name="long_click_to_remove">Нажмите для удаления</string>
+    <string name="long_click_to_remove">Нажмите и удерживайте для удаления</string>
     <string name="ok">ОК</string>
     <string name="find_me_on">Найти меня:</string>
     <string name="show_color_labels">Показывать цветовые метки</string>

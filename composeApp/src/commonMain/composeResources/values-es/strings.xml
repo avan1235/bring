@@ -47,7 +47,7 @@
     <string name="select_file">Seleccionar Archivo</string>
     <string name="close">Cerrar</string>
     <string name="remove">Eliminar</string>
-    <string name="long_click_to_remove">Presiona para eliminar</string>
+    <string name="long_click_to_remove">Mantén presionado para eliminar</string>
     <string name="ok">Aceptar</string>
     <string name="find_me_on">Encuéntrame en</string>
     <string name="show_color_labels">Mostrar etiquetas de color</string>

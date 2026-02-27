@@ -304,17 +304,17 @@ internal fun LoyaltyCardsScreen(
                             ) { visibleDetails = !visibleDetails }
                         )
                     }
+                    AnimatedVisibility(visibleDetails) {
+                        Text(
+                            text = it.data.code.text,
+                            style = BringAppTheme.typography.body1,
+                        )
+                    }
                     AnimatedVisibility(showRemoveNotification) {
                         Text(
                             text = stringResource(Res.string.long_click_to_remove),
                             style = BringAppTheme.typography.body1,
                             color = BringAppTheme.colors.textSecondary,
-                        )
-                    }
-                    AnimatedVisibility(visibleDetails) {
-                        Text(
-                            text = it.data.code.text,
-                            style = BringAppTheme.typography.body1,
                         )
                     }
                 }
