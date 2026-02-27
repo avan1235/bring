@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import bring.composeapp.generated.resources.*
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import org.jetbrains.compose.resources.stringResource
@@ -18,6 +19,7 @@ internal fun SelectColorDialog(
     selectedColor: Color,
     previousColor: MutableState<Color?>,
     onColorReset: (() -> Unit)? = null,
+    showBrightnessSlider: Boolean = true,
     onColorSaved: (Color) -> Unit,
 ) {
     AnimatedVisibility(previousColor.value != null) {
@@ -66,6 +68,14 @@ internal fun SelectColorDialog(
                         controller = controller,
                         initialColor = selectedColor,
                         onColorChanged = { onColorSaved(it.color) }
+                    )
+                    if (showBrightnessSlider) BrightnessSlider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                            .height(32.dp),
+                        controller = controller,
+                        initialColor = selectedColor,
                     )
                 }
             },

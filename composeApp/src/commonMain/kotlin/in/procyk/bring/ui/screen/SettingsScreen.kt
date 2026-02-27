@@ -273,6 +273,6 @@ private inline fun SettingColorPickerRow(
         }
     }
 
-    SelectColorDialog(selectedColor, previousColor) { onColorChanged(it) }
+    SelectColorDialog(selectedColor, previousColor, showBrightnessSlider = false) { onColorChanged(it) }
 }
 
