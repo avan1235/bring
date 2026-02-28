@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.automirrored.twotone.Label
 import androidx.compose.material.icons.outlined.EditNote
+import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.outlined.NewLabel
 import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.Share
@@ -125,7 +126,7 @@ internal fun LoyaltyCardsScreen(
                             variant = IconButtonVariant.Ghost,
                             onClick = { vm.shareCard(card) },
                         ) {
-                            Icon(Icons.Outlined.Share)
+                            Icon(Icons.Outlined.IosShare)
                         }
                         SelectColorDialog(
                             selectedColor = selectedColor,
