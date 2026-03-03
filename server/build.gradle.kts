@@ -55,6 +55,7 @@ dependencies {
 
     implementation(libs.zxing.core)
     implementation(libs.pngj)
+    implementation(libs.jpegdecoder)
 
     testImplementation(libs.kotlin.test)
     testImplementation(libs.kotlinx.coroutines.test)

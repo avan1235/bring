@@ -108,7 +108,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
         val label = userInput.value
         viewModelScope.launch {
             val file =
-                FileKit.openFilePicker(type = FileKitType.File("png", "PNG")) ?: return@launch
+                FileKit.openFilePicker(type = SUPPORTED_IMAGE_FORMATS) ?: return@launch
             val image = file.readBytes()
             loyaltyCardService
                 .durableCall { createLoyaltyCard(label, image, userId) }
@@ -202,3 +202,5 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 }
 
 private const val CARD_ID_SEPARATOR = ";"
+
+private val SUPPORTED_IMAGE_FORMATS = FileKitType.File("png", "PNG", "jpg", "JPG", "jpeg", "JPEG")

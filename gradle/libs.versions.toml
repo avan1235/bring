@@ -12,6 +12,7 @@ buildConfig = "6.0.7"
 compose-multiplatform = "1.10.1"
 androidx-compose-ui = "1.10.3"
 compose-hot-reload = "1.0.0"
+jpegdecoder = "0.13"
 pngj = "2.1.0"
 zxing = "3.5.4"
 kotlin = "2.3.0"
@@ -52,6 +53,7 @@ androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose-ui" }
 androidx-test-ext-junit = { module = "androidx.test.ext:junit-ktx", version.ref = "androidx-test-ext" }
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose-ui" }
+jpegdecoder = { module = "im.bci:jpegdecoder", version.ref = "jpegdecoder" }
 pngj = { module = "ar.com.hjg:pngj", version.ref = "pngj" }
 zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

@@ -5,9 +5,12 @@ import ar.com.hjg.pngj.PngReader
 import com.google.zxing.*
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.common.HybridBinarizer
+import de.matthiasmann.jpegdecoder.JPEGDecoder
+import de.matthiasmann.jpegdecoder.YUVtoRGB
 import `in`.procyk.bring.Code
 import java.io.ByteArrayInputStream
 import java.lang.System.arraycopy
+import java.nio.ByteBuffer
 import com.google.zxing.aztec.detector.Detector as AztecDetector
 import com.google.zxing.datamatrix.detector.Detector as DataMatrixDetector
 import com.google.zxing.pdf417.detector.Detector as PDF417Detector
@@ -16,7 +19,11 @@ import com.google.zxing.qrcode.detector.Detector as QRCodeDetector
 data object CodeDetector {
 
     fun detectSingle(imageBytes: ByteArray): Code? {
-        val luminanceData = decodePngToLuminance(imageBytes)
+        val luminanceData = when {
+            imageBytes.isPng() -> decodePngToLuminance(imageBytes)
+            imageBytes.isJpeg() -> decodeJpegToLuminance(imageBytes)
+            else -> null
+        } ?: return null
         val source = ByteArrayLuminanceSource(luminanceData.width, luminanceData.height, luminanceData.luminance)
         val bitmap = BinaryBitmap(HybridBinarizer(source))
         val hints = buildHints()
@@ -89,9 +96,7 @@ data object CodeDetector {
         BarcodeFormat.UPC_EAN_EXTENSION,
     )
 
-    private fun decodePngToLuminance(bytes: ByteArray): LuminanceData {
-        require(bytes.isNotEmpty()) { "Image byte array must not be empty" }
-
+    private fun decodePngToLuminance(bytes: ByteArray): LuminanceData? = runCatching {
         ByteArrayInputStream(bytes).use { stream ->
             val reader = PngReader(stream)
             val info = reader.imgInfo
@@ -148,9 +153,9 @@ data object CodeDetector {
                 }
             }
             reader.end()
-            return LuminanceData(width, height, luminanceData)
+            LuminanceData(width, height, luminanceData)
         }
-    }
+    }.getOrNull()
 
     private fun buildHints(): Map<DecodeHintType, Any> = mapOf(
         DecodeHintType.TRY_HARDER to true,
@@ -162,6 +167,30 @@ data object CodeDetector {
         val height: Int,
         val luminance: ByteArray,
     )
+
+    private fun decodeJpegToLuminance(bytes: ByteArray): LuminanceData? = runCatching {
+        ByteArrayInputStream(bytes).use { stream ->
+            val decoder = JPEGDecoder(stream)
+            decoder.decodeHeader()
+            val width = decoder.imageWidth
+            val height = decoder.imageHeight
+            if (!decoder.startDecode()) return null
+
+            val stride = width * 3
+            val rgb = ByteBuffer.allocate(stride * height)
+            decoder.decode(rgb, stride, decoder.numMCURows, YUVtoRGB.instance)
+            rgb.flip()
+
+            val luminanceData = ByteArray(width * height)
+            for (i in 0..<width * height) {
+                val r = rgb.get(i * 3).toInt() and 0xFF
+                val g = rgb.get(i * 3 + 1).toInt() and 0xFF
+                val b = rgb.get(i * 3 + 2).toInt() and 0xFF
+                luminanceData[i] = ((306 * r + 601 * g + 117 * b) shr 10).coerceIn(0, 255).toByte()
+            }
+            LuminanceData(width, height, luminanceData)
+        }
+    }.getOrNull()
 
     private class ByteArrayLuminanceSource(
         width: Int,
@@ -200,3 +229,17 @@ data object CodeDetector {
         }
     }
 }
+
+private fun ByteArray.isPng(): Boolean = size > 7
+        && (this[0].toInt() and 0xFF) == 0x89
+        && (this[1].toInt() and 0xFF) == 0x50
+        && (this[2].toInt() and 0xFF) == 0x4E
+        && (this[3].toInt() and 0xFF) == 0x47
+        && (this[4].toInt() and 0xFF) == 0x0D
+        && (this[5].toInt() and 0xFF) == 0x0A
+        && (this[6].toInt() and 0xFF) == 0x1A
+        && (this[7].toInt() and 0xFF) == 0x0A
+
+private fun ByteArray.isJpeg(): Boolean = size > 2
+        && (this[0].toInt() and 0xFF) == 0xFF
+        && (this[1].toInt() and 0xFF) == 0xD8
