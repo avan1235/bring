@@ -70,10 +70,11 @@ data object CodeDetector {
                 val result = PDF417Detector.detect(bitmap, hints, true)
                 val points = result.points.getOrNull(0) ?: return null
                 val bits = result.bits
-                val minX = points.minOfOrNull { it.x }?.toInt() ?: 0
-                val maxX = points.maxOfOrNull { it.x }?.toInt() ?: 0
-                val minY = points.minOfOrNull { it.y }?.toInt() ?: 0
-                val maxY = points.maxOfOrNull { it.y }?.toInt() ?: 0
+                val minX = (points.minOfOrNull { it.x }?.toInt() ?: 0).coerceAtLeast(0)
+                val maxX = (points.maxOfOrNull { it.x }?.toInt() ?: 0).coerceAtMost(bits.width - 1)
+                val minY = (points.minOfOrNull { it.y }?.toInt() ?: 0).coerceAtLeast(0)
+                val maxY = (points.maxOfOrNull { it.y }?.toInt() ?: 0).coerceAtMost(bits.height - 1)
+
                 BitMatrix(maxX - minX + 1, maxY - minY + 1).apply {
                     for (x in minX..maxX) for (y in minY..maxY) if (bits[x, y]) set(x - minX, y - minY)
                 }
@@ -104,8 +105,11 @@ data object CodeDetector {
             val height = info.rows
             val channels = info.channels
             val hasAlpha = info.alpha
+            val bitDepth = info.bitDepth
 
             val luminanceData = ByteArray(width * height)
+            val scale = if (bitDepth < 8) 255 / ((1 shl bitDepth) - 1) else 1
+            val shift = if (bitDepth == 16) 8 else 0
 
             for (y in 0..<height) {
                 val line = reader.readRow() as ImageLineInt
@@ -120,16 +124,16 @@ data object CodeDetector {
                     when {
                         channels >= 3 -> {
                             val offset = x * channels
-                            a = if (hasAlpha) scanline[offset + 3] else 255
-                            r = scanline[offset]
-                            g = scanline[offset + 1]
-                            b = scanline[offset + 2]
+                            a = if (hasAlpha) ((scanline[offset + 3] shr shift) * scale) else 255
+                            r = (scanline[offset] shr shift) * scale
+                            g = (scanline[offset + 1] shr shift) * scale
+                            b = (scanline[offset + 2] shr shift) * scale
                         }
 
                         channels == 2 -> { // grayscale + alpha
                             val offset = x * 2
-                            a = scanline[offset + 1]
-                            val gray = scanline[offset]
+                            a = (scanline[offset + 1] shr shift) * scale
+                            val gray = (scanline[offset] shr shift) * scale
                             r = gray
                             g = gray
                             b = gray
@@ -137,7 +141,7 @@ data object CodeDetector {
 
                         else -> { // grayscale
                             a = 255
-                            val gray = scanline[x]
+                            val gray = (scanline[x] shr shift) * scale
                             r = gray
                             g = gray
                             b = gray
