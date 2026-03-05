@@ -17,6 +17,9 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
     val showCardsLabels: StateFlow<Boolean> =
         storeFlow.map { it.showCardsLabels }.state(storeFlow.value.showCardsLabels)
 
+    val useCardsCache: StateFlow<Boolean> =
+        storeFlow.map { it.useCardsCache }.state(storeFlow.value.useCardsCache)
+
     val showUncheckedFirst: StateFlow<Boolean> =
         storeFlow.map { it.showUncheckedFirst }.state(storeFlow.value.showUncheckedFirst)
 
@@ -54,6 +57,10 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
 
     fun onShowCardsLabelsChanged(value: Boolean) {
         updateConfig { it.copy(showCardsLabels = value) }
+    }
+
+    fun onUseCardsCacheChanged(value: Boolean) {
+        updateConfig { it.copy(useCardsCache = value) }
     }
 
     fun onShowUncheckedFirstChanged(value: Boolean) {

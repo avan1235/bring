@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Bring!</string>
     <string name="new_list">新列表</string>
-    <string name="shopping_list">购物清单</string>
+    <string name="lists">列表</string>
+    <string name="shopping_lists">购物列表</string>
     <string name="cards">卡片</string>
+    <string name="loyalty_cards">会员卡</string>
     <string name="loading_list">正在加载购物清单...</string>
     <string name="create_list">创建新列表</string>
     <string name="create">创建</string>
@@ -51,4 +53,5 @@
     <string name="ok">确定</string>
     <string name="find_me_on">在这里找到我</string>
     <string name="show_color_labels">显示颜色标签</string>
+    <string name="use_cards_cache">缓存数据</string>
 </resources>

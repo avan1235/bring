@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import bring.composeapp.generated.resources.Res
 import bring.composeapp.generated.resources.cards
 import bring.composeapp.generated.resources.favorites
+import bring.composeapp.generated.resources.loyalty_cards
 import bring.composeapp.generated.resources.settings
 import `in`.procyk.bring.*
 import `in`.procyk.bring.ComposeAppConfig.CLIENT_HOST
@@ -107,7 +108,7 @@ internal abstract class AbstractViewModel(
         fun navigateCards() {
             appScope.launch {
                 updateListLocationPresentation(null)
-                _topBarText.value = getString(Res.string.cards)
+                _topBarText.value = getString(Res.string.loyalty_cards)
                 withContext(Dispatchers.Main) {
                     navController.navigate(Screen.LoyaltyCards)
                 }

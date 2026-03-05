@@ -35,21 +35,13 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import bring.composeapp.generated.resources.Res
-import bring.composeapp.generated.resources.cards
-import bring.composeapp.generated.resources.favorites
-import bring.composeapp.generated.resources.settings
-import bring.composeapp.generated.resources.shopping_list
+import bring.composeapp.generated.resources.*
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.components.*
 import `in`.procyk.bring.ui.components.snackbar.Snackbar
 import `in`.procyk.bring.ui.components.snackbar.SnackbarHost
 import `in`.procyk.bring.ui.components.topbar.TopBarDefaults
-import `in`.procyk.bring.ui.screen.LoyaltyCardsScreen
-import `in`.procyk.bring.ui.screen.CreateListScreen
-import `in`.procyk.bring.ui.screen.EditListScreen
-import `in`.procyk.bring.ui.screen.FavoritesScreen
-import `in`.procyk.bring.ui.screen.SettingsScreen
+import `in`.procyk.bring.ui.screen.*
 import `in`.procyk.bring.vm.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.StringResource
@@ -282,7 +274,7 @@ private val NavBarTarget.filledIcon: ImageVector
 
 private val NavBarTarget.label: StringResource
     get() = when (this) {
-        NavBarTarget.Main -> Res.string.shopping_list
+        NavBarTarget.Main -> Res.string.lists
         NavBarTarget.LoyaltyCards -> Res.string.cards
         NavBarTarget.Favourites -> Res.string.favorites
         NavBarTarget.Settings -> Res.string.settings

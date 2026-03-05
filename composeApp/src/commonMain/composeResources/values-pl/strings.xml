@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Bring!</string>
     <string name="new_list">Nowa lista</string>
-    <string name="shopping_list">Lista zakupów</string>
+    <string name="lists">Listy</string>
+    <string name="shopping_lists">Listy zakupów</string>
     <string name="cards">Karty</string>
+    <string name="loyalty_cards">Karty lojalnościowe</string>
     <string name="loading_list">Ładowanie listy zakupów...</string>
     <string name="create_list">Utwórz nową listę</string>
     <string name="create">Utwórz</string>
@@ -51,4 +53,5 @@
     <string name="ok">OK</string>
     <string name="find_me_on">Znajdź mnie na</string>
     <string name="show_color_labels">Pokaż etykiety kolorów</string>
+    <string name="use_cards_cache">Pamięć podręczna danych</string>
 </resources>

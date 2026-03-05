@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Bring!</string>
     <string name="new_list">Новый список</string>
-    <string name="shopping_list">Список покупок</string>
+    <string name="lists">Списки</string>
+    <string name="shopping_lists">Списки покупок</string>
     <string name="cards">Карты</string>
+    <string name="loyalty_cards">Карты лояльности</string>
     <string name="loading_list">Загрузка списка покупок...</string>
     <string name="create_list">Создать новый список</string>
     <string name="create">Создать</string>
@@ -51,4 +53,5 @@
     <string name="ok">ОК</string>
     <string name="find_me_on">Найти меня:</string>
     <string name="show_color_labels">Показывать цветовые метки</string>
+    <string name="use_cards_cache">Кэшировать данные</string>
 </resources>

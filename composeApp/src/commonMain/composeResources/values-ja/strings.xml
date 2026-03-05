@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Bring!</string>
     <string name="new_list">新しいリスト</string>
-    <string name="shopping_list">ショッピングリスト</string>
+    <string name="lists">リスト</string>
+    <string name="shopping_lists">ショッピングリスト</string>
     <string name="cards">カード</string>
+    <string name="loyalty_cards">ポイントカード</string>
     <string name="loading_list">ショッピングリストを読み込み中...</string>
     <string name="create_list">新しいリストを作成</string>
     <string name="create">作成</string>
@@ -51,4 +53,5 @@
     <string name="ok">OK</string>
     <string name="find_me_on">リンク:</string>
     <string name="show_color_labels">カラーラベルを表示</string>
+    <string name="use_cards_cache">データをキャッシュする</string>
 </resources>

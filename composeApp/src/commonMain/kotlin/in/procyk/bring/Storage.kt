@@ -35,6 +35,7 @@ data class BringStore(
     @CborLabel(17) val loyaltyCards: List<LoyaltyCard> = emptyList(),
     @CborLabel(18) val enableCardsEditMode: Boolean = true,
     @CborLabel(19) val showCardsLabels: Boolean = true,
+    @CborLabel(20) val useCardsCache: Boolean = true,
 ) {
     companion object {
         val Default: BringStore = BringStore()
@@ -98,6 +99,7 @@ data class LoyaltyCard(
     @CborLabel(0) val cardId: Uuid,
     @CborLabel(1) override val order: Double,
     @CborLabel(2) val color: Int? = null,
+    @CborLabel(3) val cachedData: LoyaltyCardData? = null,
 ) : Orderable, Identifiable {
     override val id get() = cardId
 }

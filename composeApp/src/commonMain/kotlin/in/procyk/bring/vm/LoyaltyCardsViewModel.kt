@@ -44,15 +44,17 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     init {
         viewModelScope.launch {
-            val cache = mutableMapOf<Uuid, Card>()
+            val inMemoryCache = mutableMapOf<Uuid, Card>()
             context.storeFlow.map { it.loyaltyCards }.distinctUntilIdsChanged().collectLatest { cards ->
                 _isLoadingCards.value = true
+                val useCardsCache = store.useCardsCache
                 try {
                     val sortedCards = cards.mapNotNull { card ->
                         val key = card.cardId
-                        cache[key] ?: run {
+                        inMemoryCache[key] ?: run {
+                            val cachedCardData = if (useCardsCache) card.cachedData else null
                             val cardData =
-                                loyaltyCardService.durableCall { getLoyaltyCard(card.cardId) }
+                                cachedCardData ?: loyaltyCardService.durableCall { getLoyaltyCard(card.cardId) }
                                     .fold(
                                         ifLeft = { it },
                                         ifRight = {
@@ -68,12 +70,17 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
                                             return@run null
                                         }
                                     )
+                            updateConfig { store ->
+                                store.copy(loyaltyCards = store.loyaltyCards.map {
+                                    if (it.cardId == key) it.copy(cachedData = if (useCardsCache) cardData else null) else it
+                                })
+                            }
                             Card(
                                 data = cardData,
                                 order = card.order,
                                 color = card.color?.let(::Color)
                             )
-                        }?.also { cache[key] = it }
+                        }?.also { inMemoryCache[key] = it }
                     }
                         .asSequence()
                         .withIndex()
