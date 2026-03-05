@@ -1,13 +1,17 @@
 package `in`.procyk.bring.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.semantics.paneTitle
@@ -18,7 +22,10 @@ import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import bring.composeapp.generated.resources.*
+import bring.composeapp.generated.resources.Res
+import bring.composeapp.generated.resources.cancel
+import bring.composeapp.generated.resources.ok
+import `in`.procyk.bring.runIf
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.LocalContentColor
 import `in`.procyk.bring.ui.components.AlertDialogDefaults.ButtonsCrossAxisSpacing
@@ -118,10 +125,31 @@ internal fun AlertDialog(
     )
 }
 
+private enum class DialogPosition(val targetValue: Float) {
+    Start(-1f), Center(0f), End(1f);
+
+    fun change(change: Float): DialogPosition = when {
+        change > 0f -> when (this) {
+            Start -> Center
+            Center -> End
+            End -> End
+        }
+
+        change < 0f -> when (this) {
+            Start -> Start
+            Center -> Start
+            End -> Center
+        }
+
+        else -> this
+    }
+}
+
 @Composable
 internal fun BasicAlertDialog(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    enableDragGesture: Boolean = false, 
     properties: DialogProperties = DialogProperties(),
     content: @Composable () -> Unit,
 ) {
@@ -130,14 +158,46 @@ internal fun BasicAlertDialog(
         properties = properties,
     ) {
         val dialogPaneDescription = "dialog"
+        var targetY by remember { mutableStateOf(DialogPosition.Center) }
+        val biasY by animateFloatAsState(
+            targetValue = targetY.targetValue,
+            label = "alignmentY"
+        )
+        val alignment = BiasAlignment(horizontalBias = 0f, verticalBias = biasY)
+        var dragSum by remember { mutableStateOf(Offset.Zero) }
+
         Box(
-            modifier =
-                modifier
-                    .sizeIn(minWidth = DialogMinWidth, maxWidth = DialogMaxWidth)
-                    .then(Modifier.semantics { paneTitle = dialogPaneDescription }),
-            propagateMinConstraints = true,
+            modifier = Modifier
+                .runIf(enableDragGesture) {
+                    pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragStart = {
+                                dragSum = Offset.Zero
+                            },
+                            onDrag = { change, dragAmount ->
+                                change.consume()
+                                dragSum += dragAmount
+                            },
+                            onDragEnd = {
+                                targetY = targetY.change(dragSum.y)
+                            }
+                        )
+                    }
+                }
+                .fillMaxSize(),
+            contentAlignment = alignment,
         ) {
-            content()
+            Box(
+                modifier =
+                    modifier
+                        .padding(WindowInsets.statusBars.asPaddingValues())
+                        .sizeIn(minWidth = DialogMinWidth, maxWidth = DialogMaxWidth)
+                        .wrapContentHeight()
+                        .then(Modifier.semantics { paneTitle = dialogPaneDescription }),
+                propagateMinConstraints = true,
+            ) {
+                content()
+            }
         }
     }
 }
@@ -157,11 +217,13 @@ internal fun AlertDialogComponent(
     titleContentColor: Color = BringAppTheme.colors.primary,
     textContentColor: Color = BringAppTheme.colors.primary,
     elevation: Dp = DialogElevation,
+    enableDragGesture: Boolean = false,
     properties: DialogProperties = DialogProperties(),
     content: @Composable (() -> Unit)? = null,
 ) {
     BasicAlertDialog(
         onDismissRequest = onDismissRequest,
+        enableDragGesture = enableDragGesture,
         properties = properties,
     ) {
         val dialogPaneDescription = "Dialog"

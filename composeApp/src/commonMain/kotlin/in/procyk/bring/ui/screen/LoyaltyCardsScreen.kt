@@ -259,6 +259,7 @@ internal fun LoyaltyCardsScreen(
         var showRemoveNotification by remember { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
         AlertDialogComponent(
+            enableDragGesture = true,
             onDismissRequest = { -> vm.unselectCard() },
             confirmButton = {
                 Button(
