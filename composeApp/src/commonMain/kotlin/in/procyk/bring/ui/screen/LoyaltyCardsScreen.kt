@@ -10,11 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.automirrored.twotone.Label
-import androidx.compose.material.icons.outlined.EditNote
-import androidx.compose.material.icons.outlined.IosShare
-import androidx.compose.material.icons.outlined.NewLabel
-import androidx.compose.material.icons.outlined.QrCodeScanner
-import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +25,7 @@ import `in`.procyk.bring.ui.components.*
 import `in`.procyk.bring.ui.components.card.ElevatedCard
 import `in`.procyk.bring.ui.components.progressindicators.CircularProgressIndicator
 import `in`.procyk.bring.ui.components.textfield.OutlinedTextField
-import `in`.procyk.bring.ui.screen.InputDialogAction.AddFromFile
-import `in`.procyk.bring.ui.screen.InputDialogAction.ImportById
+import `in`.procyk.bring.ui.screen.InputDialogAction.*
 import `in`.procyk.bring.vm.LoyaltyCardsViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -42,7 +37,7 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun LoyaltyCardsScreen(
     padding: PaddingValues,
-    vm: LoyaltyCardsViewModel
+    vm: LoyaltyCardsViewModel,
 ) = AppScreen("screen-loyalty-cards", padding) {
     var dialogAction by remember { mutableStateOf<InputDialogAction?>(null) }
     val cards by vm.cards.collectAsState()
@@ -79,14 +74,14 @@ internal fun LoyaltyCardsScreen(
                     .padding(start = if (enableEditMode) 4.dp else 16.dp)
                     .fillParentMaxWidth()
                     .animateItem()
-                    .testTag("loyalty-card")
+                    .testTag("loyalty-card"),
             ) {
                 if (enableEditMode) Spacer(Modifier.width(4.dp))
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
-                    onClick = { vm.selectCard(card) }
+                    onClick = { vm.selectCard(card) },
                 ) {
                     Row(
                         modifier = Modifier
@@ -105,14 +100,14 @@ internal fun LoyaltyCardsScreen(
                             ) {
                                 Icon(
                                     imageVector = if (selectedColor != Color.Unspecified) Icons.AutoMirrored.TwoTone.Label else Icons.AutoMirrored.Outlined.Label,
-                                    tint = if (selectedColor != Color.Unspecified) selectedColor else LocalContentColor.current
+                                    tint = if (selectedColor != Color.Unspecified) selectedColor else LocalContentColor.current,
                                 )
                             }
 
                             else -> Icon(
                                 imageVector = if (selectedColor != Color.Unspecified) Icons.AutoMirrored.TwoTone.Label else Icons.AutoMirrored.Outlined.Label,
                                 tint = if (selectedColor != Color.Unspecified) selectedColor else LocalContentColor.current,
-                                modifier = Modifier.padding(8.dp)
+                                modifier = Modifier.padding(8.dp),
                             )
                         }
                         Spacer(modifier = Modifier.width(8.dp))
@@ -120,7 +115,7 @@ internal fun LoyaltyCardsScreen(
                             text = card.data.label,
                             maxLines = 1,
                             style = BringAppTheme.typography.h3,
-                            modifier = Modifier.weight(1f, fill = true)
+                            modifier = Modifier.weight(1f, fill = true),
                         )
                         IconButton(
                             variant = IconButtonVariant.Ghost,
@@ -136,7 +131,7 @@ internal fun LoyaltyCardsScreen(
                             },
                             onColorReset = {
                                 vm.onCardColorUpdated(card.data.id, null)
-                            }
+                            },
                         )
                     }
                 }
@@ -147,7 +142,7 @@ internal fun LoyaltyCardsScreen(
                 modifier = Modifier
                     .padding(
                         start = 16.dp,
-                        top = if (isLoadingCards || cards.isNotEmpty()) 8.dp else 0.dp
+                        top = if (isLoadingCards || cards.isNotEmpty()) 8.dp else 0.dp,
                     )
                     .fillParentMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -201,6 +196,8 @@ internal fun LoyaltyCardsScreen(
         AlertDialogComponent(
             onDismissRequest = { dialogAction = null; vm.resetUserInput() },
             confirmButton = {
+                if (currentAction == Loading) return@AlertDialogComponent
+
                 Button(
                     variant = ButtonVariant.PrimaryOutlined,
                     text = when (currentAction) {
@@ -208,15 +205,23 @@ internal fun LoyaltyCardsScreen(
                         ImportById -> stringResource(Res.string.import_action)
                     },
                     onClick = when (currentAction) {
-                        ImportById -> fun() = vm.addLoyaltyCardByCardId { dialogAction = null }
-                        AddFromFile -> fun() = vm.addLoyaltyCardFromFile { dialogAction = null }
-                    })
+                        ImportById -> fun() {
+                            dialogAction = Loading
+                            vm.addLoyaltyCardByCardId { dialogAction = null }
+                        }
+
+                        AddFromFile -> fun() {
+                            dialogAction = Loading
+                            vm.addLoyaltyCardFromFile { dialogAction = null }
+                        }
+                    },
+                )
             },
-            dismissButton = {
+            dismissButton = composeIf(currentAction != Loading) {
                 Button(
                     variant = ButtonVariant.Ghost,
                     text = stringResource(Res.string.cancel),
-                    onClick = { dialogAction = null; vm.resetUserInput() }
+                    onClick = { dialogAction = null; vm.resetUserInput() },
                 )
             },
             icon = when (currentAction) {
@@ -227,31 +232,44 @@ internal fun LoyaltyCardsScreen(
                 ImportById -> {
                     { Icon(Icons.Outlined.EditNote) }
                 }
+
+                Loading -> null
             },
             title = {
+                if (currentAction == Loading) return@AlertDialogComponent
+
                 Text(
                     text = when (currentAction) {
                         AddFromFile -> stringResource(Res.string.add_loyalty_card)
                         ImportById -> stringResource(Res.string.import_loyalty_card)
-                    }
+                    },
                 )
             },
             text = {
-                val userInput by vm.userInput.collectAsState()
-                OutlinedTextField(
-                    value = userInput,
-                    onValueChange = vm::onUserInputChange,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = when (currentAction) {
-                                AddFromFile -> Icons.Outlined.NewLabel
-                                ImportById -> Icons.Outlined.EditNote
-                            },
-                            modifier = Modifier.padding(start = 16.dp),
-                        )
-                    },
-                    singleLine = true,
-                )
+                if (currentAction == Loading) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    val userInput by vm.userInput.collectAsState()
+                    OutlinedTextField(
+                        value = userInput,
+                        onValueChange = vm::onUserInputChange,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = when (currentAction) {
+                                    AddFromFile -> Icons.Outlined.NewLabel
+                                    ImportById -> Icons.Outlined.EditNote
+                                },
+                                modifier = Modifier.padding(start = 16.dp),
+                            )
+                        },
+                        singleLine = true,
+                    )
+                }
             },
         )
     }
@@ -265,7 +283,8 @@ internal fun LoyaltyCardsScreen(
                 Button(
                     variant = ButtonVariant.PrimaryOutlined,
                     text = stringResource(Res.string.close),
-                    onClick = { vm.unselectCard() })
+                    onClick = { vm.unselectCard() },
+                )
             },
             dismissButton = {
                 Button(
@@ -281,7 +300,7 @@ internal fun LoyaltyCardsScreen(
                             }
                         }
                     },
-                    onLongClick = { vm.removeCard(it) }
+                    onLongClick = { vm.removeCard(it) },
                 )
             },
             title = { Text(text = it.data.label) },
@@ -289,12 +308,12 @@ internal fun LoyaltyCardsScreen(
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     var visibleDetails by remember { mutableStateOf(false) }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.Center,
                     ) {
                         CodeGenerator(
                             code = it.data.code,
@@ -303,7 +322,7 @@ internal fun LoyaltyCardsScreen(
                             modifier = Modifier.clickable(
                                 interactionSource = null,
                                 indication = null,
-                            ) { visibleDetails = !visibleDetails }
+                            ) { visibleDetails = !visibleDetails },
                         )
                     }
                     AnimatedVisibility(visibleDetails) {
@@ -326,5 +345,12 @@ internal fun LoyaltyCardsScreen(
 }
 
 private enum class InputDialogAction {
-    AddFromFile, ImportById,
+    AddFromFile, ImportById, Loading,
 }
+
+private inline fun composeIf(condition: Boolean, crossinline f: @Composable () -> Unit): @Composable () -> Unit =
+    if (!condition) {
+        {}
+    } else {
+        { f() }
+    }
