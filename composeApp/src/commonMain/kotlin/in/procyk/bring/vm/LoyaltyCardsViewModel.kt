@@ -16,6 +16,10 @@ import kotlin.uuid.Uuid
 
 internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(context) {
 
+    enum class InputDialogAction {
+        AddFromFile, ImportById, Loading,
+    }
+
     data class Card(
         val data: LoyaltyCardData,
         override val order: Double,
@@ -25,6 +29,9 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
     }
 
     private val loyaltyCardService = durableRpcService<LoyaltyCardService>(LoyaltyCardRpcPath)
+
+    private val _dialogAction: MutableStateFlow<InputDialogAction?> = MutableStateFlow(null)
+    val dialogAction: StateFlow<InputDialogAction?> = _dialogAction.asStateFlow()
 
     private val _cards: MutableStateFlow<List<Card>> = MutableStateFlow(emptyList())
     val cards: StateFlow<List<Card>> = _cards.asStateFlow()
@@ -110,16 +117,13 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
         }
     }
 
-    fun addLoyaltyCardFromFile(
-        afterFileSelected: () -> Unit = {},
-        afterAdded: () -> Unit = {},
-    ) {
+    fun addLoyaltyCardFromFile() {
         val userId = store.userId
         val label = userInput.value
         viewModelScope.launch {
             val file =
                 FileKit.openFilePicker(type = SUPPORTED_IMAGE_FORMATS) ?: return@launch
-            afterFileSelected()
+            startDialogActionLoading()
             val image = file.readBytes()
             loyaltyCardService
                 .durableCall { createLoyaltyCard(label, image, userId) }
@@ -127,16 +131,19 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
                     ifLeft = { updateConfigWithLoyaltyCardIds(listOf(it)) },
                     ifRight = { /* TODO: handle errors */ }
                 )
-            afterAdded()
-        }
+        }.invokeOnCompletion { closeDialogAction() }
     }
 
-    fun addLoyaltyCardByCardId(afterAdded: () -> Unit = {}) {
-        val cardIds = userInput.value
-        val cardUuids = cardIds.split(CARD_ID_SEPARATOR)
-            .mapNotNull { runCatching { Uuid.parse(it) }.getOrNull() }
-        updateConfigWithLoyaltyCardIds(cardUuids)
-        afterAdded()
+    fun addLoyaltyCardByCardId() {
+        try {
+            startDialogActionLoading()
+            val cardIds = userInput.value
+            val cardUuids = cardIds.split(CARD_ID_SEPARATOR)
+                .mapNotNull { runCatching { Uuid.parse(it) }.getOrNull() }
+            updateConfigWithLoyaltyCardIds(cardUuids)
+        } finally {
+            closeDialogAction()
+        }
     }
 
     private fun updateConfigWithLoyaltyCardIds(cardIds: List<Uuid>) {
@@ -209,6 +216,22 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     fun onCardColorUpdated(cardId: Uuid, color: Color?) {
         updateConfig { it.copy(loyaltyCards = it.loyaltyCards.map { if (it.cardId == cardId) it.copy(color = color?.toArgb()) else it }) }
+    }
+
+    fun openAddFromFileDialog() {
+        _dialogAction.update { InputDialogAction.AddFromFile }
+    }
+
+    fun openImportByIdDialog() {
+        _dialogAction.update { InputDialogAction.ImportById }
+    }
+
+    fun startDialogActionLoading() {
+        _dialogAction.update { InputDialogAction.Loading }
+    }
+
+    fun closeDialogAction() {
+        _dialogAction.update { null }
     }
 }
 

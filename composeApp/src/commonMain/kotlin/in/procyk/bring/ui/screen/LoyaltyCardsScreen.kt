@@ -25,8 +25,8 @@ import `in`.procyk.bring.ui.components.*
 import `in`.procyk.bring.ui.components.card.ElevatedCard
 import `in`.procyk.bring.ui.components.progressindicators.CircularProgressIndicator
 import `in`.procyk.bring.ui.components.textfield.OutlinedTextField
-import `in`.procyk.bring.ui.screen.InputDialogAction.*
 import `in`.procyk.bring.vm.LoyaltyCardsViewModel
+import `in`.procyk.bring.vm.LoyaltyCardsViewModel.InputDialogAction.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -39,7 +39,7 @@ internal fun LoyaltyCardsScreen(
     padding: PaddingValues,
     vm: LoyaltyCardsViewModel,
 ) = AppScreen("screen-loyalty-cards", padding) {
-    var dialogAction by remember { mutableStateOf<InputDialogAction?>(null) }
+    val dialogAction by vm.dialogAction.collectAsState()
     val cards by vm.cards.collectAsState()
     val selectedCard by vm.selectedCard.collectAsState()
     val isLoadingCards by vm.isLoadingCards.collectAsState()
@@ -172,7 +172,7 @@ internal fun LoyaltyCardsScreen(
                         }
                     },
                     variant = IconButtonVariant.Primary,
-                    onClick = { dialogAction = AddFromFile },
+                    onClick = { vm.openAddFromFileDialog() },
                     modifier = Modifier.testTag("button-scan-loyalty-card"),
                 )
                 IconButton(
@@ -186,7 +186,7 @@ internal fun LoyaltyCardsScreen(
                         }
                     },
                     variant = IconButtonVariant.PrimaryGhost,
-                    onClick = { dialogAction = ImportById },
+                    onClick = { vm.openImportByIdDialog() },
                 )
             }
 
@@ -194,7 +194,7 @@ internal fun LoyaltyCardsScreen(
     }
     dialogAction?.let { currentAction ->
         AlertDialogComponent(
-            onDismissRequest = { dialogAction = null; vm.resetUserInput() },
+            onDismissRequest = { vm.run { closeDialogAction(); resetUserInput() } },
             confirmButton = {
                 if (currentAction == Loading) return@AlertDialogComponent
 
@@ -205,15 +205,8 @@ internal fun LoyaltyCardsScreen(
                         ImportById -> stringResource(Res.string.import_action)
                     },
                     onClick = when (currentAction) {
-                        ImportById -> fun() {
-                            dialogAction = Loading
-                            vm.addLoyaltyCardByCardId(afterAdded = { dialogAction = null })
-                        }
-
-                        AddFromFile -> fun() = vm.addLoyaltyCardFromFile(
-                            afterFileSelected = { dialogAction = Loading },
-                            afterAdded = { dialogAction = null },
-                        )
+                        ImportById -> vm::addLoyaltyCardByCardId
+                        AddFromFile -> vm::addLoyaltyCardFromFile
                     },
                 )
             },
@@ -221,7 +214,7 @@ internal fun LoyaltyCardsScreen(
                 Button(
                     variant = ButtonVariant.Ghost,
                     text = stringResource(Res.string.cancel),
-                    onClick = { dialogAction = null; vm.resetUserInput() },
+                    onClick = { vm.run { closeDialogAction(); resetUserInput() } },
                 )
             },
             icon = when (currentAction) {
@@ -342,10 +335,6 @@ internal fun LoyaltyCardsScreen(
             },
         )
     }
-}
-
-private enum class InputDialogAction {
-    AddFromFile, ImportById, Loading,
 }
 
 private inline fun composeIf(condition: Boolean, crossinline f: @Composable () -> Unit): @Composable () -> Unit =
