@@ -39,6 +39,9 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
     private val _userInput: MutableStateFlow<String> = MutableStateFlow("")
     val userInput: StateFlow<String> = _userInput.asStateFlow()
 
+    private val _isErrorUserInput: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isErrorUserInput: StateFlow<Boolean> = _isErrorUserInput.asStateFlow()
+
     private val _selectedCard: MutableStateFlow<Card?> = MutableStateFlow(null)
     val selectedCard: StateFlow<Card?> = _selectedCard.asStateFlow()
 
@@ -119,7 +122,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     fun addLoyaltyCardFromFile() {
         val userId = store.userId
-        val label = userInput.value
+        val label = validatedUserInputValueCardLabel() ?: return
         viewModelScope.launch {
             val file =
                 FileKit.openFilePicker(type = SUPPORTED_IMAGE_FORMATS) ?: return@launch
@@ -144,6 +147,26 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
         } finally {
             closeDialogAction()
         }
+    }
+
+    private fun validatedUserInputValueCardLabel(): String? = validatedUserInputValue {
+        isNotBlank()
+    }
+
+    private fun validatedUserInputValueCardIds(): String? = validatedUserInputValue {
+        val results = split(CARD_ID_SEPARATOR).map { runCatching { Uuid.parse(it) }.isSuccess }
+        results.all { it } && results.isNotEmpty()
+    }
+
+    private fun validatedUserInputValue(
+        isValid: String.() -> Boolean,
+    ): String? {
+        val userInput = this@LoyaltyCardsViewModel.userInput.value
+        if (!userInput.isValid()) {
+            _isErrorUserInput.update { true }
+            return null
+        }
+        return userInput
     }
 
     private fun updateConfigWithLoyaltyCardIds(cardIds: List<Uuid>) {
@@ -174,6 +197,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     fun onUserInputChange(value: String) {
         _userInput.update { value }
+        _isErrorUserInput.update { false }
     }
 
     fun unselectCard() {

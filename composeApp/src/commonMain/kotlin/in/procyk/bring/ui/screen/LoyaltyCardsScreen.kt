@@ -248,6 +248,7 @@ internal fun LoyaltyCardsScreen(
                     }
                 } else {
                     val userInput by vm.userInput.collectAsState()
+                    val isErrorUserInput by vm.isErrorUserInput.collectAsState()
                     OutlinedTextField(
                         value = userInput,
                         onValueChange = vm::onUserInputChange,
@@ -261,6 +262,7 @@ internal fun LoyaltyCardsScreen(
                             )
                         },
                         singleLine = true,
+                        isError = isErrorUserInput,
                     )
                 }
             },
