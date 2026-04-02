@@ -123,8 +123,8 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
         viewModelScope.launch {
             val file =
                 FileKit.openFilePicker(type = SUPPORTED_IMAGE_FORMATS) ?: return@launch
-            startDialogActionLoading()
             val image = file.readBytes()
+            startDialogActionLoading()
             loyaltyCardService
                 .durableCall { createLoyaltyCard(label, image, userId) }
                 .fold(
