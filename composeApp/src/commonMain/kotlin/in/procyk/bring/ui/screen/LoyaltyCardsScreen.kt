@@ -207,13 +207,13 @@ internal fun LoyaltyCardsScreen(
                     onClick = when (currentAction) {
                         ImportById -> fun() {
                             dialogAction = Loading
-                            vm.addLoyaltyCardByCardId { dialogAction = null }
+                            vm.addLoyaltyCardByCardId(afterAdded = { dialogAction = null })
                         }
 
-                        AddFromFile -> fun() {
-                            dialogAction = Loading
-                            vm.addLoyaltyCardFromFile { dialogAction = null }
-                        }
+                        AddFromFile -> fun() = vm.addLoyaltyCardFromFile(
+                            afterFileSelected = { dialogAction = Loading },
+                            afterAdded = { dialogAction = null },
+                        )
                     },
                 )
             },

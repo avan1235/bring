@@ -110,12 +110,16 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
         }
     }
 
-    fun addLoyaltyCardFromFile(afterAdded: () -> Unit = {}) {
+    fun addLoyaltyCardFromFile(
+        afterFileSelected: () -> Unit = {},
+        afterAdded: () -> Unit = {},
+    ) {
         val userId = store.userId
         val label = userInput.value
         viewModelScope.launch {
             val file =
                 FileKit.openFilePicker(type = SUPPORTED_IMAGE_FORMATS) ?: return@launch
+            afterFileSelected()
             val image = file.readBytes()
             loyaltyCardService
                 .durableCall { createLoyaltyCard(label, image, userId) }
