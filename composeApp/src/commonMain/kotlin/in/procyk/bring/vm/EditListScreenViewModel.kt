@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.math.max
+import kotlin.sequences.take
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTime
@@ -117,6 +118,23 @@ internal class EditListScreenViewModel(
     private val localListItems = MutableStateFlow<List<ShoppingListItemData>>(emptyList())
 
     init {
+        viewModelScope.launch {
+            combine(
+                fetchedList.mapNotNull { it?.name },
+                storeFlow.map { it.recentShoppingListsCount },
+            ) { a, b -> a to b }
+                .distinctUntilChanged()
+                .collectLatest { (listName, count) ->
+                    updateConfig { config ->
+                        config.copy(
+                            recentShoppingLists = sequence {
+                                yield(RecentShoppingList(listName, listId))
+                                config.recentShoppingLists.forEach { if (it.listId != listId) yield(it) }
+                            }.take(count).toSet()
+                        )
+                    }
+                }
+        }
         viewModelScope.launch {
             fetchedList.mapNotNull { it?.items }
                 .distinctUntilChanged()
@@ -214,7 +232,7 @@ internal class EditListScreenViewModel(
     fun onToggleListFavorite() {
         val list = fetchedList.value ?: return
         val favoriteShoppingList = FavoriteShoppingList(list.name, list.id)
-        updateConfig {
+        launchUpdateConfig {
             it.run {
                 when {
                     favoriteShoppingList !in favoriteShoppingLists -> copy(favoriteShoppingLists = favoriteShoppingLists + favoriteShoppingList)

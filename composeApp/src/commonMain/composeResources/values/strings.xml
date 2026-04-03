@@ -15,6 +15,7 @@
     <string name="enable_edit_mode">Enable edit mode</string>
     <string name="show_unchecked_first">Show unchecked items first</string>
     <string name="show_suggestions">Show items suggestions</string>
+    <string name="store_recent_shopping_lists">Store recent shopping lists</string>
     <string name="show_favorite_elements">Show favorite elements</string>
     <string name="theme">Theme</string>
     <string name="system_theme">System</string>
@@ -26,6 +27,7 @@
     <string name="error_fetching_suggestions">Error fetching user list items suggestions</string>
     <string name="error_fetching_favorite_elements">Error fetching favorite elements</string>
     <string name="favorite_shopping_lists">Favorite shopping lists</string>
+    <string name="recent_shopping_lists">Recent shopping lists</string>
     <string name="favorite_list_elements">Favorite list elements</string>
     <string name="copied_list_id_to_clipboard">Copied List ID to clipboard</string>
     <string name="copied_card_id_to_clipboard">Copied Loyalty Card ID to clipboard</string>

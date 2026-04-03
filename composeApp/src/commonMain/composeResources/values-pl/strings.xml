@@ -15,6 +15,7 @@
     <string name="enable_edit_mode">Włącz tryb edycji</string>
     <string name="show_unchecked_first">Pokazuj najpierw niezrealizowane</string>
     <string name="show_suggestions">Pokazuj sugestie pozycji listy zakupów</string>
+    <string name="store_recent_shopping_lists">Zapisuj ostatnie listy zakupów</string>
     <string name="show_favorite_elements">Pokazuj ulubione elementy</string>
     <string name="theme">Motyw</string>
     <string name="system_theme">Systemowy</string>
@@ -26,6 +27,7 @@
     <string name="error_fetching_suggestions">Błąd podczas pobierania sugestii pozycji listy zakupów</string>
     <string name="error_fetching_favorite_elements">Błąd podczas pobierania ulubionych elementów</string>
     <string name="favorite_shopping_lists">Ulubione listy zakupów</string>
+    <string name="recent_shopping_lists">Ostatnie listy zakupów</string>
     <string name="favorite_list_elements">Ulubione elementy listy</string>
     <string name="copied_list_id_to_clipboard">Skopiowano ID listy do schowka</string>
     <string name="copied_card_id_to_clipboard">Skopiowano ID karty lojalnościowej do schowka</string>

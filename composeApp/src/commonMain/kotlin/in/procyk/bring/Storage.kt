@@ -36,6 +36,8 @@ data class BringStore(
     @CborLabel(18) val enableCardsEditMode: Boolean = true,
     @CborLabel(19) val showCardsLabels: Boolean = true,
     @CborLabel(20) val useCardsCache: Boolean = true,
+    @CborLabel(21) val recentShoppingLists: Set<RecentShoppingList> = emptySet(),
+    @CborLabel(22) val recentShoppingListsCount: Int = 5,
 ) {
     companion object {
         val Default: BringStore = BringStore()
@@ -76,16 +78,15 @@ data class BringStore(
 val LocalBringStore: ProvidableCompositionLocal<BringStore> =
     staticCompositionLocalOf { BringStore.Default }
 
-@Serializable
-data class FavoriteShoppingList(
-    @CborLabel(0) val listName: String,
-    @CborLabel(1) val listId: Uuid,
-) {
+sealed class SavedShoppingList {
+    abstract val listName: String
+    abstract val listId: Uuid
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as FavoriteShoppingList
+        other as SavedShoppingList
 
         return listId == other.listId
     }
@@ -93,6 +94,18 @@ data class FavoriteShoppingList(
     override fun hashCode(): Int =
         listId.hashCode()
 }
+
+@Serializable
+data class FavoriteShoppingList(
+    @CborLabel(0) override val listName: String,
+    @CborLabel(1) override val listId: Uuid,
+) : SavedShoppingList()
+
+@Serializable
+data class RecentShoppingList(
+    @CborLabel(0) override val listName: String,
+    @CborLabel(1) override val listId: Uuid,
+) : SavedShoppingList()
 
 @Serializable
 data class LoyaltyCard(

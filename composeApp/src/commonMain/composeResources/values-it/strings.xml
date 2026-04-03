@@ -15,6 +15,7 @@
     <string name="enable_edit_mode">Abilita modalità modifica</string>
     <string name="show_unchecked_first">Mostra prima gli articoli non spuntati</string>
     <string name="show_suggestions">Mostra suggerimenti articoli</string>
+    <string name="store_recent_shopping_lists">Salva liste della spesa recenti</string>
     <string name="show_favorite_elements">Mostra elementi preferiti</string>
     <string name="theme">Tema</string>
     <string name="system_theme">Sistema</string>
@@ -26,6 +27,7 @@
     <string name="error_fetching_suggestions">Errore durante il recupero dei suggerimenti articoli</string>
     <string name="error_fetching_favorite_elements">Errore durante il recupero degli elementi preferiti</string>
     <string name="favorite_shopping_lists">Liste della spesa preferite</string>
+    <string name="recent_shopping_lists">Liste della spesa recenti</string>
     <string name="favorite_list_elements">Elementi di lista preferiti</string>
     <string name="copied_list_id_to_clipboard">ID della lista copiato negli appunti</string>
     <string name="copied_card_id_to_clipboard">ID della carta fedeltà copiato negli appunti</string>

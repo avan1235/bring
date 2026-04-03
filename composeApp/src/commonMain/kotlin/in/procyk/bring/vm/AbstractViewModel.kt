@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import bring.composeapp.generated.resources.Res
-import bring.composeapp.generated.resources.cards
 import bring.composeapp.generated.resources.favorites
 import bring.composeapp.generated.resources.loyalty_cards
 import bring.composeapp.generated.resources.settings
@@ -178,10 +177,12 @@ internal abstract class AbstractViewModel(
             url(scheme = CLIENT_WS_PROTOCOL, host = CLIENT_HOST, port = CLIENT_PORT, path = path)
         }
 
-    protected inline fun updateConfig(crossinline f: (BringStore) -> BringStore) {
-        viewModelScope.launch {
-            context.store.update { it?.let(f) }
-        }
+    protected inline fun launchUpdateConfig(crossinline f: (BringStore) -> BringStore) {
+        viewModelScope.launch { updateConfig(f) }
+    }
+
+    protected suspend inline fun updateConfig(crossinline f: (BringStore) -> BringStore) {
+        context.store.update { it?.let(f) }
     }
 
     protected fun <T> Flow<T>.state(

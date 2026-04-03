@@ -5,6 +5,8 @@ import arrow.core.Either
 import `in`.procyk.bring.FavoriteElement
 import `in`.procyk.bring.FavoriteElementRpcPath
 import `in`.procyk.bring.FavoriteShoppingList
+import `in`.procyk.bring.RecentShoppingList
+import `in`.procyk.bring.SavedShoppingList
 import `in`.procyk.bring.UserFavoriteElementsData
 import `in`.procyk.bring.service.FavoriteElementService
 import kotlinx.coroutines.flow.*
@@ -29,11 +31,14 @@ internal class FavoritesViewModel(context: Context) : AbstractViewModel(context)
     val favoriteLists: StateFlow<List<FavoriteShoppingList>> =
         storeFlow.map { it.favoriteShoppingLists.toList() }.state(emptyList())
 
+    val recentLists: StateFlow<List<RecentShoppingList>> =
+        storeFlow.map { it.recentShoppingLists.toList() }.state(emptyList())
+
     private val _newFavoriteElementName: MutableStateFlow<String> = MutableStateFlow("")
     val newFavoriteElementName: StateFlow<String> = _newFavoriteElementName.asStateFlow()
 
 
-    fun onNavigateToFavoriteList(list: FavoriteShoppingList) {
+    fun onNavigateToSavedShoppingList(list: SavedShoppingList) {
         context.navigateEditList(list.listId, fetchSuggestions = false)
     }
 
@@ -41,11 +46,16 @@ internal class FavoritesViewModel(context: Context) : AbstractViewModel(context)
         _newFavoriteElementName.update { value }
     }
 
-    fun onFavoriteListRemoved(list: FavoriteShoppingList) {
-        updateConfig { it.copy(favoriteShoppingLists = it.favoriteShoppingLists - list) }
+    fun onSavedShoppingListRemoved(list: SavedShoppingList) {
+        launchUpdateConfig {
+            when (list) {
+                is FavoriteShoppingList -> it.copy(favoriteShoppingLists = it.favoriteShoppingLists - list)
+                is RecentShoppingList -> it.copy(recentShoppingLists = it.recentShoppingLists - list)
+            }
+        }
     }
 
-    fun onFavoriteListShared(list: FavoriteShoppingList) {
+    fun onSavedShoppingListShared(list: SavedShoppingList) {
         viewModelScope.launch {
             onShareList(list.listId.toHexDashString(), context)
         }

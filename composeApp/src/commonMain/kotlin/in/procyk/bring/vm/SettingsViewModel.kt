@@ -44,58 +44,70 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
     val useHaptics: StateFlow<Boolean> =
         storeFlow.map { it.useHaptics }.state(storeFlow.value.useHaptics)
 
+    val recentShoppingListsCount: StateFlow<Int> =
+        storeFlow.map { it.recentShoppingListsCount }.state(storeFlow.value.recentShoppingListsCount)
+
     val useBottomNavigation: StateFlow<Boolean> =
         context.useBottomNavigation
 
     fun onShoppingListEditModeChanged(value: Boolean) {
-        updateConfig { it.copy(enableShoppingListEditMode = value) }
+        launchUpdateConfig { it.copy(enableShoppingListEditMode = value) }
     }
 
     fun onCardsEditModeChanged(value: Boolean) {
-        updateConfig { it.copy(enableCardsEditMode = value) }
+        launchUpdateConfig { it.copy(enableCardsEditMode = value) }
     }
 
     fun onShowCardsLabelsChanged(value: Boolean) {
-        updateConfig { it.copy(showCardsLabels = value) }
+        launchUpdateConfig { it.copy(showCardsLabels = value) }
     }
 
     fun onUseCardsCacheChanged(value: Boolean) {
-        updateConfig { it.copy(useCardsCache = value) }
+        launchUpdateConfig { it.copy(useCardsCache = value) }
     }
 
     fun onShowUncheckedFirstChanged(value: Boolean) {
-        updateConfig { it.copy(showUncheckedFirst = value) }
+        launchUpdateConfig { it.copy(showUncheckedFirst = value) }
     }
 
     fun onShowSuggestionsChanged(value: Boolean) {
-        updateConfig { it.copy(showSuggestions = value) }
+        launchUpdateConfig { it.copy(showSuggestions = value) }
     }
 
     fun onShowFavoriteElementsChanged(value: Boolean) {
-        updateConfig { it.copy(showFavoriteElements = value) }
+        launchUpdateConfig { it.copy(showFavoriteElements = value) }
     }
 
     fun onThemeChanged(value: Theme) {
-        updateConfig { it.copy(darkMode = value) }
+        launchUpdateConfig { it.copy(darkMode = value) }
     }
 
     fun onThemeColorChanged(value: Color) {
-        updateConfig { it.copy(themeColor = value.toArgb()) }
+        launchUpdateConfig { it.copy(themeColor = value.toArgb()) }
     }
 
     fun onGeminiKeyChanged(value: String) {
-        updateConfig { it.copy(geminiKey = value) }
+        launchUpdateConfig { it.copy(geminiKey = value) }
     }
 
     fun onUseGeminiChanged(value: Boolean) {
-        updateConfig { it.copy(useGemini = value) }
+        launchUpdateConfig { it.copy(useGemini = value) }
     }
 
     fun onUseHapticsChanged(value: Boolean) {
-        updateConfig { it.copy(useHaptics = value) }
+        launchUpdateConfig { it.copy(useHaptics = value) }
+    }
+
+    fun onRecentShoppingListsCountChanged(value: Int) {
+        launchUpdateConfig {
+            it.copy(
+                recentShoppingListsCount = value,
+                recentShoppingLists = it.recentShoppingLists.take(value).toSet()
+            )
+        }
     }
 
     fun onUseBottomNavigationChanged(value: Boolean) {
-        updateConfig { it.copy(useBottomNavigation = value) }
+        launchUpdateConfig { it.copy(useBottomNavigation = value) }
     }
 }

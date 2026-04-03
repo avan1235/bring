@@ -15,6 +15,7 @@
     <string name="enable_edit_mode">編集モードを有効にする</string>
     <string name="show_unchecked_first">未チェックのアイテムを先に表示</string>
     <string name="show_suggestions">アイテムの提案を表示</string>
+    <string name="store_recent_shopping_lists">最近のショッピングリストを保存する</string>
     <string name="show_favorite_elements">お気に入り要素を表示</string>
     <string name="theme">テーマ</string>
     <string name="system_theme">システム</string>
@@ -26,6 +27,7 @@
     <string name="error_fetching_suggestions">アイテム提案の取得中にエラーが発生しました</string>
     <string name="error_fetching_favorite_elements">お気に入り要素の取得中にエラーが発生しました</string>
     <string name="favorite_shopping_lists">お気に入りのショッピングリスト</string>
+    <string name="recent_shopping_lists">最近のショッピングリスト</string>
     <string name="favorite_list_elements">お気に入りのリスト要素</string>
     <string name="copied_list_id_to_clipboard">リストIDをクリップボードにコピーしました</string>
     <string name="copied_card_id_to_clipboard">ポイントカードIDをクリップボードにコピーしました</string>

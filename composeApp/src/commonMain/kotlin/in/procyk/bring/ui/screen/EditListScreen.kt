@@ -59,6 +59,7 @@ import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Checked
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Unchecked
 import `in`.procyk.bring.ui.components.AddItemTextField
 import `in`.procyk.bring.ui.components.AnimatedStrikethroughText
+import `in`.procyk.bring.ui.components.AnimatedVisibilityGhostButton
 import `in`.procyk.bring.ui.components.AppScreen
 import `in`.procyk.bring.ui.components.Checkbox
 import `in`.procyk.bring.ui.components.CompactButtonPadding
@@ -256,31 +257,6 @@ internal fun EditListScreen(
                 }) {
                 Icon(Icons.Default.KeyboardArrowUp)
             }
-        }
-    }
-}
-
-@Composable
-private inline fun RowScope.AnimatedVisibilityGhostButton(
-    visible: Boolean,
-    icon: ImageVector,
-    testTag: String,
-    crossinline onClick: () -> Unit,
-) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(),
-        exit = fadeOut(),
-    ) {
-        IconButton(
-            variant = IconButtonVariant.Ghost,
-            onClick = { onClick() },
-            modifier = Modifier
-                .compactButtonMinSize()
-                .testTag(testTag),
-            contentPadding = CompactButtonPadding,
-        ) {
-            Icon(icon)
         }
     }
 }

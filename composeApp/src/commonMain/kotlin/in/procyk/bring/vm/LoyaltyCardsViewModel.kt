@@ -73,14 +73,14 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
                                                     /* TODO: handle errors */
                                                 }
 
-                                                GetLoyaltyCardError.UnknownCardId -> updateConfig { store ->
+                                                GetLoyaltyCardError.UnknownCardId -> launchUpdateConfig { store ->
                                                     store.copy(loyaltyCards = store.loyaltyCards.filter { it.cardId != card.cardId })
                                                 }
                                             }
                                             return@run null
                                         }
                                     )
-                            updateConfig { store ->
+                            launchUpdateConfig { store ->
                                 store.copy(loyaltyCards = store.loyaltyCards.map {
                                     if (it.cardId == key) it.copy(cachedData = if (useCardsCache) cardData else null) else it
                                 })
@@ -170,7 +170,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
     }
 
     private fun updateConfigWithLoyaltyCardIds(cardIds: List<Uuid>) {
-        updateConfig { config ->
+        launchUpdateConfig { config ->
             val maxOrder = config.loyaltyCards.maxOfOrNull { it.order } ?: 0.0
             val prevCardIds = config.loyaltyCards.map { it.cardId }
             config.copy(
@@ -187,7 +187,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     fun removeCard(card: Card) {
         unselectCard()
-        updateConfig { it.copy(loyaltyCards = it.loyaltyCards.filter { it.cardId != card.data.id }) }
+        launchUpdateConfig { it.copy(loyaltyCards = it.loyaltyCards.filter { it.cardId != card.data.id }) }
         viewModelScope.launch {
             loyaltyCardService
                 .durableCall { removeLoyaltyCard(card.data.id, store.userId) }
@@ -227,7 +227,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
             _cards.update { cards ->
                 cards.map { if (it.id == from.id) it.copy(order = updatedOrder) else it }.sorted()
             }
-            updateConfig {
+            launchUpdateConfig {
                 it.copy(loyaltyCards = it.loyaltyCards.map { if (it.cardId == from.data.id) it.copy(order = updatedOrder) else it })
             }
         }
@@ -239,7 +239,7 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
             .state(Color.Unspecified)
 
     fun onCardColorUpdated(cardId: Uuid, color: Color?) {
-        updateConfig { it.copy(loyaltyCards = it.loyaltyCards.map { if (it.cardId == cardId) it.copy(color = color?.toArgb()) else it }) }
+        launchUpdateConfig { it.copy(loyaltyCards = it.loyaltyCards.map { if (it.cardId == cardId) it.copy(color = color?.toArgb()) else it }) }
     }
 
     fun openAddFromFileDialog() {

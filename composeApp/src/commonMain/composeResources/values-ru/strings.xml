@@ -15,6 +15,7 @@
     <string name="enable_edit_mode">Включить режим редактирования</string>
     <string name="show_unchecked_first">Показывать сначала неотмеченные элементы</string>
     <string name="show_suggestions">Показывать предложения элементов</string>
+    <string name="store_recent_shopping_lists">Сохранять последние списки покупок</string>
     <string name="show_favorite_elements">Показывать избранные элементы</string>
     <string name="theme">Тема</string>
     <string name="system_theme">Системная</string>
@@ -26,6 +27,7 @@
     <string name="error_fetching_suggestions">Ошибка при получении предложений элементов</string>
     <string name="error_fetching_favorite_elements">Ошибка при получении избранных элементов</string>
     <string name="favorite_shopping_lists">Избранные списки покупок</string>
+    <string name="recent_shopping_lists">Последние списки покупок</string>
     <string name="favorite_list_elements">Избранные элементы списка</string>
     <string name="copied_list_id_to_clipboard">ID списка скопирован в буфер обмена</string>
     <string name="copied_card_id_to_clipboard">ID карты лояльности скопирован в буфер обмена</string>

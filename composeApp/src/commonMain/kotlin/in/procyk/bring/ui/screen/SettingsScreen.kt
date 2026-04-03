@@ -1,15 +1,19 @@
 package `in`.procyk.bring.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.outlined.ExposureNeg1
+import androidx.compose.material.icons.outlined.ExposurePlus1
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.runtime.*
@@ -20,7 +24,9 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.input.KeyboardType.Companion.Password
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import bring.composeapp.generated.resources.*
 import `in`.procyk.bring.LocalBringStore
 import `in`.procyk.bring.ui.BringAppTheme
@@ -54,6 +60,11 @@ internal fun SettingsScreen(
         SettingSwitchRow(Res.string.show_unchecked_first, vm.showUncheckedFirst, vm::onShowUncheckedFirstChanged)
         SettingSwitchRow(Res.string.show_favorite_elements, vm.showFavoriteElements, vm::onShowFavoriteElementsChanged)
         SettingSwitchRow(Res.string.show_suggestions, vm.showSuggestions, vm::onShowSuggestionsChanged)
+        SettingNumberRow(
+            Res.string.store_recent_shopping_lists,
+            vm.recentShoppingListsCount,
+            vm::onRecentShoppingListsCountChanged
+        )
         SettingSwitchRow(Res.string.use_gemini, vm.useGemini, vm::onUseGeminiChanged)
         AnimatedVisibility(vm.useGemini.value) {
             SettingStringRow(
@@ -183,6 +194,54 @@ private inline fun SettingSwitchRow(
             onCheckedChange = {
                 onCheckedChange(it)
             })
+    }
+}
+
+@Composable
+private inline fun SettingNumberRow(
+    label: StringResource,
+    value: StateFlow<Int>,
+    crossinline onValueChange: (Int) -> Unit,
+) {
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val value by value.collectAsState()
+        Text(
+            text = stringResource(label),
+            modifier = Modifier.weight(1f),
+        )
+        AnimatedVisibilityGhostButton(
+            visible = value > 0,
+            icon = Icons.Outlined.ExposureNeg1,
+            onClick = { onValueChange(value - 1) },
+        )
+        Text(
+            text = value.toString(),
+            textAlign = TextAlign.Center,
+            style = BringAppTheme.typography.input,
+            fontSize = 18.sp,
+            modifier = Modifier
+                .padding(
+                    top = 4.dp,
+                    bottom = 5.dp,
+                    start = 2.dp,
+                    end = 2.dp,
+                )
+                .border(2.dp, BringAppTheme.colors.primary, RoundedCornerShape(8.dp))
+                .padding(
+                    top = 4.dp,
+                    bottom = 5.dp,
+                    start = 4.dp,
+                    end = 4.dp,
+                )
+                .width(32.dp),
+        )
+        AnimatedVisibilityGhostButton(
+            onClick = { onValueChange(value + 1) },
+            icon = Icons.Outlined.ExposurePlus1,
+        )
     }
 }
 
