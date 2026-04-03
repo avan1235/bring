@@ -44,6 +44,7 @@ If you like the project, consider supporting it by leaving ⭐.
 - ✅ Generate shopping lists with the help of AI
 - ✅ Mark items as favorites for quick access
 - ✅ Real-time synchronization across devices
+- ✅ Collect all loyalty cards in single place
 - ✅ Customizable settings
 - ✅ Beautiful, responsive UI
 
