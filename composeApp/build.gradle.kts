@@ -5,7 +5,6 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.lang.System.getenv
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem as currentOS
@@ -74,22 +73,21 @@ kotlin {
             }
         }
         androidMain.dependencies {
-            implementation(compose.preview)
+            implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.cio)
             implementation(libs.kstore.file)
         }
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.ui)
-            implementation(compose.material)
-            implementation(compose.material3)
-            implementation(compose.uiUtil)
-            implementation(compose.components.resources)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.components.resources)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.ui.util)
+            implementation(libs.compose.material)
+            implementation(libs.compose.material.icons.extended)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.components.resources)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.navigation.compose)
@@ -196,7 +194,7 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
-    debugImplementation(compose.uiTooling)
+    debugImplementation(libs.compose.uiTooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
@@ -260,9 +258,9 @@ fun File.fillClientEnvVariables() {
 
     val content = readText()
     val updatedContent = content
-        .replace("\${CLIENT_HOST}", env.CLIENT_HOST.value)
-        .replace("\${CLIENT_PORT}", env.CLIENT_PORT.value)
-        .replace("\${CLIENT_HTTP_PROTOCOL}", env.CLIENT_HTTP_PROTOCOL.value)
+        .replace($$"${CLIENT_HOST}", env.CLIENT_HOST.value)
+        .replace($$"${CLIENT_PORT}", env.CLIENT_PORT.value)
+        .replace($$"${CLIENT_HTTP_PROTOCOL}", env.CLIENT_HTTP_PROTOCOL.value)
     writeText(updatedContent)
 }
 

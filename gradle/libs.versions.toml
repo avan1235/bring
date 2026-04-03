@@ -10,6 +10,8 @@ androidx-navigation-compose = "2.9.2"
 buildKonfig = "0.17.1"
 buildConfig = "6.0.7"
 compose-multiplatform = "1.10.1"
+material3 = "1.9.0"
+material-icons-extended = "1.7.3"
 androidx-compose-ui = "1.10.3"
 compose-hot-reload = "1.0.0"
 jpegdecoder = "0.13"
@@ -55,6 +57,16 @@ androidx-test-ext-junit = { module = "androidx.test.ext:junit-ktx", version.ref 
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose-ui" }
 jpegdecoder = { module = "im.bci:jpegdecoder", version.ref = "jpegdecoder" }
 pngj = { module = "ar.com.hjg:pngj", version.ref = "pngj" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
+compose-uiTooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose-multiplatform" }
+compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-multiplatform" }
+compose-ui-util = { module = "org.jetbrains.compose.ui:ui-util", version.ref = "compose-multiplatform" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
+compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-multiplatform" }
+compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "material-icons-extended" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinxBrowser" }
