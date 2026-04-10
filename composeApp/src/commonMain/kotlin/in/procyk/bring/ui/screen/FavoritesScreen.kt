@@ -111,7 +111,7 @@ private fun LazyListScope.savedShoppingLists(
             }
         }
     }
-    items(saved, key = { it.listId }) { favorite ->
+    items(saved, key = { "${it.listId}@${headerKey}" }) { favorite ->
         Row(
             modifier = Modifier
                 .clickable { vm.onNavigateToSavedShoppingList(favorite) }
