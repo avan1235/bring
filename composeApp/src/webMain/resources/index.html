@@ -1,78 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-        (async () => {
-            const CACHE_NAME = 'bring-app-cache';
-            const CACHED_EXTENSIONS = ['.wasm', '.png', '.ttf', '.cvr', '.js', '.css'];
-            const CLIENT_HOST = '${CLIENT_HOST}';
-            const CLIENT_PORT = '${CLIENT_PORT}';
-            const CLIENT_HTTP_PROTOCOL = '${CLIENT_HTTP_PROTOCOL}';
-            const VERSION_ENDPOINT = `${CLIENT_HTTP_PROTOCOL}://${CLIENT_HOST}:${CLIENT_PORT}/version`;
-            const CACHE_VERSION_KEY = 'bring-cache-version';
-
-            function shouldCache(url) {
-                return CACHED_EXTENSIONS.some(ext => url.endsWith(ext));
-            }
-
-            async function getServerVersion() {
-                try {
-                    const response = await fetch(VERSION_ENDPOINT);
-                    return await response.text();
-                } catch (error) {
-                    console.warn('Failed to fetch server version:', error);
-                    return null;
-                }
-            }
-
-            async function clearCache() {
-                if ('caches' in window) {
-                    await window.caches.delete(CACHE_NAME);
-                    console.log('Cache cleared due to version change');
-                }
-            }
-
-            if (!('serviceWorker' in navigator) || !('caches' in window)) {
-                console.log('Service Worker or Cache API not supported');
-                return;
-            }
-
-            const serverVersion = await getServerVersion();
-
-            const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
-
-            if (serverVersion) {
-                if (cachedVersion && cachedVersion !== serverVersion) {
-                    await clearCache();
-                }
-                localStorage.setItem(CACHE_VERSION_KEY, serverVersion);
-            } else {
-                await clearCache();
-            }
-
-            const cache = await window.caches.open(CACHE_NAME);
-
-            const originalFetch = window.fetch;
-            window.fetch = async function (resource, init) {
-                const url = typeof resource === 'string' ? resource : resource.url;
-
-                if (!shouldCache(url)) {
-                    return await originalFetch(resource, init);
-                }
-
-                const cachedResponse = await cache.match(resource);
-                if (cachedResponse) {
-                    return cachedResponse;
-                }
-
-                const response = await originalFetch(resource, init);
-                if (response.ok) {
-                    await cache.put(resource, response.clone());
-                }
-                return response;
-            };
-        })();
-    </script>
     <meta charset="UTF-8">
     <link rel="apple-touch-icon" sizes="1024x1024" href="apple-touch-icon-1024x1024.png">
     <link rel="icon" href="favicon.ico">
@@ -85,6 +13,20 @@
     <meta name="theme-color" content="#FFFFFF">
     <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: dark)">
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+    </script>
 </head>
 <body style="background-color: rgb(255, 255, 255);">
 <div id="loader-box">
