@@ -2,7 +2,7 @@ package `in`.procyk.bring.ai
 
 import ai.koog.prompt.markdown.markdown
 import ai.koog.prompt.params.LLMParams
-import ai.koog.prompt.structure.StructuredData
+import ai.koog.prompt.structure.Structure
 import ai.koog.prompt.structure.json.generator.BasicJsonSchemaGenerator
 import ai.koog.prompt.structure.json.generator.JsonSchemaGenerator
 import ai.koog.prompt.structure.json.generator.StandardJsonSchemaGenerator
@@ -23,7 +23,7 @@ internal class MarkdownWrappedJsonStructuredData<TStruct> private constructor(
         builder: TextContentBuilderBase<*>,
         structuredData: MarkdownWrappedJsonStructuredData<TStruct>,
     ) -> TextContentBuilderBase<*> = ::defaultDefinitionPrompt,
-) : StructuredData<TStruct, LLMParams.Schema.JSON>(id, schema, examples) {
+) : Structure<TStruct, LLMParams.Schema.JSON>(id, schema, examples) {
 
     override fun parse(text: String): TStruct =
         json.decodeFromString(serializer, text.trim().removeSurrounding("```json", "```"))
@@ -33,6 +33,17 @@ internal class MarkdownWrappedJsonStructuredData<TStruct> private constructor(
 
     override fun definition(builder: TextContentBuilderBase<*>): TextContentBuilderBase<*> =
         definitionPrompt(builder, this)
+
+    override fun examples(builder: TextContentBuilderBase<*>): TextContentBuilderBase<*> = builder.apply {
+        markdown {
+            examples.forEach { example ->
+                codeblock(
+                    code = ai.koog.prompt.text.text { structure(this@MarkdownWrappedJsonStructuredData, example) },
+                    language = "json"
+                )
+            }
+        }
+    }
 
     companion object {
         val defaultJson: Json = Json {

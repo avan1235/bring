@@ -1,13 +1,14 @@
 package `in`.procyk.bring.vm
 
 import ai.koog.agents.core.tools.annotations.LLMDescription
+import ai.koog.http.client.ktor.KtorKoogHttpClient
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.clients.google.GoogleLLMClient
 import ai.koog.prompt.executor.clients.google.GoogleModels
-import ai.koog.prompt.executor.llms.SingleLLMPromptExecutor
-import ai.koog.prompt.structure.StructuredOutput.Manual
-import ai.koog.prompt.structure.StructuredOutputConfig
-import ai.koog.prompt.structure.executeStructured
+import ai.koog.prompt.executor.llms.MultiLLMPromptExecutor
+import ai.koog.prompt.executor.model.executeStructured
+import ai.koog.prompt.structure.StructuredRequest.Manual
+import ai.koog.prompt.structure.StructuredRequestConfig
 import androidx.lifecycle.viewModelScope
 import bring.composeapp.generated.resources.Res
 import bring.composeapp.generated.resources.error_fetching_favorite_elements
@@ -28,7 +29,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.math.max
-import kotlin.sequences.take
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTime
@@ -347,26 +347,28 @@ private suspend fun HttpClient.getSuggestionsFromGemini(
     apiKey: String,
     description: String,
 ): SuggestedShoppingList? {
-    val promptExecutor = SingleLLMPromptExecutor(GoogleLLMClient(apiKey, baseClient = this))
+    val httpClientFactory = KtorKoogHttpClient.Factory(baseClient = this)
+    val googleClient = GoogleLLMClient(apiKey, httpClientFactory = httpClientFactory)
+    val promptExecutor = MultiLLMPromptExecutor(googleClient)
     val structuredResponse = promptExecutor.executeStructured(
         prompt = prompt("shopping-list-suggestion") {
             system(
                 """
-                You are shopping list planner assistant.
-                Write down a shopping list items from the provided input.
-                Provide a list of elements that might be available at local shops, being some concrete, one by one listed products, to be bought at shop.
-                Don't answer with general things to buy, only concrete ones matter, but not specify concrete producer.
-                Use the same language to describe the list elements as he list description is written in.
+                You are a shopping list extraction assistant.
+                Extract specific shopping list items from the user input.
+                Items must be concrete products available at local shops.
+                Avoid general categories and do not specify brand names.
+                Use the same language as the you're given in the user context.
                 """.trimIndent()
             )
             user(description)
         },
-        model = GoogleModels.Gemini2_0Flash,
-        config = StructuredOutputConfig(
+        model = GoogleModels.Gemini2_5Flash,
+        config = StructuredRequestConfig(
             default = Manual(shoppingListStructure),
         )
     )
-    return structuredResponse.getOrNull()?.structure
+    return structuredResponse.getOrNull()?.data
 }
 
 @Serializable
