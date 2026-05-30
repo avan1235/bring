@@ -363,7 +363,7 @@ private suspend fun HttpClient.getSuggestionsFromGemini(
             )
             user(description)
         },
-        model = GoogleModels.Gemini2_5Flash,
+        model = GoogleModels.Gemini3_Flash_Preview,
         config = StructuredRequestConfig(
             default = Manual(shoppingListStructure),
         )

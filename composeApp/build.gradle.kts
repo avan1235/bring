@@ -96,6 +96,7 @@ kotlin {
             implementation(libs.compose.colorpicker)
             implementation(libs.materialKolor)
             implementation(libs.koog.agents)
+            implementation(libs.koog.prompt.executor.google)
             implementation(libs.filekit.core)
             implementation(libs.filekit.dialogs)
 
