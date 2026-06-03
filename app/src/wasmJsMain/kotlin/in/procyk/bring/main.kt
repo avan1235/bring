@@ -14,10 +14,17 @@ import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.vm.PlatformContext
 import kotlinx.browser.document
 import kotlinx.browser.window
+import kotlinx.coroutines.await
+import org.khronos.webgl.ArrayBuffer
+import org.khronos.webgl.Int8Array
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLHeadElement
 import org.w3c.dom.HTMLMetaElement
 import org.w3c.dom.asList
+import org.w3c.fetch.Response
+import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
+import kotlin.wasm.unsafe.withScopedMemoryAllocator
+
 
 fun main() {
     val head = document.head ?: error("no <head>")
@@ -87,4 +94,34 @@ private fun Float.in255(): Int = (this * 255).toInt()
 
 private const val NotoColorEmoji: String = "./NotoColorEmoji.ttf"
 
-internal expect suspend fun loadRes(url: String): ByteArray
+@OptIn(ExperimentalWasmJsInterop::class)
+private suspend fun loadRes(url: String): ByteArray =
+    window.fetch(url).await<Response>().arrayBuffer().await<ArrayBuffer>().toByteArray()
+
+
+private fun ArrayBuffer.toByteArray(): ByteArray {
+    val source = Int8Array(this, 0, byteLength)
+    return jsInt8ArrayToKotlinByteArray(source)
+}
+
+@OptIn(ExperimentalWasmJsInterop::class)
+@JsFun(
+    """ (src, size, dstAddr) => {
+        const mem8 = new Int8Array(wasmExports.memory.buffer, dstAddr, size);
+        mem8.set(src);
+    }
+"""
+)
+private external fun jsExportInt8ArrayToWasm(src: Int8Array, size: Int, dstAddr: Int)
+
+private fun jsInt8ArrayToKotlinByteArray(x: Int8Array): ByteArray {
+    val size = x.length
+
+    @OptIn(UnsafeWasmMemoryApi::class)
+    return withScopedMemoryAllocator { allocator ->
+        val memBuffer = allocator.allocate(size)
+        val dstAddress = memBuffer.address.toInt()
+        jsExportInt8ArrayToWasm(x, size, dstAddress)
+        ByteArray(size) { i -> (memBuffer + i).loadByte() }
+    }
+}

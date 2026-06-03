@@ -68,14 +68,14 @@ jobs:
           export CLIENT_HTTP_PROTOCOL=https
           export CLIENT_WS_PROTOCOL=wss
           chmod +x ./gradlew
-          ./gradlew app:composeCompatibilityBrowserDistribution
+          ./gradlew app:wasmJsBrowserDistribution
         env:
           VERSION: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
 
       - name: Inject Cache Version into Service Worker
         if: job.status == 'success'
         run: |
-          SW_PATH="./app/build/dist/composeWebCompatibility/productionExecutable/service-worker.js"
+          SW_PATH="./app/build/dist/wasmJs/productionExecutable/service-worker.js"
           NEW_VERSION="v${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}"
           
           echo "Replacing placeholder with $NEW_VERSION in $SW_PATH"
@@ -85,7 +85,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./app/build/dist/composeWebCompatibility/productionExecutable
+          publish_dir: ./app/build/dist/wasmJs/productionExecutable
           force_orphan: true
           cname: bring.procyk.in
 
