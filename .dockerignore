@@ -5,7 +5,7 @@
 .idea
 .kotlin
 
-composeApp
+app
 iosApp
 kotlin-js-store
 

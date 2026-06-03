@@ -33,7 +33,7 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
 }
 
-include(":composeApp")
+include(":app")
 include(":server")
 include(":shared")
 include(":shared-client")

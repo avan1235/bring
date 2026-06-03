@@ -16,7 +16,7 @@
 ## 📱 Overview
 
 <div style="display: flex; justify-content: center; flex-wrap: nowrap;">
-  <img src="composeApp/src/androidMain/res/mipmap-xxxhdpi/ic_launcher.webp" style="width: 32%;">
+  <img src="app/src/androidMain/res/mipmap-xxxhdpi/ic_launcher.webp" style="width: 32%;">
 </div>
 
 Bring! is a modern, feature-rich shopping list application built with Kotlin Multiplatform (KMP) and Compose Multiplatform (CMP). It allows users to create, manage, and share shopping lists across multiple platforms with a seamless, native-like experience.
@@ -26,14 +26,14 @@ Web version is publicly available at https://bring.procyk.in.
 If you like the project, consider supporting it by leaving ⭐.
 
 <div style="display: flex; justify-content: center; flex-wrap: nowrap;">
-  <img src="composeApp/screenshots/create-list-screen-custom-name.png" style="width: 32%;" />
-  <img src="composeApp/screenshots/create-list-screen-join-list.png" style="width: 32%;" />
-  <img src="composeApp/screenshots/favorites-screen-collections.png" style="width: 32%;" />
+  <img src="app/screenshots/create-list-screen-custom-name.png" style="width: 32%;" />
+  <img src="app/screenshots/create-list-screen-join-list.png" style="width: 32%;" />
+  <img src="app/screenshots/favorites-screen-collections.png" style="width: 32%;" />
 </div>
 <div style="display: flex; justify-content: center; flex-wrap: nowrap;">
-  <img src="composeApp/screenshots/loyalty-cards-screen.png" style="width: 32%;" />
-  <img src="composeApp/screenshots/edit-list-screen-options.png" style="width: 32%;" />
-  <img src="composeApp/screenshots/settings-screen-options.png" style="width: 32%;" />
+  <img src="app/screenshots/loyalty-cards-screen.png" style="width: 32%;" />
+  <img src="app/screenshots/edit-list-screen-options.png" style="width: 32%;" />
+  <img src="app/screenshots/settings-screen-options.png" style="width: 32%;" />
 </div>
 
 
@@ -81,7 +81,7 @@ The client application supports:
 
 ```
 bring
-├─ composeApp           # Client application code
+├─ app           # Client application code
 │  └─ src
 │     ├─ androidMain    # Android-specific code
 │     ├─ commonMain     # Shared client code

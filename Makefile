@@ -15,10 +15,10 @@ server:
 	chmod +X ./gradlew
 
 desktop: .executable
-	./gradlew composeApp:runReleaseDistributable
+	./gradlew app:runReleaseDistributable
 
 wasm: .executable
-	./gradlew composeApp:wasmJsBrowserProductionRun
+	./gradlew app:wasmJsBrowserProductionRun
 
 .clean-docker:
 	docker compose --file docker-compose.yml --env-file .env down
