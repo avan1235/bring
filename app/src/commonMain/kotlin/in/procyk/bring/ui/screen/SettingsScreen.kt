@@ -91,6 +91,13 @@ internal fun SettingsScreen(
         SettingsCategoryName(Res.string.miscellaneous)
         SettingSwitchRow(Res.string.use_haptics, vm.useHaptics, vm::onUseHapticsChanged)
         SettingSwitchRow(Res.string.use_bottom_navigation, vm.useBottomNavigation, vm::onUseBottomNavigationChanged)
+        AnimatedVisibility(vm.useBottomNavigation.value) {
+            SettingSwitchRow(
+                Res.string.use_liquid_navigation,
+                vm.useLiquidGlassNavigation,
+                vm::onUseLiquidGlassNavigation
+            )
+        }
         Spacer(modifier = Modifier.weight(1f))
         Spacer(modifier = Modifier.height(16.dp))
         BottomBanner(

@@ -50,6 +50,9 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
     val useBottomNavigation: StateFlow<Boolean> =
         context.useBottomNavigation
 
+    val useLiquidGlassNavigation: StateFlow<Boolean> =
+        context.useLiquidGlassNavigation
+
     fun onShoppingListEditModeChanged(value: Boolean) {
         launchUpdateConfig { it.copy(enableShoppingListEditMode = value) }
     }
@@ -109,5 +112,9 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
 
     fun onUseBottomNavigationChanged(value: Boolean) {
         launchUpdateConfig { it.copy(useBottomNavigation = value) }
+    }
+
+    fun onUseLiquidGlassNavigation(value: Boolean) {
+        launchUpdateConfig { it.copy(useLiquidGlassNavigation = value) }
     }
 }

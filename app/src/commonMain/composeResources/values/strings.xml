@@ -42,6 +42,7 @@
     <string name="use_gemini">Use Gemini to generate inputs</string>
     <string name="use_haptics">Use haptic feedback</string>
     <string name="use_bottom_navigation">Use bottom navigation</string>
+    <string name="use_liquid_navigation">Use liquid glass navigation</string>
     <string name="miscellaneous">Miscellaneous</string>
     <string name="share_all">Share All</string>
     <string name="import_action">Import</string>

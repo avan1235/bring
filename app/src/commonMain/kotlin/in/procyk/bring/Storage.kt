@@ -12,6 +12,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.platform.LocalHapticFeedback
 import `in`.procyk.bring.ui.Theme
 import `in`.procyk.bring.ui.defaultUseBottomNavigation
+import `in`.procyk.bring.ui.defaultUseLiquidGlassNavigation
 import io.github.xxfast.kstore.Codec
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.cbor.CborLabel
@@ -38,6 +39,7 @@ data class BringStore(
     @CborLabel(20) val useCardsCache: Boolean = true,
     @CborLabel(21) val recentShoppingLists: Set<RecentShoppingList> = emptySet(),
     @CborLabel(22) val recentShoppingListsCount: Int = 5,
+    @CborLabel(23) val useLiquidGlassNavigation: Boolean = defaultUseLiquidGlassNavigation,
 ) {
     companion object {
         val Default: BringStore = BringStore()

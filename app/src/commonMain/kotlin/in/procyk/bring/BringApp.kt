@@ -9,13 +9,19 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Summarize
+import androidx.compose.material.icons.outlined.CreditCard
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Summarize
 import androidx.compose.material.icons.twotone.CreditCard
 import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.Settings
@@ -23,26 +29,38 @@ import androidx.compose.material.icons.twotone.Summarize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import bring.app.generated.resources.*
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import `in`.procyk.bring.ui.BringAppTheme
+import `in`.procyk.bring.ui.Theme
 import `in`.procyk.bring.ui.components.*
+import `in`.procyk.bring.ui.components.liquid.LiquidBottomTab
+import `in`.procyk.bring.ui.components.liquid.LiquidBottomTabs
 import `in`.procyk.bring.ui.components.snackbar.Snackbar
 import `in`.procyk.bring.ui.components.snackbar.SnackbarHost
 import `in`.procyk.bring.ui.components.topbar.TopBarDefaults
 import `in`.procyk.bring.ui.screen.*
 import `in`.procyk.bring.vm.*
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -99,72 +117,83 @@ internal fun BringAppInternal(
         },
         bottomBar = {
             val useBottomNavigation by context.useBottomNavigation.collectAsState()
-            if (useBottomNavigation) {
+            val useLiquidGlassNavigation by context.useLiquidGlassNavigation.collectAsState()
+            if (useBottomNavigation && !useLiquidGlassNavigation) {
                 Navigation(context)
             }
         },
         content = { padding ->
-            val focusManager = LocalFocusManager.current
-            NavHost(
-                navController = context.navController,
-                modifier = Modifier.pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = { focusManager.clearFocus() })
-                }.padding(
-                    top = padding.calculateTopPadding(),
-                    bottom = padding.calculateBottomPadding(),
-                ),
-                startDestination = when (initListId) {
-                    null -> Screen.CreateList
-                    else -> Screen.EditList(
-                        initListId, fetchSuggestionsAndFavoriteElements = true
-                    )
-                },
-                enterTransition = {
-                    slideIntoContainer(
-                        towards = towards(),
-                        animationSpec = tween(durationMillis = 400, easing = EaseOut),
-                    )
-                },
-                exitTransition = {
-                    slideOutOfContainer(
-                        towards = towards(),
-                        animationSpec = tween(durationMillis = 400, easing = EaseOut),
-                    )
-                },
+            Box(
+                modifier = Modifier.fillMaxSize()
             ) {
-                composable<Screen.CreateList> {
-                    val vm = viewModel {
-                        CreateListScreenViewModel(
-                            context = context,
+                val backdrop = rememberLayerBackdrop()
+                val focusManager = LocalFocusManager.current
+                NavHost(
+                    navController = context.navController,
+                    modifier = Modifier.pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = { focusManager.clearFocus() })
+                    }.padding(
+                        top = padding.calculateTopPadding(),
+                        bottom = padding.calculateBottomPadding(),
+                    ),
+                    startDestination = when (initListId) {
+                        null -> Screen.CreateList
+                        else -> Screen.EditList(
+                            initListId, fetchSuggestionsAndFavoriteElements = true
                         )
-                    }
-                    CreateListScreen(padding, vm)
-                }
-                composable<Screen.EditList> {
-                    val editList = it.toRoute<Screen.EditList>()
-                    val listId = editList.listId.let(Uuid::parseHexDash)
-                    val fetchSuggestionsAndFavoriteElements = editList.fetchSuggestionsAndFavoriteElements
-                    val vm = viewModel {
-                        EditListScreenViewModel(
-                            context = context,
-                            listId = listId,
-                            fetchSuggestionsAndFavoriteElements = fetchSuggestionsAndFavoriteElements,
+                    },
+                    enterTransition = {
+                        slideIntoContainer(
+                            towards = towards(),
+                            animationSpec = tween(durationMillis = 400, easing = EaseOut),
                         )
+                    },
+                    exitTransition = {
+                        slideOutOfContainer(
+                            towards = towards(),
+                            animationSpec = tween(durationMillis = 400, easing = EaseOut),
+                        )
+                    },
+                ) {
+                    composable<Screen.CreateList> {
+                        val vm = viewModel {
+                            CreateListScreenViewModel(
+                                context = context,
+                            )
+                        }
+                        CreateListScreen(padding, vm)
                     }
-                    EditListScreen(padding, vm)
+                    composable<Screen.EditList> {
+                        val editList = it.toRoute<Screen.EditList>()
+                        val listId = editList.listId.let(Uuid::parseHexDash)
+                        val fetchSuggestionsAndFavoriteElements = editList.fetchSuggestionsAndFavoriteElements
+                        val vm = viewModel {
+                            EditListScreenViewModel(
+                                context = context,
+                                listId = listId,
+                                fetchSuggestionsAndFavoriteElements = fetchSuggestionsAndFavoriteElements,
+                            )
+                        }
+                        EditListScreen(padding, vm)
+                    }
+                    composable<Screen.LoyaltyCards> {
+                        val vm = viewModel { LoyaltyCardsViewModel(context) }
+                        LoyaltyCardsScreen(padding, vm)
+                    }
+                    composable<Screen.Favorites> {
+                        val vm = viewModel { FavoritesViewModel(context) }
+                        FavoritesScreen(padding, vm)
+                    }
+                    composable<Screen.Settings> {
+                        val vm = viewModel { SettingsViewModel(context) }
+                        SettingsScreen(padding, vm)
+                    }
                 }
-                composable<Screen.LoyaltyCards> {
-                    val vm = viewModel { LoyaltyCardsViewModel(context) }
-                    LoyaltyCardsScreen(padding, vm)
-                }
-                composable<Screen.Favorites> {
-                    val vm = viewModel { FavoritesViewModel(context) }
-                    FavoritesScreen(padding, vm)
-                }
-                composable<Screen.Settings> {
-                    val vm = viewModel { SettingsViewModel(context) }
-                    SettingsScreen(padding, vm)
+                val useBottomNavigation by context.useBottomNavigation.collectAsState()
+                val useLiquidGlassNavigation by context.useLiquidGlassNavigation.collectAsState()
+                if (useBottomNavigation && useLiquidGlassNavigation) {
+                    LiquidNavigation(context, padding, backdrop)
                 }
             }
         },
@@ -206,6 +235,54 @@ private fun AnimatedTopBar(
 }
 
 @Composable
+private fun BoxScope.LiquidNavigation(
+    context: AbstractViewModel.Context,
+    paddingValues: PaddingValues,
+    backdrop: Backdrop,
+) {
+    val currentTarget by context.navBarTarget.collectAsState()
+    val theme by context.store.updates.mapNotNull { it?.darkMode }.collectAsState(Theme.System)
+    val isLightTheme = when (theme) {
+        Theme.Light -> true
+        Theme.Dark -> false
+        Theme.System -> !isSystemInDarkTheme()
+    }
+    val contentColor = if (isLightTheme) Color.Black else Color.White
+    val iconColorFilter = ColorFilter.tint(contentColor)
+    LiquidBottomTabs(
+        selectedTab = { currentTarget },
+        onTabSelected = { context.onNavBarTargetSelected(it) },
+        fromIndex = { NavBarTarget.entries[it] },
+        backdrop = backdrop,
+        tabsCount = NavBarTarget.entries.size,
+        isLightTheme = isLightTheme,
+        modifier = Modifier
+            .widthIn(max = NavBarTarget.entries.size * 128.dp)
+            .padding(bottom = 16.dp)
+            .padding(horizontal = 36.dp)
+            .padding(paddingValues)
+            .align(Alignment.BottomCenter)
+    ) {
+        val currentTarget by context.navBarTarget.collectAsState()
+        NavBarTarget.entries.forEach { target ->
+            val selected = currentTarget == target
+            LiquidBottomTab({ context.onNavBarTargetSelected(target) }) {
+                val painter = rememberVectorPainter(image = if (selected) target.filledIcon else target.outlinedIcon)
+                Box(
+                    Modifier
+                        .size(28f.dp)
+                        .paint(painter, colorFilter = iconColorFilter)
+                )
+                BasicText(
+                    stringResource(target.label),
+                    style = TextStyle(contentColor, 12f.sp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun Navigation(
     context: AbstractViewModel.Context,
 ) {
@@ -230,7 +307,7 @@ private fun Navigation(
             NavigationBarItem(
                 icon = {
                     Icon(
-                        imageVector = if (selected) target.filledIcon else target.outlinedIcon,
+                        imageVector = if (selected) target.filledIcon else target.twoToneIcon,
                         modifier = Modifier
                             .background(
                                 color = if (selected) BringAppTheme.colors.primary.copy(alpha = 0.16f) else Color.Transparent,
@@ -256,12 +333,20 @@ private fun Navigation(
 
 private const val ScreenChangeAnimationDurationMillis: Int = 400
 
-private val NavBarTarget.outlinedIcon: ImageVector
+private val NavBarTarget.twoToneIcon: ImageVector
     get() = when (this) {
         NavBarTarget.Main -> Icons.TwoTone.Summarize
         NavBarTarget.LoyaltyCards -> Icons.TwoTone.CreditCard
         NavBarTarget.Favourites -> Icons.TwoTone.Favorite
         NavBarTarget.Settings -> Icons.TwoTone.Settings
+    }
+
+private val NavBarTarget.outlinedIcon: ImageVector
+    get() = when (this) {
+        NavBarTarget.Main -> Icons.Outlined.Summarize
+        NavBarTarget.LoyaltyCards -> Icons.Outlined.CreditCard
+        NavBarTarget.Favourites -> Icons.Outlined.Favorite
+        NavBarTarget.Settings -> Icons.Outlined.Settings
     }
 
 private val NavBarTarget.filledIcon: ImageVector

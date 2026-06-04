@@ -52,10 +52,18 @@ internal abstract class AbstractViewModel(
                 storeFlow.value.useBottomNavigation
             )
 
+        val useLiquidGlassNavigation: StateFlow<Boolean> = storeFlow
+            .map { it.useLiquidGlassNavigation }
+            .stateIn(
+                appScope,
+                SharingStarted.WhileSubscribed(stopTimeoutMillis = 1_000),
+                storeFlow.value.useLiquidGlassNavigation
+            )
+
         private val _topBarText = MutableStateFlow(AppConfig.APP_NAME)
         val topBarText: StateFlow<String> = _topBarText.asStateFlow()
 
-        val navBarTarget = navController.currentBackStackEntryFlow.map { entry ->
+        val navBarTarget: StateFlow<NavBarTarget> = navController.currentBackStackEntryFlow.map { entry ->
             when {
                 entry.navigatesFrom<Screen.EditList>() -> NavBarTarget.Main
                 entry.navigatesFrom<Screen.CreateList>() -> NavBarTarget.Main

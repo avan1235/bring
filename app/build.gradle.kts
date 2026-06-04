@@ -112,6 +112,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.arrow.core)
             implementation(libs.arrow.core.serialization)
+
+            implementation("io.github.kyant0:backdrop:2.0.0")
+            implementation("io.github.kyant0:shapes:1.2.0")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
