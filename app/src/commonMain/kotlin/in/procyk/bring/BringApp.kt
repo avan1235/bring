@@ -49,6 +49,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import bring.app.generated.resources.*
 import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.layerBackdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.Theme
@@ -130,13 +131,18 @@ internal fun BringAppInternal(
                 val focusManager = LocalFocusManager.current
                 NavHost(
                     navController = context.navController,
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectTapGestures(
-                            onTap = { focusManager.clearFocus() })
-                    }.padding(
-                        top = padding.calculateTopPadding(),
-                        bottom = padding.calculateBottomPadding(),
-                    ),
+                    modifier = Modifier
+                        .layerBackdrop(backdrop)
+                        .then(
+                            Modifier.pointerInput(Unit) {
+                                detectTapGestures(
+                                    onTap = { focusManager.clearFocus() })
+                            }.padding(
+                                top = padding.calculateTopPadding(),
+                                bottom = padding.calculateBottomPadding(),
+                            )
+                        )
+                        .fillMaxSize(),
                     startDestination = when (initListId) {
                         null -> Screen.CreateList
                         else -> Screen.EditList(
