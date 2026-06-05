@@ -253,7 +253,7 @@ private fun BoxScope.LiquidNavigation(
         Theme.Dark -> false
         Theme.System -> !isSystemInDarkTheme()
     }
-    val contentColor = if (isLightTheme) Color.Black else Color.White
+    val contentColor = BringAppTheme.colors.onSurface
     val iconColorFilter = ColorFilter.tint(contentColor)
     LiquidBottomTabs(
         selectedTab = { currentTarget },
