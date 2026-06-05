@@ -33,11 +33,27 @@ import com.kyant.backdrop.shadow.InnerShadow
 import com.kyant.backdrop.shadow.Shadow
 import com.kyant.shapes.Capsule
 import `in`.procyk.bring.ui.BringAppTheme
+import `in`.procyk.bring.vm.AbstractViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.sign
+
+@Composable
+internal fun LiquidBottomTabsSpacer(
+    vm: AbstractViewModel,
+) {
+    val useBottomNavigation by vm.context.useBottomNavigation.collectAsState()
+    val useLiquidGlassNavigation by vm.context.useLiquidGlassNavigation.collectAsState()
+    if (useBottomNavigation && useLiquidGlassNavigation) {
+        Box(
+            Modifier
+                .height(80.dp)
+                .fillMaxWidth(),
+        )
+    }
+}
 
 @Composable
 internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
@@ -48,7 +64,7 @@ internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
     tabsCount: Int,
     isLightTheme: Boolean,
     modifier: Modifier = Modifier,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     val accentColor = BringAppTheme.colors.primary
     val containerColor = if (isLightTheme) Color(0xFFFAFAFA).copy(0.4f) else Color(0xFF121212).copy(0.4f)
@@ -57,7 +73,7 @@ internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
 
     BoxWithConstraints(
         modifier,
-        contentAlignment = Alignment.CenterStart
+        contentAlignment = Alignment.CenterStart,
     ) {
         val density = LocalDensity.current
         val tabWidth = with(density) {
@@ -95,19 +111,19 @@ internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
                     animationScope.launch {
                         offsetAnimation.animateTo(
                             0f,
-                            spring(1f, 300f, 0.5f)
+                            spring(1f, 300f, 0.5f),
                         )
                     }
                 },
                 onDrag = { _, dragAmount ->
                     updateValue(
                         (targetValue + dragAmount.x / tabWidth * if (isLtr) 1f else -1f)
-                            .fastCoerceIn(0f, (tabsCount - 1).toFloat())
+                            .fastCoerceIn(0f, (tabsCount - 1).toFloat()),
                     )
                     animationScope.launch {
                         offsetAnimation.snapTo(offsetAnimation.value + dragAmount.x)
                     }
-                }
+                },
             )
         }
         LaunchedEffect(selectedTab) {
@@ -132,9 +148,9 @@ internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
                     Offset(
                         if (isLtr) (dampedDragAnimation.value + 0.5f) * tabWidth + panelOffset
                         else size.width - (dampedDragAnimation.value + 0.5f) * tabWidth + panelOffset,
-                        size.height / 2f
+                        size.height / 2f,
                     )
-                }
+                },
             )
         }
 
@@ -157,20 +173,20 @@ internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
                         scaleX = scale
                         scaleY = scale
                     },
-                    onDrawSurface = { drawRect(containerColor) }
+                    onDrawSurface = { drawRect(containerColor) },
                 )
                 .then(interactiveHighlight.modifier)
                 .height(64f.dp)
                 .fillMaxWidth()
                 .padding(4f.dp),
             verticalAlignment = Alignment.CenterVertically,
-            content = content
+            content = content,
         )
 
         CompositionLocalProvider(
             LocalLiquidBottomTabScale provides {
                 lerp(1f, 1.2f, dampedDragAnimation.pressProgress)
-            }
+            },
         ) {
             Row(
                 Modifier
@@ -189,14 +205,14 @@ internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
                             blur(8f.dp.toPx())
                             lens(
                                 24f.dp.toPx() * progress,
-                                24f.dp.toPx() * progress
+                                24f.dp.toPx() * progress,
                             )
                         },
                         highlight = {
                             val progress = dampedDragAnimation.pressProgress
                             Highlight.Default.copy(alpha = progress)
                         },
-                        onDrawSurface = { drawRect(containerColor) }
+                        onDrawSurface = { drawRect(containerColor) },
                     )
                     .then(interactiveHighlight.modifier)
                     .height(56f.dp)
@@ -204,7 +220,7 @@ internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
                     .padding(horizontal = 4f.dp)
                     .graphicsLayer(colorFilter = ColorFilter.tint(accentColor)),
                 verticalAlignment = Alignment.CenterVertically,
-                content = content
+                content = content,
             )
         }
 
@@ -226,7 +242,7 @@ internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
                         lens(
                             10f.dp.toPx() * progress,
                             14f.dp.toPx() * progress,
-                            chromaticAberration = true
+                            chromaticAberration = true,
                         )
                     },
                     highlight = {
@@ -241,7 +257,7 @@ internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
                         val progress = dampedDragAnimation.pressProgress
                         InnerShadow(
                             radius = 8f.dp * progress,
-                            alpha = progress
+                            alpha = progress,
                         )
                     },
                     layerBlock = {
@@ -256,13 +272,13 @@ internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
                         drawRect(
                             if (isLightTheme) Color.Black.copy(0.1f)
                             else Color.White.copy(0.1f),
-                            alpha = 1f - progress
+                            alpha = 1f - progress,
                         )
                         drawRect(Color.Black.copy(alpha = 0.03f * progress))
-                    }
+                    },
                 )
                 .height(56f.dp)
-                .fillMaxWidth(1f / tabsCount)
+                .fillMaxWidth(1f / tabsCount),
         )
     }
 }

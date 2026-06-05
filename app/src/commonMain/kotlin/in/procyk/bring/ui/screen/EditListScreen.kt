@@ -69,6 +69,7 @@ import `in`.procyk.bring.ui.components.IconButton
 import `in`.procyk.bring.ui.components.IconButtonVariant
 import `in`.procyk.bring.ui.components.ReorderableItemRow
 import `in`.procyk.bring.ui.components.compactButtonMinSize
+import `in`.procyk.bring.ui.components.liquid.LiquidBottomTabsSpacer
 import `in`.procyk.bring.ui.components.progressindicators.LinearProgressIndicator
 import `in`.procyk.bring.vm.EditListScreenViewModel
 import kotlinx.coroutines.launch
@@ -224,6 +225,9 @@ internal fun EditListScreen(
                         )
                     }
                 }
+            }
+            item(key = "edit_list_liquid_spacer") {
+                LiquidBottomTabsSpacer(vm)
             }
         }
     }

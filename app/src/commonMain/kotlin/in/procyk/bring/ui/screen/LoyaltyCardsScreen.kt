@@ -23,6 +23,7 @@ import `in`.procyk.bring.ui.LocalColors
 import `in`.procyk.bring.ui.LocalContentColor
 import `in`.procyk.bring.ui.components.*
 import `in`.procyk.bring.ui.components.card.ElevatedCard
+import `in`.procyk.bring.ui.components.liquid.LiquidBottomTabsSpacer
 import `in`.procyk.bring.ui.components.progressindicators.CircularProgressIndicator
 import `in`.procyk.bring.ui.components.textfield.OutlinedTextField
 import `in`.procyk.bring.vm.LoyaltyCardsViewModel
@@ -190,6 +191,9 @@ internal fun LoyaltyCardsScreen(
                 )
             }
 
+        }
+        item(key = "loyalty-cards-liquid-spacer") {
+            LiquidBottomTabsSpacer(vm)
         }
     }
     dialogAction?.let { currentAction ->

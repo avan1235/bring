@@ -33,6 +33,7 @@ import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.Theme
 import `in`.procyk.bring.ui.components.*
 import `in`.procyk.bring.ui.components.card.OutlinedCard
+import `in`.procyk.bring.ui.components.liquid.LiquidBottomTabsSpacer
 import `in`.procyk.bring.ui.components.textfield.OutlinedTextField
 import `in`.procyk.bring.ui.icons.BringIcons
 import `in`.procyk.bring.ui.icons.GitHub
@@ -107,6 +108,7 @@ internal fun SettingsScreen(
             BottomBannerItem("https://procyk.in", BringIcons.Html),
         )
         Spacer(modifier = Modifier.height(16.dp))
+        LiquidBottomTabsSpacer(vm)
     }
 }
 

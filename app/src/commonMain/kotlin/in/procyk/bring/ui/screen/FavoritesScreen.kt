@@ -26,6 +26,7 @@ import bring.app.generated.resources.recent_shopping_lists
 import `in`.procyk.bring.SavedShoppingList
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.components.*
+import `in`.procyk.bring.ui.components.liquid.LiquidBottomTabsSpacer
 import `in`.procyk.bring.vm.FavoritesViewModel
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -83,6 +84,9 @@ internal fun FavoritesScreen(
         }
         savedShoppingLists(vm, favorites, "favorite_shopping_lists_header", Res.string.favorite_shopping_lists)
         savedShoppingLists(vm, recents, "recent_shopping_lists_header", Res.string.recent_shopping_lists)
+        item(key = "favorite_elements_liquid_spacer") {
+            LiquidBottomTabsSpacer(vm)
+        }
     }
 }
 
