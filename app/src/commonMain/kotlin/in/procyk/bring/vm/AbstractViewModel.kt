@@ -116,9 +116,7 @@ internal abstract class AbstractViewModel(
             appScope.launch {
                 updateListLocationPresentation(null)
                 _topBarText.value = getString(Res.string.loyalty_cards)
-                withContext(Dispatchers.Main) {
-                    navController.navigate(Screen.LoyaltyCards)
-                }
+                navigateReusingState(Screen.LoyaltyCards)
             }
         }
 
@@ -126,9 +124,7 @@ internal abstract class AbstractViewModel(
             appScope.launch {
                 updateListLocationPresentation(null)
                 _topBarText.value = getString(Res.string.favorites)
-                withContext(Dispatchers.Main) {
-                    navController.navigate(Screen.Favorites)
-                }
+                navigateReusingState(Screen.Favorites)
             }
         }
 
@@ -136,9 +132,7 @@ internal abstract class AbstractViewModel(
             appScope.launch {
                 updateListLocationPresentation(null)
                 _topBarText.value = getString(Res.string.settings)
-                withContext(Dispatchers.Main) {
-                    navController.navigate(Screen.Settings)
-                }
+                navigateReusingState(Screen.Settings)
             }
         }
 
@@ -146,9 +140,7 @@ internal abstract class AbstractViewModel(
             appScope.launch {
                 updateListLocationPresentation(listId)
                 store.update { it?.copy(lastListId = listId) }
-                withContext(Dispatchers.Main) {
-                    navController.navigate(Screen.EditList(listId, fetchSuggestions))
-                }
+                navigateReusingState(Screen.EditList(listId, fetchSuggestions))
             }
         }
 
@@ -161,15 +153,25 @@ internal abstract class AbstractViewModel(
                 if (cleanLastListId) {
                     store.update { it?.copy(lastListId = null) }
                 }
-                withContext(Dispatchers.Main) {
-                    navController.navigate(Screen.CreateList)
-                }
+                navigateReusingState(Screen.CreateList)
                 _topBarText.value = AppConfig.APP_NAME
             }
         }
 
         fun updateListName(name: String) {
             _topBarText.value = name
+        }
+
+        private suspend fun navigateReusingState(screen: Screen) {
+            withContext(Dispatchers.Main) {
+                navController.navigate(screen)  {
+                    launchSingleTop = true
+                    restoreState = true
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                }
+            }
         }
     }
 
