@@ -5,7 +5,9 @@ package `in`.procyk.bring.ui.screen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -13,6 +15,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -241,17 +244,18 @@ internal fun EditListScreen(
         )
     }
     val density = LocalDensity.current
-    Box(
+    Column(
         modifier = Modifier.padding(FabPadding).fillMaxSize(),
-        contentAlignment = Alignment.BottomEnd,
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.Bottom,
     ) {
         val scope = rememberCoroutineScope()
         val showFab by vm.showFab.collectAsState()
         val extra = remember(density) { with(density) { FabPadding.roundToPx() } }
         AnimatedVisibility(
             visible = showFab,
-            enter = slideInVertically(initialOffsetY = { it + extra }),
-            exit = slideOutVertically(targetOffsetY = { it + extra }),
+            enter = slideInHorizontally(initialOffsetX = { it + extra }),
+            exit = slideOutHorizontally(targetOffsetX = { it + extra }),
         ) {
             IconButton(
                 variant = IconButtonVariant.PrimaryElevated, onClick = {
@@ -262,6 +266,7 @@ internal fun EditListScreen(
                 Icon(Icons.Default.KeyboardArrowUp)
             }
         }
+        LiquidBottomTabsSpacer(vm)
     }
 }
 
