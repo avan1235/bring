@@ -17,7 +17,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.GestureEn
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.GestureThresholdActivate
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import `in`.procyk.bring.LocalBringStore
+import `in`.procyk.bring.LocalUseHaptics
 import `in`.procyk.bring.ui.BringAppTheme
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.ReorderableLazyListState
@@ -33,7 +33,7 @@ internal fun LazyItemScope.ReorderableItemRow(
 ) {
     ReorderableItem(state, key, modifier, enabled, animateItemModifier) { isDragging ->
         val haptics = LocalHapticFeedback.current
-        val useHaptics = LocalBringStore.current.useHaptics
+        val useHaptics = LocalUseHaptics.current
         LaunchedEffect(isDragging) {
             when {
                 !useHaptics -> return@LaunchedEffect

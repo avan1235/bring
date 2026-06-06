@@ -7,7 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import `in`.procyk.bring.LocalBringStore
+import `in`.procyk.bring.LocalUseHaptics
+import `in`.procyk.bring.onClickWithHaptics
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -36,7 +37,7 @@ internal fun BottomBanner(
             val uriHandler = LocalUriHandler.current
             for (item in items) {
                 IconButton(
-                    onClick = LocalBringStore.current.onClickWithHaptics(onClick = {
+                    onClick = LocalUseHaptics.onClickWithHaptics(onClick = {
                         uriHandler.openUri(item.url)
                     }),
                     variant = IconButtonVariant.SecondaryGhost,

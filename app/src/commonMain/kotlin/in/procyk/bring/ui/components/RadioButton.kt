@@ -18,7 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import `in`.procyk.bring.LocalBringStore
+import `in`.procyk.bring.LocalUseHaptics
+import `in`.procyk.bring.onClickWithHaptics
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.components.RadioButtonDefaults.MinimumInteractiveSize
 import `in`.procyk.bring.ui.components.RadioButtonDefaults.RadioAnimationDuration
@@ -49,7 +50,7 @@ internal fun RadioButton(
         if (onClick != null) {
             Modifier.selectable(
                 selected = selected,
-                onClick = LocalBringStore.current.onClickWithHaptics(onClick),
+                onClick = LocalUseHaptics.onClickWithHaptics(onClick),
                 enabled = enabled,
                 role = Role.RadioButton,
                 interactionSource = interactionSource,
@@ -70,7 +71,7 @@ internal fun RadioButton(
                 role = Role.RadioButton,
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = LocalBringStore.current.onClickWithHaptics(onClick),
+                onClick = LocalUseHaptics.onClickWithHaptics(onClick),
             )
         } else {
             Modifier

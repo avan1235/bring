@@ -72,11 +72,6 @@ internal fun BringApp(
     platformContext: PlatformContext,
     initListId: String? = null,
 ) {
-
-    @Composable
-    fun foo() {
-
-    }
     BringAppTheme(platformContext) { context ->
         BringAppInternal(context, initListId)
     }
@@ -174,7 +169,7 @@ internal fun BringAppInternal(
                         val editList = it.toRoute<Screen.EditList>()
                         val listId = editList.listId.let(Uuid::parseHexDash)
                         val fetchSuggestionsAndFavoriteElements = editList.fetchSuggestionsAndFavoriteElements
-                        val vm = viewModel {
+                        val vm = viewModel(key = "edit-list-${editList.listId}") {
                             EditListScreenViewModel(
                                 context = context,
                                 listId = listId,

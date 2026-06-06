@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.navigation.compose.rememberNavController
 import com.materialkolor.rememberDynamicColorScheme
 import `in`.procyk.bring.BringStore
-import `in`.procyk.bring.LocalBringStore
+import `in`.procyk.bring.LocalUseHaptics
 import `in`.procyk.bring.bringCodec
 import `in`.procyk.bring.ui.components.snackbar.rememberSnackbarHost
 import `in`.procyk.bring.ui.foundation.ripple
@@ -60,7 +60,7 @@ internal inline fun BringAppTheme(
     val rippleIndication = ripple()
     val selectionColors = rememberTextSelectionColors(colors)
     val typography = provideTypography()
-    val currStore by store.updates.collectAsState(BringStore.Default)
+    val currUseHaptics by store.updates.mapNotNull { it?.useHaptics }.collectAsState(BringStore.Default.useHaptics)
 
     MaterialTheme(
         colorScheme = colorScheme,
@@ -72,7 +72,7 @@ internal inline fun BringAppTheme(
             LocalTextSelectionColors provides selectionColors,
             LocalContentColor provides colors.contentColorFor(colors.background),
             LocalTextStyle provides typography.body1,
-            LocalBringStore provides (currStore ?: BringStore.Default),
+            LocalUseHaptics provides currUseHaptics,
             content = { content(context) },
         )
     }

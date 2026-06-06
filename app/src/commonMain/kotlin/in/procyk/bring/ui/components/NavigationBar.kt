@@ -3,7 +3,6 @@ package `in`.procyk.bring.ui.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
@@ -22,7 +21,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import `in`.procyk.bring.LocalBringStore
+import `in`.procyk.bring.LocalUseHaptics
+import `in`.procyk.bring.onClickWithHaptics
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.LocalContentColor
 import `in`.procyk.bring.ui.components.NavigationBarDefaults.NavigationBarHeight
@@ -95,7 +95,7 @@ internal fun RowScope.NavigationBarItem(
         modifier
             .selectable(
                 selected = selected,
-                onClick = LocalBringStore.current.onClickWithHaptics(onClick),
+                onClick = LocalUseHaptics.onClickWithHaptics(onClick),
                 enabled = enabled,
                 role = Role.Tab,
                 interactionSource = interactionSource,

@@ -28,7 +28,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bring.app.generated.resources.*
-import `in`.procyk.bring.LocalBringStore
+import `in`.procyk.bring.LocalUseHaptics
+import `in`.procyk.bring.onClickWithHaptics
+import `in`.procyk.bring.onToggleWithHaptics
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.Theme
 import `in`.procyk.bring.ui.components.*
@@ -145,7 +147,7 @@ private inline fun <T : Any> SettingSelectionRow(
                 ) {
                     RadioButton(
                         selected = selectedOption == option,
-                        onClick = LocalBringStore.current.onClickWithHaptics(onClick = {
+                        onClick = LocalUseHaptics.onClickWithHaptics(onClick = {
                             onSelectedChange(option)
                         }),
                         content = {
@@ -188,7 +190,7 @@ private inline fun SettingSwitchRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val interactionSource = remember { MutableInteractionSource() }
-        val onClick = LocalBringStore.current.onToggleWithHaptics(onCheckedChange)
+        val onClick = LocalUseHaptics.onToggleWithHaptics(onCheckedChange)
         val isChecked by isChecked.collectAsState()
         Text(
             text = stringResource(label),

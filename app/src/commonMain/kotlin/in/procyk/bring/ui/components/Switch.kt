@@ -22,7 +22,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import `in`.procyk.bring.LocalBringStore
+import `in`.procyk.bring.LocalUseHaptics
+import `in`.procyk.bring.onToggleWithHaptics
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.LocalContentColor
 import `in`.procyk.bring.ui.components.SwitchDefaults.RippleRadius
@@ -64,7 +65,7 @@ internal fun Switch(
         if (onCheckedChange != null) {
             Modifier.toggleable(
                 value = checked,
-                onValueChange = LocalBringStore.current.onToggleWithHaptics(onCheckedChange),
+                onValueChange = LocalUseHaptics.onToggleWithHaptics(onCheckedChange),
                 enabled = enabled,
                 role = Role.Switch,
                 interactionSource = interactionSource,

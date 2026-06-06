@@ -44,41 +44,41 @@ data class BringStore(
     companion object {
         val Default: BringStore = BringStore()
     }
+}
 
-    @Composable
-    inline fun onClickWithHaptics(
-        crossinline onClick: () -> Unit,
-        type: HapticFeedbackType = ContextClick,
-    ): () -> Unit {
-        val hapticFeedback = LocalHapticFeedback.current
-        return when {
-            useHaptics -> fun() {
-                onClick()
-                hapticFeedback.performHapticFeedback(type)
-            }
+val LocalUseHaptics: ProvidableCompositionLocal<Boolean> =
+    staticCompositionLocalOf { BringStore.Default.useHaptics }
 
-            else -> fun() { onClick() }
+@Composable
+inline fun ProvidableCompositionLocal<Boolean>.onClickWithHaptics(
+    crossinline onClick: () -> Unit,
+    type: HapticFeedbackType = ContextClick,
+): () -> Unit {
+    val hapticFeedback = LocalHapticFeedback.current
+    return when {
+        current -> fun() {
+            onClick()
+            hapticFeedback.performHapticFeedback(type)
         }
-    }
 
-    @Composable
-    inline fun onToggleWithHaptics(
-        crossinline onToggle: (Boolean) -> Unit,
-    ): (Boolean) -> Unit {
-        val hapticFeedback = LocalHapticFeedback.current
-        return when {
-            useHaptics -> fun(value: Boolean) {
-                onToggle(value)
-                hapticFeedback.performHapticFeedback(if (value) ToggleOn else ToggleOff)
-            }
-
-            else -> fun(value: Boolean) { onToggle(value) }
-        }
+        else -> fun() { onClick() }
     }
 }
 
-val LocalBringStore: ProvidableCompositionLocal<BringStore> =
-    staticCompositionLocalOf { BringStore.Default }
+@Composable
+inline fun ProvidableCompositionLocal<Boolean>.onToggleWithHaptics(
+    crossinline onToggle: (Boolean) -> Unit,
+): (Boolean) -> Unit {
+    val hapticFeedback = LocalHapticFeedback.current
+    return when {
+        current -> fun(value: Boolean) {
+            onToggle(value)
+            hapticFeedback.performHapticFeedback(if (value) ToggleOn else ToggleOff)
+        }
+
+        else -> fun(value: Boolean) { onToggle(value) }
+    }
+}
 
 sealed class SavedShoppingList {
     abstract val listName: String

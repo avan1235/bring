@@ -28,7 +28,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import `in`.procyk.bring.LocalBringStore
+import `in`.procyk.bring.LocalUseHaptics
+import `in`.procyk.bring.onClickWithHaptics
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.components.CheckboxDefaults.BoxInDuration
 import `in`.procyk.bring.ui.components.CheckboxDefaults.BoxOutDuration
@@ -81,7 +82,7 @@ internal fun TriStateCheckbox(
                 .requiredSize(MinimumInteractiveSize)
                 .triStateToggleable(
                     state = state,
-                    onClick = LocalBringStore.current.onClickWithHaptics(onClick),
+                    onClick = LocalUseHaptics.onClickWithHaptics(onClick),
                     enabled = enabled,
                     role = Role.Checkbox,
                     interactionSource = interactionSource,
