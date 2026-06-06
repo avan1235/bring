@@ -106,7 +106,9 @@ internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
                 onDragStarted = {},
                 onDragStopped = {
                     val targetIndex = targetValue.fastRoundToInt().fastCoerceIn(0, tabsCount - 1)
-                    currentTab = targetIndex.let(fromIndex)
+                    val targetTab = targetIndex.let(fromIndex)
+                    currentTab = targetTab
+                    onTabSelected(targetTab)
                     animateToValue(targetIndex.toFloat())
                     animationScope.launch {
                         offsetAnimation.animateTo(
@@ -126,18 +128,11 @@ internal fun <Entries : Enum<Entries>> LiquidBottomTabs(
                 },
             )
         }
-        LaunchedEffect(selectedTab) {
+        LaunchedEffect(selectedTab, dampedDragAnimation) {
             snapshotFlow { selectedTab() }
                 .collectLatest { tab ->
                     currentTab = tab
-                }
-        }
-        LaunchedEffect(dampedDragAnimation) {
-            snapshotFlow { currentTab }
-                .drop(1)
-                .collectLatest { tab ->
                     dampedDragAnimation.animateToValue(tab.ordinal.toFloat())
-                    onTabSelected(tab)
                 }
         }
 
