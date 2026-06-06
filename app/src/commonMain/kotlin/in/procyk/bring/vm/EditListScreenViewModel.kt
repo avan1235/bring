@@ -50,9 +50,6 @@ internal class EditListScreenViewModel(
 
     val useGeminiSettings = storeFlow.map { it.useGemini }.distinctUntilChanged().state(store.useGemini)
 
-    private val _useGemini = MutableStateFlow(true)
-    val useGemini = _useGemini.asStateFlow()
-
     init {
         if (fetchSuggestionsAndFavoriteElements) viewModelScope.launch {
             val userId = store.userId
@@ -190,7 +187,7 @@ internal class EditListScreenViewModel(
         _newItemName.update { name }
     }
 
-    fun onCreateNewItem() {
+    fun onCreateNewItem(useGemini: Boolean = false) {
         val name = _newItemName.value
         _newItemName.update { "" }
         viewModelScope.launch {
@@ -198,8 +195,8 @@ internal class EditListScreenViewModel(
                 _newItemLoading.getAndUpdate { true }
                 val items = when {
                     name.isNotBlank()
+                            && useGemini
                             && useGeminiSettings.value
-                            && useGemini.value
                             && store.geminiKey.isNotEmpty() ->
                         httpClient.getSuggestionsFromGemini(store.geminiKey, name)
                             ?.items
@@ -240,10 +237,6 @@ internal class EditListScreenViewModel(
                 }
             }
         }
-    }
-
-    fun onToggleUseGemini() {
-        _useGemini.update { !it }
     }
 
     fun onShareList() {

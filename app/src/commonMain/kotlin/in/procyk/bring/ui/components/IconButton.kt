@@ -120,7 +120,7 @@ internal object IconButtonDefaults {
     val ButtonPadding = PaddingValues(4.dp)
     val ButtonSquareShape = RoundedCornerShape(12.dp)
     val ButtonCircleShape = RoundedCornerShape(percent = 50)
-    val OutlineHeight = 1.dp
+    val OutlineHeight = 2.dp
 
     @Composable
     fun buttonElevation() =
