@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.MutatorMutex
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -63,24 +64,36 @@ class DampedDragAnimation(
     val scaleY: Float get() = scaleYAnimation.value
     val velocity: Float get() = velocityAnimation.value
 
-    val modifier: Modifier = Modifier.pointerInput(Unit) {
-        detectDragGestures(
-            onDragStart = { down ->
-                onDragStarted(down)
-                press()
-            },
-            onDragEnd = {
-                onDragStopped()
-                release()
-            },
-            onDragCancel = {
-                onDragStopped()
-                release()
+    val modifier: Modifier = Modifier
+        .pointerInput(Unit) {
+            detectDragGestures(
+                onDragStart = { down ->
+                    onDragStarted(down)
+                    press()
+                },
+                onDragEnd = {
+                    onDragStopped()
+                    release()
+                },
+                onDragCancel = {
+                    onDragStopped()
+                    release()
+                },
+            ) { change, dragAmount ->
+                onDrag(size, dragAmount)
             }
-        ) { change, dragAmount ->
-            onDrag(size, dragAmount)
         }
-    }
+        .pointerInput(Unit) {
+            detectTapGestures(
+                onTap = { offset ->
+                    onDragStarted(offset)
+                    press()
+
+                    onDragStopped()
+                    release()
+                },
+            )
+        }
 
     fun press() {
         velocityTracker.resetTracking()
