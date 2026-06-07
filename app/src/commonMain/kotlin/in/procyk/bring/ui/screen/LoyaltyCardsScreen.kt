@@ -17,6 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.currentStateAsState
 import bring.app.generated.resources.*
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.LocalColors
@@ -49,13 +52,16 @@ internal fun LoyaltyCardsScreen(
     val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->
         vm.onUpdatedItemOrder(from.key as Uuid, to.key as Uuid, cards)
     }
+
+    val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
+    val isTransitionFinished = lifecycleState == Lifecycle.State.RESUMED
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         state = listState,
     ) {
-        if (isLoadingCards) item(key = "loyalty-cards-loading-indicator") {
+        if (isLoadingCards || !isTransitionFinished) item(key = "loyalty-cards-loading-indicator") {
             Row(
                 modifier = Modifier
                     .padding(start = 16.dp)
@@ -66,7 +72,7 @@ internal fun LoyaltyCardsScreen(
                 CircularProgressIndicator(modifier = Modifier.size(32.dp))
             }
         }
-        items(cards, key = { it.data.id }) { card ->
+        if (isTransitionFinished) items(cards, key = { it.data.id }) { card ->
             ReorderableItemRow(
                 state = reorderableLazyListState,
                 key = card.data.id,
