@@ -42,6 +42,7 @@
     <string name="use_gemini">使用Gemini生成输入</string>
     <string name="use_haptics">使用触觉反馈</string>
     <string name="use_bottom_navigation">使用底部导航</string>
+    <string name="use_liquid_navigation">使用液态玻璃导航</string>
     <string name="miscellaneous">其他</string>
     <string name="share_all">全部分享</string>
     <string name="import_action">导入</string>

@@ -42,6 +42,7 @@
     <string name="use_gemini">Использовать Gemini для генерации ввода</string>
     <string name="use_haptics">Использовать тактильную отдачу</string>
     <string name="use_bottom_navigation">Использовать нижнюю навигацию</string>
+    <string name="use_liquid_navigation">Использовать навигацию Liquid Glass</string>
     <string name="miscellaneous">Разное</string>
     <string name="share_all">Поделиться всеми</string>
     <string name="import_action">Импортировать</string>

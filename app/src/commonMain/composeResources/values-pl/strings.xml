@@ -42,6 +42,7 @@
     <string name="use_gemini">Użyj Gemini do generowania wpisów</string>
     <string name="use_haptics">Użyj wibracji</string>
     <string name="use_bottom_navigation">Użyj dolnej nawigacji</string>
+    <string name="use_liquid_navigation">Używaj nawigacji liquid glass</string>
     <string name="miscellaneous">Różne</string>
     <string name="share_all">Udostępnij Wszystkie</string>
     <string name="import_action">Importuj</string>

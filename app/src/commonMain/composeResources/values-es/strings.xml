@@ -42,6 +42,7 @@
     <string name="use_gemini">Usar Gemini para generar entradas</string>
     <string name="use_haptics">Usar retroalimentación háptica</string>
     <string name="use_bottom_navigation">Usar navegación inferior</string>
+    <string name="use_liquid_navigation">Usar navegación de cristal líquido</string>
     <string name="miscellaneous">Varios</string>
     <string name="share_all">Compartir Todo</string>
     <string name="import_action">Importar</string>
