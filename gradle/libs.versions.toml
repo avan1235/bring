@@ -35,6 +35,7 @@ arrow = "2.2.1.1"
 koin = "4.1.0-Beta8"
 dotenvGradle = "4.0.0"
 lumo = "1.2.5"
+lumo-composables = "1.1.1"
 kstore = "1.0.0"
 reorderable = "3.0.0"
 junit = "5.13.4"
@@ -68,6 +69,7 @@ compose-components-resources = { module = "org.jetbrains.compose.components:comp
 compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-multiplatform" }
 compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "material-icons-extended" }
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
+lumo-composables = { module = "com.nomanr:composables", version.ref = "lumo-composables" }
 zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinxBrowser" }
