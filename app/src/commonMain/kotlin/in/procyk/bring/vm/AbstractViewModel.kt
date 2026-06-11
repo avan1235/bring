@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import bring.app.generated.resources.Res
 import bring.app.generated.resources.favorites
 import bring.app.generated.resources.loyalty_cards
+import bring.app.generated.resources.recipies
 import bring.app.generated.resources.settings
 import `in`.procyk.bring.*
 import `in`.procyk.bring.AppConfig.CLIENT_HOST
@@ -68,6 +69,7 @@ internal abstract class AbstractViewModel(
                 entry.navigatesFrom<Screen.EditList>() -> NavBarTarget.Main
                 entry.navigatesFrom<Screen.CreateList>() -> NavBarTarget.Main
                 entry.navigatesFrom<Screen.Settings>() -> NavBarTarget.Settings
+                entry.navigatesFrom<Screen.Recipies>() -> NavBarTarget.Recipies
                 entry.navigatesFrom<Screen.LoyaltyCards>() -> NavBarTarget.LoyaltyCards
                 entry.navigatesFrom<Screen.Favorites>() -> NavBarTarget.Favourites
                 else -> error("Unknown screen target: $entry")
@@ -82,6 +84,7 @@ internal abstract class AbstractViewModel(
         fun onNavBarTargetSelected(target: NavBarTarget) {
             val current = navBarTarget.value
             when (target) {
+                NavBarTarget.Recipies if target != current -> navigateRecipies()
                 NavBarTarget.LoyaltyCards if target != current -> navigateCards()
                 NavBarTarget.Favourites if target != current -> navigateFavourites()
                 NavBarTarget.Settings if target != current -> navigateSettings()
@@ -109,6 +112,14 @@ internal abstract class AbstractViewModel(
                     null -> navigateCreateList(cleanLastListId = false)
                     else -> navigateEditList(lastListId, fetchSuggestions = false)
                 }
+            }
+        }
+
+        fun navigateRecipies() {
+            appScope.launch {
+                updateListLocationPresentation(null)
+                _topBarText.value = getString(Res.string.recipies)
+                navigateReusingState(Screen.Recipies)
             }
         }
 
@@ -214,7 +225,7 @@ internal inline fun <reified T : Screen> NavBackStackEntry?.navigatesFrom(): Boo
     this?.destination?.route?.split('/')?.getOrNull(0)?.split('.')?.lastOrNull() == T::class.simpleName
 
 enum class NavBarTarget {
-    Main, LoyaltyCards, Favourites, Settings;
+    Main, Recipies, LoyaltyCards, Favourites, Settings;
 }
 
 inline fun <T> onUpdatedItemOrder(

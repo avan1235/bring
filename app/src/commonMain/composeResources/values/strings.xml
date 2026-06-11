@@ -4,6 +4,7 @@
     <string name="lists">Lists</string>
     <string name="shopping_lists">Shopping Lists</string>
     <string name="cards">Cards</string>
+    <string name="recipies">Recipies</string>
     <string name="loyalty_cards">Loyalty Cards</string>
     <string name="loading_list">Loading Shopping List...</string>
     <string name="create_list">Create New List</string>

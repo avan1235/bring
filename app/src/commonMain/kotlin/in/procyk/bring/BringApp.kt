@@ -16,14 +16,17 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Summarize
 import androidx.compose.material.icons.outlined.CreditCard
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.RestaurantMenu
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Summarize
 import androidx.compose.material.icons.twotone.CreditCard
 import androidx.compose.material.icons.twotone.Favorite
+import androidx.compose.material.icons.twotone.RestaurantMenu
 import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material.icons.twotone.Summarize
 import androidx.compose.runtime.*
@@ -177,6 +180,10 @@ internal fun BringAppInternal(
                             )
                         }
                         EditListScreen(padding, vm)
+                    }
+                    composable<Screen.Recipies> {
+                        val vm = viewModel { RecipiesViewModel(context) }
+                        RecipiesScreen(padding, vm)
                     }
                     composable<Screen.LoyaltyCards> {
                         val vm = viewModel { LoyaltyCardsViewModel(context) }
@@ -338,6 +345,7 @@ private val NavBarTarget.twoToneIcon: ImageVector
     get() = when (this) {
         NavBarTarget.Main -> Icons.TwoTone.Summarize
         NavBarTarget.LoyaltyCards -> Icons.TwoTone.CreditCard
+        NavBarTarget.Recipies -> Icons.TwoTone.RestaurantMenu
         NavBarTarget.Favourites -> Icons.TwoTone.Favorite
         NavBarTarget.Settings -> Icons.TwoTone.Settings
     }
@@ -346,6 +354,7 @@ private val NavBarTarget.outlinedIcon: ImageVector
     get() = when (this) {
         NavBarTarget.Main -> Icons.Outlined.Summarize
         NavBarTarget.LoyaltyCards -> Icons.Outlined.CreditCard
+        NavBarTarget.Recipies -> Icons.Outlined.RestaurantMenu
         NavBarTarget.Favourites -> Icons.Outlined.Favorite
         NavBarTarget.Settings -> Icons.Outlined.Settings
     }
@@ -354,6 +363,7 @@ private val NavBarTarget.filledIcon: ImageVector
     get() = when (this) {
         NavBarTarget.Main -> Icons.Filled.Summarize
         NavBarTarget.LoyaltyCards -> Icons.Filled.CreditCard
+        NavBarTarget.Recipies -> Icons.Filled.RestaurantMenu
         NavBarTarget.Favourites -> Icons.Filled.Favorite
         NavBarTarget.Settings -> Icons.Filled.Settings
     }
@@ -362,6 +372,7 @@ private val NavBarTarget.label: StringResource
     get() = when (this) {
         NavBarTarget.Main -> Res.string.lists
         NavBarTarget.LoyaltyCards -> Res.string.cards
+        NavBarTarget.Recipies -> Res.string.recipies
         NavBarTarget.Favourites -> Res.string.favorites
         NavBarTarget.Settings -> Res.string.settings
     }
@@ -378,9 +389,10 @@ private fun AnimatedContentTransitionScope<NavBackStackEntry>.towards(): SlideDi
 private fun NavBackStackEntry.toScreenOrderOrNull(): Int? = when {
     navigatesFrom<Screen.CreateList>() -> 0
     navigatesFrom<Screen.EditList>() -> 1
-    navigatesFrom<Screen.LoyaltyCards>() -> 2
-    navigatesFrom<Screen.Favorites>() -> 3
-    navigatesFrom<Screen.Settings>() -> 4
+    navigatesFrom<Screen.Recipies>() -> 2
+    navigatesFrom<Screen.LoyaltyCards>() -> 3
+    navigatesFrom<Screen.Favorites>() -> 4
+    navigatesFrom<Screen.Settings>() -> 5
     else -> null
 }
 
@@ -395,6 +407,9 @@ internal sealed class Screen {
 
     @Serializable
     data object Favorites : Screen()
+
+    @Serializable
+    data object Recipies : Screen()
 
     @Serializable
     data object LoyaltyCards : Screen()
