@@ -28,6 +28,7 @@ object Database {
             SchemaUtils.createMissingTablesAndColumns(ShoppingListItemsTable)
             SchemaUtils.createMissingTablesAndColumns(ShoppingListsTable)
             SchemaUtils.createMissingTablesAndColumns(LoyaltyCardsTable)
+            SchemaUtils.createMissingTablesAndColumns(CookingRecipesTable)
             exec(CREATE_NOTIFY_SHOPPING_LIST_ITEMS_FUNCTION)
             exec(CREATE_SHOPPING_LIST_ITEMS_TRIGGER)
         }

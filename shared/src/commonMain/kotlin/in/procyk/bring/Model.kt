@@ -8,6 +8,7 @@ import kotlin.uuid.Uuid
 const val ShoppingListRpcPath: String = "/shoppingList"
 const val FavoriteElementRpcPath: String = "/favoriteElement"
 const val LoyaltyCardRpcPath: String = "/loyaltyCard"
+const val CookingRecipeRpcPath: String = "/cookingRecipe"
 
 val ListIdRegex: Regex = Regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
 
@@ -130,4 +131,22 @@ data class LoyaltyCardData(
     @CborLabel(0) val id: Uuid,
     @CborLabel(1) val label: String,
     @CborLabel(2) val code: Code,
+)
+
+@Serializable
+data class CookingRecipeData(
+    @CborLabel(0) val id: Uuid,
+    @CborLabel(1) val name: String,
+    @CborLabel(2) val byUserId: Uuid,
+    @Serializable(InstantSerializer::class)
+    @CborLabel(3) val createdAt: Instant,
+    @CborLabel(4) val ingredients: List<RecipeIngredient>,
+    @CborLabel(5) val steps: List<String>,
+)
+
+@Serializable
+data class RecipeIngredient(
+    @CborLabel(0) val name: String,
+    @CborLabel(1) val measure: Double,
+    @CborLabel(2) val unit: String,
 )
