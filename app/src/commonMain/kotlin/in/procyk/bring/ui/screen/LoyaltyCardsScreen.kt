@@ -161,7 +161,7 @@ internal fun LoyaltyCardsScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(horizontal = 8.dp),
                         ) {
-                            Icon(Icons.Outlined.Share)
+                            Icon(Icons.Outlined.IosShare)
                         }
                     },
                     variant = IconButtonVariant.PrimaryGhost,

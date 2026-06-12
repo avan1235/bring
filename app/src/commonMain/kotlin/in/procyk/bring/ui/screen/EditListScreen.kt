@@ -260,7 +260,7 @@ private fun ControlButtons(
     )
     IconButton(
         onClick = vm::onShareList,
-        icon = Icons.Outlined.Share,
+        icon = Icons.Outlined.IosShare,
         modifier = Modifier.testTag("button-share-list"),
     )
     IconButton(
