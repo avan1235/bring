@@ -266,8 +266,8 @@ private fun BoxScope.LiquidNavigation(
         isLightTheme = isLightTheme,
         modifier = Modifier
             .widthIn(max = NavBarTarget.entries.size * 128.dp)
-            .padding(bottom = 16.dp)
-            .padding(horizontal = 36.dp)
+            .padding(bottom = 24.dp)
+            .padding(horizontal = 16.dp)
             .padding(paddingValues)
             .align(Alignment.BottomCenter)
     ) {
