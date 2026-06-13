@@ -78,10 +78,14 @@ internal fun SettingsScreen(
                 isSecure = true,
             )
         }
+        SettingsCategoryName(Res.string.cooking_recipes)
+        SettingSwitchRow(Res.string.enable_edit_mode, vm.enableRecipesEditMode, vm::onRecipesEditModeChanged)
+        SettingSwitchRow(Res.string.show_color_labels, vm.showRecipesLabels, vm::onShowRecipesLabelsChanged)
+        SettingSwitchRow(Res.string.use_cached_data, vm.useRecipesCache, vm::onUseRecipesCacheChanged)
         SettingsCategoryName(Res.string.loyalty_cards)
         SettingSwitchRow(Res.string.enable_edit_mode, vm.enableCardsEditMode, vm::onCardsEditModeChanged)
         SettingSwitchRow(Res.string.show_color_labels, vm.showCardsLabels, vm::onShowCardsLabelsChanged)
-        SettingSwitchRow(Res.string.use_cards_cache, vm.useCardsCache, vm::onUseCardsCacheChanged)
+        SettingSwitchRow(Res.string.use_cached_data, vm.useCardsCache, vm::onUseCardsCacheChanged)
         SettingsCategoryName(Res.string.theme)
         SettingSelectionRow(Res.string.dark_mode, vm.theme, vm::onThemeChanged, Theme.entries, optionLabel = {
             when (it) {

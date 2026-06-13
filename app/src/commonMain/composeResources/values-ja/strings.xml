@@ -56,5 +56,5 @@
     <string name="ok">OK</string>
     <string name="find_me_on">リンク:</string>
     <string name="show_color_labels">カラーラベルを表示</string>
-    <string name="use_cards_cache">データをキャッシュする</string>
+    <string name="use_cached_data">データをキャッシュする</string>
 </resources>

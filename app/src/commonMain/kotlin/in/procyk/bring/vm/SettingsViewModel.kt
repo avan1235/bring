@@ -11,6 +11,15 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
     val enableShoppingListEditMode: StateFlow<Boolean> =
         storeFlow.map { it.enableShoppingListEditMode }.state(storeFlow.value.enableShoppingListEditMode)
 
+    val enableRecipesEditMode: StateFlow<Boolean> =
+        storeFlow.map { it.enableRecipesEditMode }.state(storeFlow.value.enableRecipesEditMode)
+
+    val showRecipesLabels: StateFlow<Boolean> =
+        storeFlow.map { it.showRecipesLabels }.state(storeFlow.value.showRecipesLabels)
+
+    val useRecipesCache: StateFlow<Boolean> =
+        storeFlow.map { it.useRecipesCache }.state(storeFlow.value.useRecipesCache)
+
     val enableCardsEditMode: StateFlow<Boolean> =
         storeFlow.map { it.enableCardsEditMode }.state(storeFlow.value.enableCardsEditMode)
 
@@ -55,6 +64,18 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
 
     fun onShoppingListEditModeChanged(value: Boolean) {
         launchUpdateConfig { it.copy(enableShoppingListEditMode = value) }
+    }
+
+    fun onRecipesEditModeChanged(value: Boolean) {
+        launchUpdateConfig { it.copy(enableRecipesEditMode = value) }
+    }
+
+    fun onShowRecipesLabelsChanged(value: Boolean) {
+        launchUpdateConfig { it.copy(showRecipesLabels = value) }
+    }
+
+    fun onUseRecipesCacheChanged(value: Boolean) {
+        launchUpdateConfig { it.copy(useRecipesCache = value) }
     }
 
     fun onCardsEditModeChanged(value: Boolean) {

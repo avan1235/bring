@@ -6,6 +6,7 @@
     <string name="cards">Cards</string>
     <string name="recipes">Recipes</string>
     <string name="loyalty_cards">Loyalty Cards</string>
+    <string name="cooking_recipes">Cooking Recipes</string>
     <string name="loading_list">Loading Shopping List...</string>
     <string name="create_list">Create New List</string>
     <string name="create">Create</string>
@@ -60,7 +61,7 @@
     <string name="ok">OK</string>
     <string name="find_me_on">Find Me On</string>
     <string name="show_color_labels">Show color labels</string>
-    <string name="use_cards_cache">Cache data</string>
+    <string name="use_cached_data">Cache data</string>
     <string name="loading_read_from_file">Reading input files…</string>
     <string name="loading_scanning">Scanning input files…</string>
     <string name="loading_saving">Saving extracted data…</string>

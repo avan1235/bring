@@ -56,5 +56,5 @@
     <string name="ok">Aceptar</string>
     <string name="find_me_on">Encuéntrame en</string>
     <string name="show_color_labels">Mostrar etiquetas de color</string>
-    <string name="use_cards_cache">Caché de datos</string>
+    <string name="use_cached_data">Caché de datos</string>
 </resources>

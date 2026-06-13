@@ -56,5 +56,5 @@
     <string name="ok">确定</string>
     <string name="find_me_on">在这里找到我</string>
     <string name="show_color_labels">显示颜色标签</string>
-    <string name="use_cards_cache">缓存数据</string>
+    <string name="use_cached_data">缓存数据</string>
 </resources>

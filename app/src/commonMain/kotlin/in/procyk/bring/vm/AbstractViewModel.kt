@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import bring.app.generated.resources.Res
+import bring.app.generated.resources.cooking_recipes
 import bring.app.generated.resources.favorites
 import bring.app.generated.resources.loyalty_cards
 import bring.app.generated.resources.recipes
@@ -118,7 +119,7 @@ internal abstract class AbstractViewModel(
         fun navigateRecipes() {
             appScope.launch {
                 updateListLocationPresentation(null)
-                _topBarText.value = getString(Res.string.recipes)
+                _topBarText.value = getString(Res.string.cooking_recipes)
                 navigateReusingState(Screen.Recipes)
             }
         }

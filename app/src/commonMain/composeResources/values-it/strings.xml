@@ -56,5 +56,5 @@
     <string name="ok">OK</string>
     <string name="find_me_on">Trovami su</string>
     <string name="show_color_labels">Mostra etichette colorate</string>
-    <string name="use_cards_cache">Cache dei dati</string>
+    <string name="use_cached_data">Cache dei dati</string>
 </resources>
