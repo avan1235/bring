@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
-import kotlin.test.Ignore
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.uuid.Uuid
@@ -46,7 +45,7 @@ internal class EditShoppingListTest : BringServerIntegrationTestCase() {
         }
 
         val updatedData = shoppingListService.testCall {
-            getShoppingList(listId).first()
+            getShoppingList(listId).first { it.leftOrNull()?.items?.isNotEmpty() == true }
         }
 
         assertEquals(updatedData.items.size, 1)
