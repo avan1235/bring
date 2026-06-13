@@ -5,15 +5,12 @@
 .idea
 .kotlin
 
-app
 iosApp
 kotlin-js-store
 
 .dockerignore
-.env
 .gitignore
 docker-compose.yml
-Dockerfile
 local.properties
 lumo.properties
 Makefile
@@ -22,3 +19,6 @@ README.md
 server/src/test
 
 **/build
+**/.gradle
+**/node_modules
+*.log

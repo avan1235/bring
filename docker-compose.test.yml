@@ -1,0 +1,3 @@
+services:
+  bring-dev-server:
+    image: bring-dev-server:test
