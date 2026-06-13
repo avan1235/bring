@@ -1,5 +1,6 @@
 package `in`.procyk.bring
 
+import `in`.procyk.bring.rpc.cookingRecipeRpc
 import `in`.procyk.bring.rpc.favoriteElementRpc
 import `in`.procyk.bring.rpc.loyaltyCardRpc
 import `in`.procyk.bring.rpc.shoppingListRpc
@@ -22,6 +23,7 @@ internal fun Application.routes() = routing {
     get("/health") {
         call.respond(HttpStatusCode.OK)
     }
+    cookingRecipeRpc()
     loyaltyCardRpc()
     favoriteElementRpc()
     shoppingListRpc()

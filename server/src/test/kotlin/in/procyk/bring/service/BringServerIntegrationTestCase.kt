@@ -52,6 +52,16 @@ internal abstract class BringServerIntegrationTestCase {
             url(scheme = "ws", host = containerHost, port = containerPort, path = FavoriteElementRpcPath)
         }
 
+    protected fun TestScope.loyaltyCardService() =
+        DurableRpcService<LoyaltyCardService>(backgroundScope, httpClient) {
+            url(scheme = "ws", host = containerHost, port = containerPort, path = LoyaltyCardRpcPath)
+        }
+
+    protected fun TestScope.cookingRecipeService() =
+        DurableRpcService<CookingRecipeService>(backgroundScope, httpClient) {
+            url(scheme = "ws", host = containerHost, port = containerPort, path = CookingRecipeRpcPath)
+        }
+
     protected val userId = Uuid.Companion.random()
 
     @BeforeEach

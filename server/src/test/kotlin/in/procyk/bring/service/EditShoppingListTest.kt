@@ -17,7 +17,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.uuid.Uuid
 
-@Ignore
 internal class EditShoppingListTest : BringServerIntegrationTestCase() {
 
     private inline fun runTestWithShoppingList(
