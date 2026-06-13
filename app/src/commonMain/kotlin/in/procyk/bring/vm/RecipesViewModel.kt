@@ -38,7 +38,7 @@ import kotlin.uuid.Uuid
 
 internal class RecipesViewModel(
     context: Context,
-) : ImportableCollectionViewModel<CookingRecipe, CookingRecipeData, RecipesViewModel.Recipe>(context) {
+) : ImportableCollectionViewModel<CookingRecipe, CookingRecipeData, RecipesViewModel.Recipe, Unit>(context) {
 
     data class Recipe(
         val data: CookingRecipeData,
@@ -76,7 +76,7 @@ internal class RecipesViewModel(
 
     override fun newStored(id: Uuid, order: Double): CookingRecipe = CookingRecipe(recipeId = id, order = order)
 
-    override suspend fun createFromFile(label: String): List<Uuid> {
+    override suspend fun createFromFile(input: Unit): List<Uuid> {
         val apiKey = store.geminiKey.takeIf { store.useGemini } ?: return emptyList()
         val userId = store.userId
         val files = FileKit.openFilePicker(
@@ -114,12 +114,20 @@ internal class RecipesViewModel(
                 }
             }
 
+    override fun getInputContext() = Unit
+
+    override fun isValidContext(input: Unit): Boolean = true
+
     override suspend fun share(ids: String) = onShareRecipe(ids, context)
 
     override fun replaceOrder(item: Recipe, order: Double): Recipe = item.copy(order = order)
 
     override fun replaceStoredOrder(stored: CookingRecipe, order: Double): CookingRecipe =
         stored.copy(order = order)
+
+    override fun openAddFromFileDialog() {
+        addFromFile()
+    }
 
     init {
         updateStoredItemsInBackground()

@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import kotlin.uuid.Uuid
 
-internal abstract class ImportableCollectionViewModel<TStored, TData, TItem>(
+internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TInputContext>(
     context: Context,
 ) : AbstractViewModel(context) where TStored : Orderable, TStored : Identifiable, TItem : Orderable, TItem : Identifiable {
 
@@ -53,16 +53,13 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem>(
 
     protected abstract fun newStored(id: Uuid, order: Double): TStored
 
-    protected abstract suspend fun createFromFile(label: String): List<Uuid>
+    protected abstract suspend fun createFromFile(input: TInputContext): List<Uuid>
 
     protected abstract suspend fun removeRemote(item: TItem): Either<Unit, RemoveError>
 
-    protected open fun isValidLabel(input: String): Boolean = input.isNotBlank()
+    protected abstract fun getInputContext(): TInputContext
 
-    protected open fun isValidIdList(input: String): Boolean {
-        val results = input.split(idSeparator).map { runCatching { Uuid.parse(it) }.isSuccess }
-        return results.isNotEmpty() && results.all { it }
-    }
+    protected abstract fun isValidContext(input: TInputContext): Boolean
 
     protected abstract suspend fun share(ids: String)
 
@@ -139,10 +136,10 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem>(
 
 
     fun addFromFile() {
-        val label = validatedUserInputValue(::isValidLabel) ?: return
+        val inputContext = validateUserInputContext(::isValidContext) ?: return
         viewModelScope.launch {
             updateDialogActionLoading(getString(Res.string.loading_read_from_file))
-            val ids = createFromFile(label)
+            val ids = createFromFile(inputContext)
             updateConfigWithStoredIds(ids)
         }.invokeOnCompletion { closeDialogAction() }
     }
@@ -217,7 +214,7 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem>(
         onUserInputChange("")
     }
 
-    fun openAddFromFileDialog() {
+    open fun openAddFromFileDialog() {
         _dialogAction.update { InputDialogAction.AddFromFile }
     }
 
@@ -233,8 +230,8 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem>(
         _dialogAction.update { null }
     }
 
-    private fun validatedUserInputValue(isValid: (String) -> Boolean): String? {
-        val input = userInput.value
+    private fun validateUserInputContext(isValid: (TInputContext) -> Boolean): TInputContext? {
+        val input = getInputContext()
         if (!isValid(input)) {
             _isErrorUserInput.update { true }
             return null

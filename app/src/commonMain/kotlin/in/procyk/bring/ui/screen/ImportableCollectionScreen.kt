@@ -46,7 +46,7 @@ internal fun <V, I> ImportableCollectionScreen(
     scanButtonTestTag: String? = null,
     overlay: @Composable () -> Unit = {},
     itemContent: @Composable (item: I) -> Unit,
-) where V : ImportableCollectionViewModel<*, *, I>,
+) where V : ImportableCollectionViewModel<*, *, I, *>,
         I : Orderable,
         I : Identifiable = AppScreen(testTag, padding) {
     val dialogAction by vm.dialogAction.collectAsState()

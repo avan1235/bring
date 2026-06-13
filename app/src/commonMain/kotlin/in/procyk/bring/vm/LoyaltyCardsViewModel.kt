@@ -3,7 +3,6 @@ package `in`.procyk.bring.vm
 import androidx.compose.ui.graphics.Color
 import arrow.core.Either
 import bring.app.generated.resources.Res
-import bring.app.generated.resources.loading_read_from_file
 import bring.app.generated.resources.loading_scanning
 import `in`.procyk.bring.*
 import `in`.procyk.bring.service.LoyaltyCardService
@@ -13,13 +12,16 @@ import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.readBytes
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import org.jetbrains.compose.resources.getString
 import kotlin.uuid.Uuid
 
 internal class LoyaltyCardsViewModel(
     context: Context,
-) : ImportableCollectionViewModel<LoyaltyCard, LoyaltyCardData, LoyaltyCardsViewModel.Card>(context) {
+) : ImportableCollectionViewModel<LoyaltyCard, LoyaltyCardData, LoyaltyCardsViewModel.Card, String>(context) {
 
     data class Card(
         val data: LoyaltyCardData,
@@ -56,7 +58,9 @@ internal class LoyaltyCardsViewModel(
     override fun BringStore.storedItems(): List<LoyaltyCard> = loyaltyCards
     override fun BringStore.withStoredItems(items: List<LoyaltyCard>): BringStore = copy(loyaltyCards = items)
     override fun cachedData(stored: LoyaltyCard): LoyaltyCardData? = stored.cachedData
-    override fun withCachedData(stored: LoyaltyCard, data: LoyaltyCardData?): LoyaltyCard = stored.copy(cachedData = data)
+    override fun withCachedData(stored: LoyaltyCard, data: LoyaltyCardData?): LoyaltyCard =
+        stored.copy(cachedData = data)
+
     override fun color(stored: LoyaltyCard): Int? = stored.color
     override fun withColor(stored: LoyaltyCard, color: Int?): LoyaltyCard = stored.copy(color = color)
 
@@ -85,8 +89,8 @@ internal class LoyaltyCardsViewModel(
                     else -> indexed.mapIndexed { innerIdx, ic ->
                         ic.copy(
                             value = ic.value.copy(
-                                data = ic.value.data.copy(label = "${ic.value.data.label} #${innerIdx + 1}")
-                            )
+                                data = ic.value.data.copy(label = "${ic.value.data.label} #${innerIdx + 1}"),
+                            ),
                         )
                     }
                 }
@@ -96,13 +100,13 @@ internal class LoyaltyCardsViewModel(
 
     override fun newStored(id: Uuid, order: Double): LoyaltyCard = LoyaltyCard(cardId = id, order = order)
 
-    override suspend fun createFromFile(label: String): List<Uuid> {
+    override suspend fun createFromFile(input: String): List<Uuid> {
         val userId = store.userId
         val file = FileKit.openFilePicker(type = SUPPORTED_IMAGE_FORMATS) ?: return emptyList()
         val image = file.readBytes()
         updateDialogActionLoading(getString(Res.string.loading_scanning))
         return loyaltyCardService
-            .durableCall { createLoyaltyCard(label, image, userId) }
+            .durableCall { createLoyaltyCard(input, image, userId) }
             .fold(ifLeft = { listOf(it) }, ifRight = { /* TODO: handle errors */ emptyList() })
     }
 
@@ -114,6 +118,10 @@ internal class LoyaltyCardsViewModel(
                     RemoveLoyaltyCardError.UnknownCardId -> RemoveError.UnknownId
                 }
             }
+
+    override fun getInputContext(): String = userInput.value
+
+    override fun isValidContext(input: String): Boolean = input.isNotBlank()
 
     override suspend fun share(ids: String) = onShareLoyaltyCard(ids, context)
 
