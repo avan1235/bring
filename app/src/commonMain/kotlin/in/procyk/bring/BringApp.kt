@@ -14,21 +14,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CreditCard
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.RestaurantMenu
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Summarize
-import androidx.compose.material.icons.outlined.CreditCard
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.RestaurantMenu
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Summarize
-import androidx.compose.material.icons.twotone.CreditCard
-import androidx.compose.material.icons.twotone.Favorite
-import androidx.compose.material.icons.twotone.RestaurantMenu
-import androidx.compose.material.icons.twotone.Settings
-import androidx.compose.material.icons.twotone.Summarize
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.twotone.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -109,9 +97,14 @@ internal fun BringAppInternal(
         snackbarHost = {
             SnackbarHost(
                 hostState = context.snackbarHostState,
-                modifier = Modifier.padding(WindowInsets.navigationBars.asPaddingValues())
+                modifier = Modifier.padding(WindowInsets.navigationBars.asPaddingValues()),
             ) {
-                Snackbar(it)
+                val useBottomNavigation by context.useBottomNavigation.collectAsState()
+                val useLiquidGlassNavigation by context.useLiquidGlassNavigation.collectAsState()
+                Snackbar(
+                    it,
+                    modifier = if (useBottomNavigation && useLiquidGlassNavigation) Modifier.padding(bottom = 88.dp) else Modifier,
+                )
             }
         },
         bottomBar = {
@@ -123,7 +116,7 @@ internal fun BringAppInternal(
         },
         content = { padding ->
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 val backdrop = rememberLayerBackdrop()
                 val focusManager = LocalFocusManager.current
@@ -134,17 +127,18 @@ internal fun BringAppInternal(
                         .then(
                             Modifier.pointerInput(Unit) {
                                 detectTapGestures(
-                                    onTap = { focusManager.clearFocus() })
+                                    onTap = { focusManager.clearFocus() },
+                                )
                             }.padding(
                                 top = padding.calculateTopPadding(),
                                 bottom = padding.calculateBottomPadding(),
-                            )
+                            ),
                         )
                         .fillMaxSize(),
                     startDestination = when (initListId) {
                         null -> Screen.CreateList
                         else -> Screen.EditList(
-                            initListId, fetchSuggestionsAndFavoriteElements = true
+                            initListId, fetchSuggestionsAndFavoriteElements = true,
                         )
                     },
                     enterTransition = {
@@ -224,10 +218,10 @@ private fun AnimatedTopBar(
         transitionSpec = {
             slideInVertically(
                 animationSpec = spring(DampingRatioMediumBouncy, StiffnessLow),
-                initialOffsetY = { fullWidth -> fullWidth }
+                initialOffsetY = { fullWidth -> fullWidth },
             ) togetherWith slideOutHorizontally(
                 animationSpec = tween(ScreenChangeAnimationDurationMillis),
-                targetOffsetX = { fullWidth -> -fullWidth }
+                targetOffsetX = { fullWidth -> -fullWidth },
             )
         },
         contentAlignment = Alignment.CenterStart,
@@ -269,7 +263,7 @@ private fun BoxScope.LiquidNavigation(
             .padding(bottom = 24.dp)
             .padding(horizontal = 16.dp)
             .padding(paddingValues)
-            .align(Alignment.BottomCenter)
+            .align(Alignment.BottomCenter),
     ) {
         val currentTarget by context.navBarTarget.collectAsState()
         NavBarTarget.entries.forEach { target ->
@@ -279,7 +273,7 @@ private fun BoxScope.LiquidNavigation(
                 Box(
                     Modifier
                         .size(28f.dp)
-                        .paint(painter, colorFilter = iconColorFilter)
+                        .paint(painter, colorFilter = iconColorFilter),
                 )
                 BasicText(
                     stringResource(target.label),
@@ -334,7 +328,8 @@ private fun Navigation(
                     else -> {
                         { Text(stringResource(target.label)) }
                     }
-                })
+                },
+            )
         }
     }
 }
