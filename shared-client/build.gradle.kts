@@ -13,10 +13,6 @@ plugins {
 }
 
 kotlin {
-    compilerOptions {
-        freeCompilerArgs.add("-Xnon-local-break-continue")
-    }
-
     androidTarget {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_11

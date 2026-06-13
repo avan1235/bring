@@ -24,7 +24,7 @@ plugins {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.addAll("-Xnon-local-break-continue", "-Xwhen-guards")
+        freeCompilerArgs.addAll("-Xwhen-guards")
     }
 
     androidTarget {
@@ -35,7 +35,7 @@ kotlin {
     if (currentOS().isMacOsX) {
         listOf(
             iosArm64(),
-            iosSimulatorArm64()
+            iosSimulatorArm64(),
         ).forEach { iosTarget ->
             iosTarget.binaries.framework {
                 baseName = "App"
@@ -227,7 +227,7 @@ buildkonfig {
         buildConfigField(Type.STRING, "VERSION", version.toString())
         buildConfigField(Type.STRING, "PACKAGE", packageName)
         buildConfigField(Type.STRING, "APP_NAME", "Bring!")
-        buildConfigField(Type.STRING, "AUTHOR", "Maciej Procyk")
+        buildConfigField(Type.STRING, "AUTHOR", "Macie.j Procyk")
     }
 }
 
