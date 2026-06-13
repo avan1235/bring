@@ -1,24 +1,25 @@
 package `in`.procyk.bring.vm
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.lifecycle.viewModelScope
+import arrow.core.Either
+import bring.app.generated.resources.Res
+import bring.app.generated.resources.loading_read_from_file
+import bring.app.generated.resources.loading_scanning
 import `in`.procyk.bring.*
 import `in`.procyk.bring.service.LoyaltyCardService
 import `in`.procyk.bring.service.LoyaltyCardService.GetLoyaltyCardError
+import `in`.procyk.bring.service.LoyaltyCardService.RemoveLoyaltyCardError
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import kotlin.uuid.Uuid
 
-internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(context) {
-
-    enum class InputDialogAction {
-        AddFromFile, ImportById, Loading,
-    }
+internal class LoyaltyCardsViewModel(
+    context: Context,
+) : ImportableCollectionViewModel<LoyaltyCard, LoyaltyCardData, LoyaltyCardsViewModel.Card>(context) {
 
     data class Card(
         val data: LoyaltyCardData,
@@ -30,235 +31,102 @@ internal class LoyaltyCardsViewModel(context: Context) : AbstractViewModel(conte
 
     private val loyaltyCardService = durableRpcService<LoyaltyCardService>(LoyaltyCardRpcPath)
 
-    private val _dialogAction: MutableStateFlow<InputDialogAction?> = MutableStateFlow(null)
-    val dialogAction: StateFlow<InputDialogAction?> = _dialogAction.asStateFlow()
-
-    private val _cards: MutableStateFlow<List<Card>> = MutableStateFlow(emptyList())
-    val cards: StateFlow<List<Card>> = _cards.asStateFlow()
-
-    private val _userInput: MutableStateFlow<String> = MutableStateFlow("")
-    val userInput: StateFlow<String> = _userInput.asStateFlow()
-
-    private val _isErrorUserInput: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isErrorUserInput: StateFlow<Boolean> = _isErrorUserInput.asStateFlow()
-
     private val _selectedCard: MutableStateFlow<Card?> = MutableStateFlow(null)
     val selectedCard: StateFlow<Card?> = _selectedCard.asStateFlow()
 
-    private val _isLoadingCards: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isLoadingCards: StateFlow<Boolean> = _isLoadingCards.asStateFlow()
-
-    val enableEditMode: StateFlow<Boolean> = storeFlow.map { it.enableCardsEditMode }.state(store.enableCardsEditMode)
-
-    val showCardsLabels: StateFlow<Boolean> = storeFlow.map { it.showCardsLabels }.state(store.showCardsLabels)
-
-    init {
-        viewModelScope.launch {
-            val inMemoryCache = mutableMapOf<Uuid, Card>()
-            context.storeFlow.map { it.loyaltyCards }.distinctUntilIdsChanged().collectLatest { cards ->
-                _isLoadingCards.value = true
-                val useCardsCache = store.useCardsCache
-                try {
-                    val sortedCards = cards.mapNotNull { card ->
-                        val key = card.cardId
-                        inMemoryCache[key] ?: run {
-                            val cachedCardData = if (useCardsCache) card.cachedData else null
-                            val cardData =
-                                cachedCardData ?: loyaltyCardService.durableCall { getLoyaltyCard(card.cardId) }
-                                    .fold(
-                                        ifLeft = { it },
-                                        ifRight = {
-                                            when (it) {
-                                                GetLoyaltyCardError.Internal -> {
-                                                    /* TODO: handle errors */
-                                                }
-
-                                                GetLoyaltyCardError.UnknownCardId -> launchUpdateConfig { store ->
-                                                    store.copy(loyaltyCards = store.loyaltyCards.filter { it.cardId != card.cardId })
-                                                }
-                                            }
-                                            return@run null
-                                        }
-                                    )
-                            launchUpdateConfig { store ->
-                                store.copy(loyaltyCards = store.loyaltyCards.map {
-                                    if (it.cardId == key) it.copy(cachedData = if (useCardsCache) cardData else null) else it
-                                })
-                            }
-                            Card(
-                                data = cardData,
-                                order = card.order,
-                                color = card.color?.let(::Color)
-                            )
-                        }?.also { inMemoryCache[key] = it }
-                    }
-                        .asSequence()
-                        .withIndex()
-                        .groupBy { it.value.data.label }
-                        .flatMap { (_, indexedCards) ->
-                            when {
-                                indexedCards.size <= 1 -> indexedCards
-                                else -> indexedCards.mapIndexed { innerIdx, indexedCard ->
-                                    indexedCard.copy(
-                                        value = indexedCard.value.copy(
-                                            data = indexedCard.value.data.copy(
-                                                label = "${indexedCard.value.data.label} #${innerIdx + 1}"
-                                            )
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                        .sortedBy { it.value }
-                        .map { it.value }
-                    _cards.value = sortedCards
-                    resetUserInput()
-                } finally {
-                    _isLoadingCards.value = false
-                }
-            }
-        }
-    }
-
-    fun addLoyaltyCardFromFile() {
-        val userId = store.userId
-        val label = validatedUserInputValueCardLabel() ?: return
-        viewModelScope.launch {
-            val file =
-                FileKit.openFilePicker(type = SUPPORTED_IMAGE_FORMATS) ?: return@launch
-            val image = file.readBytes()
-            startDialogActionLoading()
-            loyaltyCardService
-                .durableCall { createLoyaltyCard(label, image, userId) }
-                .fold(
-                    ifLeft = { updateConfigWithLoyaltyCardIds(listOf(it)) },
-                    ifRight = { /* TODO: handle errors */ }
-                )
-        }.invokeOnCompletion { closeDialogAction() }
-    }
-
-    fun addLoyaltyCardByCardId() {
-        try {
-            startDialogActionLoading()
-            val cardIds = userInput.value
-            val cardUuids = cardIds.split(CARD_ID_SEPARATOR)
-                .mapNotNull { runCatching { Uuid.parse(it) }.getOrNull() }
-            updateConfigWithLoyaltyCardIds(cardUuids)
-        } finally {
-            closeDialogAction()
-        }
-    }
-
-    private fun validatedUserInputValueCardLabel(): String? = validatedUserInputValue {
-        isNotBlank()
-    }
-
-    private fun validatedUserInputValueCardIds(): String? = validatedUserInputValue {
-        val results = split(CARD_ID_SEPARATOR).map { runCatching { Uuid.parse(it) }.isSuccess }
-        results.all { it } && results.isNotEmpty()
-    }
-
-    private fun validatedUserInputValue(
-        isValid: String.() -> Boolean,
-    ): String? {
-        val userInput = this@LoyaltyCardsViewModel.userInput.value
-        if (!userInput.isValid()) {
-            _isErrorUserInput.update { true }
-            return null
-        }
-        return userInput
-    }
-
-    private fun updateConfigWithLoyaltyCardIds(cardIds: List<Uuid>) {
-        launchUpdateConfig { config ->
-            val maxOrder = config.loyaltyCards.maxOfOrNull { it.order } ?: 0.0
-            val prevCardIds = config.loyaltyCards.map { it.cardId }
-            config.copy(
-                loyaltyCards = config.loyaltyCards + cardIds
-                    .filter { it !in prevCardIds }
-                    .mapIndexed { idx, cardId -> LoyaltyCard(cardId, maxOrder + 1.0 + idx) }
-            )
-        }
-    }
-
-    fun resetUserInput() {
-        onUserInputChange("")
-    }
-
-    fun removeCard(card: Card) {
-        unselectCard()
-        launchUpdateConfig { it.copy(loyaltyCards = it.loyaltyCards.filter { it.cardId != card.data.id }) }
-        viewModelScope.launch {
-            loyaltyCardService
-                .durableCall { removeLoyaltyCard(card.data.id, store.userId) }
-                .onRight { /* TODO: handle errors */ }
-        }
-    }
-
-    fun onUserInputChange(value: String) {
-        _userInput.update { value }
-        _isErrorUserInput.update { false }
+    fun selectCard(card: Card) {
+        _selectedCard.update { card }
     }
 
     fun unselectCard() {
         _selectedCard.update { null }
     }
 
-    fun selectCard(card: Card) {
-        _selectedCard.update { card }
+    val cards: StateFlow<List<Card>> get() = items
+
+    fun removeCard(card: Card) {
+        unselectCard()
+        removeItem(card)
     }
 
-    fun shareCard(card: Card) {
-        viewModelScope.launch {
-            onShareLoyaltyCard(card.data.id.toHexDashString(), context)
-        }
-    }
+    fun shareCard(card: Card) = shareItem(card)
+    fun cardColor(card: Card) = itemColor(card)
+    fun onCardColorUpdated(cardId: Uuid, color: Color?) = onItemColorUpdated(cardId, color)
 
-    fun shareAllCards() {
-        viewModelScope.launch {
-            val cardIds =
-                cards.value.joinToString(separator = CARD_ID_SEPARATOR) { it.data.id.toHexDashString() }
-            onShareLoyaltyCard(cardIds, context)
-        }
-    }
+    override fun BringStore.storedItems(): List<LoyaltyCard> = loyaltyCards
+    override fun BringStore.withStoredItems(items: List<LoyaltyCard>): BringStore = copy(loyaltyCards = items)
+    override fun cachedData(stored: LoyaltyCard): LoyaltyCardData? = stored.cachedData
+    override fun withCachedData(stored: LoyaltyCard, data: LoyaltyCardData?): LoyaltyCard = stored.copy(cachedData = data)
+    override fun color(stored: LoyaltyCard): Int? = stored.color
+    override fun withColor(stored: LoyaltyCard, color: Int?): LoyaltyCard = stored.copy(color = color)
 
-    fun onUpdatedItemOrder(fromKey: Uuid, toKey: Uuid, cards: List<Card>) {
-        onUpdatedItemOrder(fromKey, toKey, cards) { from, updatedOrder ->
-            _cards.update { cards ->
-                cards.map { if (it.id == from.id) it.copy(order = updatedOrder) else it }.sorted()
+    override val useCacheStored: BringStore.() -> Boolean = { useCardsCache }
+    override val enableEditModeStored: BringStore.() -> Boolean = { enableCardsEditMode }
+    override val showLabelsStored: BringStore.() -> Boolean = { showCardsLabels }
+
+    override suspend fun fetchData(stored: LoyaltyCard): Either<LoyaltyCardData, FetchError> =
+        loyaltyCardService.durableCall { getLoyaltyCard(stored.cardId) }.mapRight { err ->
+            when (err) {
+                GetLoyaltyCardError.Internal -> FetchError.Internal
+                GetLoyaltyCardError.UnknownCardId -> FetchError.UnknownId
             }
-            launchUpdateConfig {
-                it.copy(loyaltyCards = it.loyaltyCards.map { if (it.cardId == from.data.id) it.copy(order = updatedOrder) else it })
-            }
         }
+
+    override fun buildItem(stored: LoyaltyCard, data: LoyaltyCardData): Card =
+        Card(data = data, order = stored.order, color = stored.color?.let(::Color))
+
+    override fun postProcessItems(items: List<Card>): List<Card> =
+        items.asSequence()
+            .withIndex()
+            .groupBy { it.value.data.label }
+            .flatMap { (_, indexed) ->
+                when {
+                    indexed.size <= 1 -> indexed
+                    else -> indexed.mapIndexed { innerIdx, ic ->
+                        ic.copy(
+                            value = ic.value.copy(
+                                data = ic.value.data.copy(label = "${ic.value.data.label} #${innerIdx + 1}")
+                            )
+                        )
+                    }
+                }
+            }
+            .sortedBy { it.index }
+            .map { it.value }
+
+    override fun newStored(id: Uuid, order: Double): LoyaltyCard = LoyaltyCard(cardId = id, order = order)
+
+    override suspend fun createFromFile(label: String): List<Uuid> {
+        val userId = store.userId
+        val file = FileKit.openFilePicker(type = SUPPORTED_IMAGE_FORMATS) ?: return emptyList()
+        val image = file.readBytes()
+        updateDialogActionLoading(getString(Res.string.loading_scanning))
+        return loyaltyCardService
+            .durableCall { createLoyaltyCard(label, image, userId) }
+            .fold(ifLeft = { listOf(it) }, ifRight = { /* TODO: handle errors */ emptyList() })
     }
 
-    fun cardColor(card: Card): StateFlow<Color> =
-        storeFlow
-            .map { it.loyaltyCards.find { it.cardId == card.data.id }?.color?.let(::Color) ?: Color.Unspecified }
-            .state(Color.Unspecified)
+    override suspend fun removeRemote(item: Card): Either<Unit, RemoveError> =
+        loyaltyCardService.durableCall { removeLoyaltyCard(item.data.id, store.userId) }
+            .mapRight { err ->
+                when (err) {
+                    RemoveLoyaltyCardError.Internal -> RemoveError.Internal
+                    RemoveLoyaltyCardError.UnknownCardId -> RemoveError.UnknownId
+                }
+            }
 
-    fun onCardColorUpdated(cardId: Uuid, color: Color?) {
-        launchUpdateConfig { it.copy(loyaltyCards = it.loyaltyCards.map { if (it.cardId == cardId) it.copy(color = color?.toArgb()) else it }) }
-    }
+    override suspend fun share(ids: String) = onShareLoyaltyCard(ids, context)
 
-    fun openAddFromFileDialog() {
-        _dialogAction.update { InputDialogAction.AddFromFile }
-    }
+    override fun replaceOrder(item: Card, order: Double): Card = item.copy(order = order)
+    override fun replaceStoredOrder(stored: LoyaltyCard, order: Double): LoyaltyCard = stored.copy(order = order)
 
-    fun openImportByIdDialog() {
-        _dialogAction.update { InputDialogAction.ImportById }
-    }
-
-    fun startDialogActionLoading() {
-        _dialogAction.update { InputDialogAction.Loading }
-    }
-
-    fun closeDialogAction() {
-        _dialogAction.update { null }
+    init {
+        updateStoredItemsInBackground()
     }
 }
 
-private const val CARD_ID_SEPARATOR = ";"
-
 private val SUPPORTED_IMAGE_FORMATS = FileKitType.File("png", "PNG", "jpg", "JPG", "jpeg", "JPEG")
+
+/** Bridges `Either<A, E>` to `Either<A, E2>` by mapping the right side. */
+private inline fun <A, E, E2> Either<A, E>.mapRight(transform: (E) -> E2): Either<A, E2> =
+    fold(ifLeft = { Either.Left(it) }, ifRight = { Either.Right(transform(it)) })

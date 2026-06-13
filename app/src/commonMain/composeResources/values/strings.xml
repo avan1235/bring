@@ -32,6 +32,7 @@
     <string name="favorite_list_elements">Favorite list elements</string>
     <string name="copied_list_id_to_clipboard">Copied List ID to clipboard</string>
     <string name="copied_card_id_to_clipboard">Copied Loyalty Card ID to clipboard</string>
+    <string name="copied_recipe_id_to_clipboard">Copied Recipe ID to clipboard</string>
     <string name="copied_list_url_to_clipboard">Copied List URL to clipboard</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
@@ -50,6 +51,8 @@
     <string name="scan">Scan Screenshot</string>
     <string name="add_loyalty_card">Add Loyalty Card</string>
     <string name="import_loyalty_card">Import Loyalty Card</string>
+    <string name="add_recipe">Add Recipe</string>
+    <string name="import_recipe">Import Recipe</string>
     <string name="select_file">Select File</string>
     <string name="close">Close</string>
     <string name="remove">Remove</string>
@@ -58,4 +61,8 @@
     <string name="find_me_on">Find Me On</string>
     <string name="show_color_labels">Show color labels</string>
     <string name="use_cards_cache">Cache data</string>
+    <string name="loading_read_from_file">Reading input files…</string>
+    <string name="loading_scanning">Scanning input files…</string>
+    <string name="loading_saving">Saving extracted data…</string>
+    <string name="loading_importing">Importing data…</string>
 </resources>

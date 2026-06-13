@@ -5,6 +5,7 @@ import androidx.compose.ui.platform.ClipEntry
 import bring.app.generated.resources.Res
 import bring.app.generated.resources.copied_card_id_to_clipboard
 import bring.app.generated.resources.copied_list_id_to_clipboard
+import bring.app.generated.resources.copied_recipe_id_to_clipboard
 import `in`.procyk.bring.vm.AbstractViewModel.Context
 import kotlinx.cinterop.BetaInteropApi
 import platform.Foundation.NSString
@@ -42,4 +43,19 @@ internal actual suspend fun onShareLoyaltyCard(cardId: String, context: Context)
 
     context.clipboard.setClipEntry(ClipEntry.withPlainText(cardId))
     context.showSnackbar(Res.string.copied_card_id_to_clipboard)
+}
+
+@OptIn(ExperimentalComposeUiApi::class, BetaInteropApi::class)
+internal actual suspend fun onShareRecipe(recipeId: String, context: Context) {
+    val activityItems = listOf(
+        NSString.create(string = recipeId)
+    )
+    val activityViewController =
+        UIActivityViewController(activityItems = activityItems, applicationActivities = null)
+
+    val rootViewController = UIApplication.sharedApplication.keyWindow?.rootViewController
+    rootViewController?.presentViewController(activityViewController, animated = true, completion = null)
+
+    context.clipboard.setClipEntry(ClipEntry.withPlainText(recipeId))
+    context.showSnackbar(Res.string.copied_recipe_id_to_clipboard)
 }

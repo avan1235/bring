@@ -11,11 +11,16 @@ import ai.koog.prompt.message.AttachmentContent
 import ai.koog.prompt.message.AttachmentSource
 import ai.koog.prompt.structure.StructuredRequest.Manual
 import ai.koog.prompt.structure.StructuredRequestConfig
-import androidx.lifecycle.viewModelScope
-import `in`.procyk.bring.CookingRecipeRpcPath
-import `in`.procyk.bring.RecipeIngredient
+import androidx.compose.ui.graphics.Color
+import arrow.core.Either
+import bring.app.generated.resources.Res
+import bring.app.generated.resources.loading_saving
+import bring.app.generated.resources.loading_scanning
+import `in`.procyk.bring.*
 import `in`.procyk.bring.ai.MarkdownWrappedJsonStructuredData.Companion.createMarkdownWrappedJsonStructure
 import `in`.procyk.bring.service.CookingRecipeService
+import `in`.procyk.bring.service.CookingRecipeService.GetCookingRecipeError
+import `in`.procyk.bring.service.CookingRecipeService.RemoveCookingRecipeError
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.FileKitMode
 import io.github.vinceglb.filekit.dialogs.FileKitType
@@ -23,44 +28,109 @@ import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.extension
 import io.github.vinceglb.filekit.readBytes
 import io.ktor.client.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.getString
+import kotlin.uuid.Uuid
 
-internal class RecipesViewModel(context: Context) : AbstractViewModel(context) {
+internal class RecipesViewModel(
+    context: Context,
+) : ImportableCollectionViewModel<CookingRecipe, CookingRecipeData, RecipesViewModel.Recipe>(context) {
+
+    data class Recipe(
+        val data: CookingRecipeData,
+        override val order: Double,
+        val color: Color?,
+    ) : Orderable, Identifiable {
+        override val id get() = data.id
+    }
 
     private val cookingRecipeService = durableRpcService<CookingRecipeService>(CookingRecipeRpcPath)
 
-    fun extractFromImages() {
-        val apiKey = store.geminiKey.takeIf { store.useGemini } ?: return
-        val userId = store.userId
-        viewModelScope.launch {
-            val files =
-                FileKit.openFilePicker(type = SUPPORTED_IMAGE_FORMATS, mode = FileKitMode.Multiple()) ?: return@launch
-            val images = files.map { Image(it.readBytes(), it.extension) }
-            val recipes = httpClient.extractRecipes(apiKey, images) ?: return@launch
-            coroutineScope {
-                recipes.recipes.forEach { recipe ->
-                    launch {
-                        val ingredients = recipe.items.map { RecipeIngredient(it.name, it.measures, it.unit) }
-                        val steps = recipe.steps.map { it.description }
-                        cookingRecipeService.durableCall {
-                            createCookingRecipe(
-                                name = recipe.title,
-                                ingredients = ingredients,
-                                steps = steps,
-                                byUserId = userId,
-                            )
-                        }
-                    }
-                }
+    override fun BringStore.storedItems(): List<CookingRecipe> = recipes
+    override fun BringStore.withStoredItems(items: List<CookingRecipe>): BringStore = copy(recipes = items)
+    override fun cachedData(stored: CookingRecipe): CookingRecipeData? = stored.cachedData
+    override fun withCachedData(stored: CookingRecipe, data: CookingRecipeData?): CookingRecipe =
+        stored.copy(cachedData = data)
+
+    override fun color(stored: CookingRecipe): Int? = stored.color
+    override fun withColor(stored: CookingRecipe, color: Int?): CookingRecipe = stored.copy(color = color)
+
+    override val useCacheStored: BringStore.() -> Boolean = { useRecipesCache }
+    override val enableEditModeStored: BringStore.() -> Boolean = { enableRecipesEditMode }
+    override val showLabelsStored: BringStore.() -> Boolean = { showRecipesLabels }
+
+    override suspend fun fetchData(stored: CookingRecipe): Either<CookingRecipeData, FetchError> =
+        cookingRecipeService.durableCall { getCookingRecipe(stored.recipeId) }.mapRight { err ->
+            when (err) {
+                GetCookingRecipeError.Internal -> FetchError.Internal
+                GetCookingRecipeError.UnknownRecipeId -> FetchError.UnknownId
             }
         }
+
+    override fun buildItem(stored: CookingRecipe, data: CookingRecipeData): Recipe =
+        Recipe(data = data, order = stored.order, color = stored.color?.let(::Color))
+
+    override fun newStored(id: Uuid, order: Double): CookingRecipe = CookingRecipe(recipeId = id, order = order)
+
+    override suspend fun createFromFile(label: String): List<Uuid> {
+        val apiKey = store.geminiKey.takeIf { store.useGemini } ?: return emptyList()
+        val userId = store.userId
+        val files = FileKit.openFilePicker(
+            type = SUPPORTED_IMAGE_FORMATS,
+            mode = FileKitMode.Multiple(),
+        ) ?: return emptyList()
+        val images = files.map { Image(it.readBytes(), it.extension) }
+        updateDialogActionLoading(getString(Res.string.loading_scanning))
+        val recipes = httpClient.extractRecipes(apiKey, images) ?: return emptyList()
+        updateDialogActionLoading(getString(Res.string.loading_saving))
+        return coroutineScope {
+            recipes.recipes.map { recipe ->
+                async {
+                    val ingredients = recipe.items.map { RecipeIngredient(it.name, it.measures, it.unit) }
+                    val steps = recipe.steps.map { it.description }
+                    cookingRecipeService.durableCall {
+                        createCookingRecipe(
+                            name = recipe.title,
+                            ingredients = ingredients,
+                            steps = steps,
+                            byUserId = userId,
+                        )
+                    }.fold(ifLeft = { it }, ifRight = { null })
+                }
+            }.awaitAll().filterNotNull()
+        }
+    }
+
+    override suspend fun removeRemote(item: Recipe): Either<Unit, RemoveError> =
+        cookingRecipeService.durableCall { removeCookingRecipe(item.data.id, store.userId) }
+            .mapRight { err ->
+                when (err) {
+                    RemoveCookingRecipeError.Internal -> RemoveError.Internal
+                    RemoveCookingRecipeError.UnknownRecipeId -> RemoveError.UnknownId
+                }
+            }
+
+    override suspend fun share(ids: String) = onShareRecipe(ids, context)
+
+    override fun replaceOrder(item: Recipe, order: Double): Recipe = item.copy(order = order)
+
+    override fun replaceStoredOrder(stored: CookingRecipe, order: Double): CookingRecipe =
+        stored.copy(order = order)
+
+    init {
+        updateStoredItemsInBackground()
     }
 }
 
 private val SUPPORTED_IMAGE_FORMATS = FileKitType.File("png", "PNG", "jpg", "JPG", "jpeg", "JPEG")
+
+private inline fun <A, E, E2> Either<A, E>.mapRight(transform: (E) -> E2): Either<A, E2> =
+    fold(ifLeft = { Either.Left(it) }, ifRight = { Either.Right(transform(it)) })
+
 
 @Serializable
 @SerialName("Recipes")
@@ -101,7 +171,6 @@ private data class ExtractedRecipeStep(
     @property:LLMDescription("Actions to be done as a single step of the extracted recipe")
     val description: String,
 )
-
 
 private class Image(
     val bytes: ByteArray,
@@ -220,33 +289,6 @@ private val examples: List<ExtractedRecipes> = listOf(
                     ExtractedRecipeStep(description = "Sift the flour, sugar, and baking powder into a large bowl."),
                     ExtractedRecipeStep(description = "Make a well in the center and pour in the milk."),
                     ExtractedRecipeStep(description = "Mix until smooth and cook on a griddle."),
-                ),
-            ),
-            ExtractedRecipe(
-                title = "Roast Chicken",
-                items = listOf(
-                    ExtractedIngredient(name = "whole chicken", measures = 1.5, unit = "kg"),
-                    ExtractedIngredient(name = "garlic", measures = 4.0, unit = "cloves"),
-                    ExtractedIngredient(name = "rosemary", measures = 3.0, unit = "sprigs"),
-                    ExtractedIngredient(name = "salt", measures = 1.5, unit = "tsp"),
-                ),
-                steps = listOf(
-                    ExtractedRecipeStep(description = "Rub the whole chicken with salt and crushed garlic cloves."),
-                    ExtractedRecipeStep(description = "Place rosemary sprigs inside the cavity."),
-                    ExtractedRecipeStep(description = "Roast in the oven at 200°C for 60 minutes."),
-                ),
-            ),
-            ExtractedRecipe(
-                title = "Protein Smoothie",
-                items = listOf(
-                    ExtractedIngredient(name = "protein powder", measures = 1.0, unit = "scoop"),
-                    ExtractedIngredient(name = "frozen berries", measures = 1.0, unit = "cup"),
-                    ExtractedIngredient(name = "spinach", measures = 1.0, unit = "handful"),
-                    ExtractedIngredient(name = "almond milk", measures = 250.0, unit = "ml"),
-                ),
-                steps = listOf(
-                    ExtractedRecipeStep(description = "Combine protein powder, frozen berries, and spinach in a blender."),
-                    ExtractedRecipeStep(description = "Add almond milk and blend until smooth."),
                 ),
             ),
         ),

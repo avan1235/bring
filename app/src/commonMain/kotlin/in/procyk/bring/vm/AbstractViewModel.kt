@@ -263,3 +263,5 @@ internal expect fun updateListLocationPresentation(listId: String?)
 internal expect suspend fun onShareList(listId: String, context: Context)
 
 internal expect suspend fun onShareLoyaltyCard(cardId: String, context: Context)
+
+internal expect suspend fun onShareRecipe(recipeId: String, context: Context)

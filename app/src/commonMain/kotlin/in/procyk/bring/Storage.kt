@@ -40,6 +40,10 @@ data class BringStore(
     @CborLabel(21) val recentShoppingLists: Set<RecentShoppingList> = emptySet(),
     @CborLabel(22) val recentShoppingListsCount: Int = 5,
     @CborLabel(23) val useLiquidGlassNavigation: Boolean = defaultUseLiquidGlassNavigation,
+    @CborLabel(24) val recipes: List<CookingRecipe> = emptyList(),
+    @CborLabel(25) val enableRecipesEditMode: Boolean = true,
+    @CborLabel(26) val showRecipesLabels: Boolean = true,
+    @CborLabel(27) val useRecipesCache: Boolean = true,
 ) {
     companion object {
         val Default: BringStore = BringStore()
@@ -117,6 +121,16 @@ data class LoyaltyCard(
     @CborLabel(3) val cachedData: LoyaltyCardData? = null,
 ) : Orderable, Identifiable {
     override val id get() = cardId
+}
+
+@Serializable
+data class CookingRecipe(
+    @CborLabel(0) val recipeId: Uuid,
+    @CborLabel(1) override val order: Double,
+    @CborLabel(2) val color: Int? = null,
+    @CborLabel(3) val cachedData: CookingRecipeData? = null,
+) : Orderable, Identifiable {
+    override val id get() = recipeId
 }
 
 @Composable

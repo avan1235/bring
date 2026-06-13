@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.ClipEntry
 import bring.app.generated.resources.Res
 import bring.app.generated.resources.copied_card_id_to_clipboard
 import bring.app.generated.resources.copied_list_id_to_clipboard
+import bring.app.generated.resources.copied_recipe_id_to_clipboard
 import `in`.procyk.bring.vm.AbstractViewModel.Context
 import org.jetbrains.compose.resources.StringResource
 
@@ -18,6 +19,9 @@ internal actual suspend fun onShareList(listId: String, context: Context) =
 
 internal actual suspend fun onShareLoyaltyCard(cardId: String, context: Context) =
     onShare(cardId, context, Res.string.copied_card_id_to_clipboard)
+
+internal actual suspend fun onShareRecipe(recipeId: String, context: Context) =
+    onShare(recipeId, context, Res.string.copied_recipe_id_to_clipboard)
 
 private suspend fun onShare(value: String, context: Context, message: StringResource) {
     val shareIntent = Intent(ACTION_SEND).apply {
