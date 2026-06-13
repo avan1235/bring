@@ -179,6 +179,11 @@ internal fun BringAppInternal(
                         val vm = viewModel { RecipesViewModel(context) }
                         RecipesScreen(padding, vm)
                     }
+                    composable<Screen.Recipe> { backStackEntry ->
+                        val route = backStackEntry.toRoute<Screen.Recipe>()
+                        val vm = viewModel { RecipeViewModel(context, route.recipeId) }
+                        RecipeScreen(padding, vm)
+                    }
                     composable<Screen.LoyaltyCards> {
                         val vm = viewModel { LoyaltyCardsViewModel(context) }
                         LoyaltyCardsScreen(padding, vm)
@@ -385,9 +390,10 @@ private fun NavBackStackEntry.toScreenOrderOrNull(): Int? = when {
     navigatesFrom<Screen.CreateList>() -> 0
     navigatesFrom<Screen.EditList>() -> 1
     navigatesFrom<Screen.Recipes>() -> 2
-    navigatesFrom<Screen.LoyaltyCards>() -> 3
-    navigatesFrom<Screen.Favorites>() -> 4
-    navigatesFrom<Screen.Settings>() -> 5
+    navigatesFrom<Screen.Recipe>() -> 3
+    navigatesFrom<Screen.LoyaltyCards>() -> 4
+    navigatesFrom<Screen.Favorites>() -> 5
+    navigatesFrom<Screen.Settings>() -> 6
     else -> null
 }
 
@@ -405,6 +411,9 @@ internal sealed class Screen {
 
     @Serializable
     data object Recipes : Screen()
+
+    @Serializable
+    data class Recipe(val recipeId: String) : Screen()
 
     @Serializable
     data object LoyaltyCards : Screen()

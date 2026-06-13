@@ -5,12 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
-import bring.app.generated.resources.Res
-import bring.app.generated.resources.cooking_recipes
-import bring.app.generated.resources.favorites
-import bring.app.generated.resources.loyalty_cards
-import bring.app.generated.resources.recipes
-import bring.app.generated.resources.settings
+import bring.app.generated.resources.*
 import `in`.procyk.bring.*
 import `in`.procyk.bring.AppConfig.CLIENT_HOST
 import `in`.procyk.bring.AppConfig.CLIENT_HTTP_PROTOCOL
@@ -51,7 +46,7 @@ internal abstract class AbstractViewModel(
             .stateIn(
                 appScope,
                 SharingStarted.WhileSubscribed(stopTimeoutMillis = 1_000),
-                storeFlow.value.useBottomNavigation
+                storeFlow.value.useBottomNavigation,
             )
 
         val useLiquidGlassNavigation: StateFlow<Boolean> = storeFlow
@@ -59,7 +54,7 @@ internal abstract class AbstractViewModel(
             .stateIn(
                 appScope,
                 SharingStarted.WhileSubscribed(stopTimeoutMillis = 1_000),
-                storeFlow.value.useLiquidGlassNavigation
+                storeFlow.value.useLiquidGlassNavigation,
             )
 
         private val _topBarText = MutableStateFlow(AppConfig.APP_NAME)
@@ -71,6 +66,7 @@ internal abstract class AbstractViewModel(
                 entry.navigatesFrom<Screen.CreateList>() -> NavBarTarget.Main
                 entry.navigatesFrom<Screen.Settings>() -> NavBarTarget.Settings
                 entry.navigatesFrom<Screen.Recipes>() -> NavBarTarget.Recipes
+                entry.navigatesFrom<Screen.Recipe>() -> NavBarTarget.Recipes
                 entry.navigatesFrom<Screen.LoyaltyCards>() -> NavBarTarget.LoyaltyCards
                 entry.navigatesFrom<Screen.Favorites>() -> NavBarTarget.Favourites
                 else -> error("Unknown screen target: $entry")
@@ -79,7 +75,7 @@ internal abstract class AbstractViewModel(
         }.stateIn(
             appScope,
             SharingStarted.WhileSubscribed(stopTimeoutMillis = 1_000),
-            NavBarTarget.Main
+            NavBarTarget.Main,
         )
 
         fun onNavBarTargetSelected(target: NavBarTarget) {
@@ -121,6 +117,14 @@ internal abstract class AbstractViewModel(
                 updateListLocationPresentation(null)
                 _topBarText.value = getString(Res.string.cooking_recipes)
                 navigateReusingState(Screen.Recipes)
+            }
+        }
+
+        fun navigateRecipe(recipeId: String) {
+            appScope.launch {
+                withContext(Dispatchers.Main) {
+                    navController.navigate(Screen.Recipe(recipeId))
+                }
             }
         }
 
@@ -176,7 +180,7 @@ internal abstract class AbstractViewModel(
 
         private suspend fun navigateReusingState(screen: Screen) {
             withContext(Dispatchers.Main) {
-                navController.navigate(screen)  {
+                navController.navigate(screen) {
                     launchSingleTop = true
                     restoreState = true
                     popUpTo(navController.graph.startDestinationId) {

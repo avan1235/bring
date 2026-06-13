@@ -1,5 +1,6 @@
 package `in`.procyk.bring.ui.screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Label
@@ -47,6 +48,7 @@ private fun RecipeRow(
     val previousColor = remember { mutableStateOf<Color?>(null) }
     Row(
         modifier = Modifier
+            .clickable { vm.context.navigateRecipe(recipe.id.toString()) }
             .padding(8.dp)
             .fillMaxWidth()
             .testTag("recipe"),
