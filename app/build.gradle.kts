@@ -115,8 +115,8 @@ kotlin {
             implementation(libs.arrow.core)
             implementation(libs.arrow.core.serialization)
 
-            implementation("io.github.kyant0:backdrop:2.0.0")
-            implementation("io.github.kyant0:shapes:1.2.0")
+            implementation(libs.backdrop)
+            implementation(libs.shapes)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -135,7 +135,7 @@ kotlin {
                 implementation(libs.kstore.file)
             }
         }
-        webMain.dependencies {
+        wasmJsMain.dependencies {
             implementation(libs.ktor.client.js)
             implementation(libs.kstore.storage)
             implementation(libs.kotlinx.browser)
