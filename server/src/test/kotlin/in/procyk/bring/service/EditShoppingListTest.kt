@@ -38,7 +38,7 @@ internal class EditShoppingListTest : BringServerIntegrationTestCase() {
         val data = shoppingListService.testCall {
             getShoppingList(listId).first()
         }
-        assertEquals(data.items.size, 0)
+        assertEquals(0, data.items.size)
 
         shoppingListService.testCall {
             addEntryToShoppingList(userId, listId, input)
@@ -48,12 +48,12 @@ internal class EditShoppingListTest : BringServerIntegrationTestCase() {
             getShoppingList(listId).first { it.leftOrNull()?.items?.isNotEmpty() == true }
         }
 
-        assertEquals(updatedData.items.size, 1)
+        assertEquals(1, updatedData.items.size)
         val addedItem = updatedData.items.first()
 
-        assertEquals(addedItem.byUserId, userId)
-        assertEquals(addedItem.name, input)
-        assertEquals(addedItem.status, ShoppingListItemData.CheckedStatusData.Unchecked)
+        assertEquals(userId, addedItem.byUserId)
+        assertEquals(input, addedItem.name)
+        assertEquals(ShoppingListItemData.CheckedStatusData.Unchecked, addedItem.status)
     }
 
     @Test

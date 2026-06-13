@@ -27,8 +27,8 @@ internal class CreateShoppingListTest : BringServerIntegrationTestCase(){
             getShoppingList(listId).first()
         }
 
-        assertEquals(data.name, listName)
-        assertEquals(data.byUserId, userId)
-        assertEquals(data.items.size, 0)
+        assertEquals(listName, data.name)
+        assertEquals(userId, data.byUserId)
+        assertEquals(0, data.items.size)
     }
 }
