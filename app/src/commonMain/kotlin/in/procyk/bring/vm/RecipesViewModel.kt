@@ -208,6 +208,8 @@ private suspend fun HttpClient.extractRecipes(
                 "unsalted butter", do not write "butter" in the steps).
                 Do not include emojis or other non-textual content in the extracted recipe, 
                 and if such content is present in input, interpret it accordingly.
+                Normalize the texts of the extracted recipe in title, steps and 
+                ingredients - they should have sentence casing, with no spell checking issues.
                 Use the order of user images as a reference for order of steps, 
                 if that's not clear from the recipe content.
                 Use the same language as the you're given in the user image.
