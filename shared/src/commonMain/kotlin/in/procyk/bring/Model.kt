@@ -147,6 +147,6 @@ data class CookingRecipeData(
 @Serializable
 data class RecipeIngredient(
     @CborLabel(0) val name: String,
-    @CborLabel(1) val measure: Double,
+    @CborLabel(1) val measures: Double,
     @CborLabel(2) val unit: String,
 )

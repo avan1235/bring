@@ -12,7 +12,10 @@ import ai.koog.prompt.message.AttachmentSource
 import ai.koog.prompt.structure.StructuredRequest.Manual
 import ai.koog.prompt.structure.StructuredRequestConfig
 import androidx.lifecycle.viewModelScope
+import `in`.procyk.bring.CookingRecipeRpcPath
+import `in`.procyk.bring.RecipeIngredient
 import `in`.procyk.bring.ai.MarkdownWrappedJsonStructuredData.Companion.createMarkdownWrappedJsonStructure
+import `in`.procyk.bring.service.CookingRecipeService
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.FileKitMode
 import io.github.vinceglb.filekit.dialogs.FileKitType
@@ -20,19 +23,39 @@ import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.extension
 import io.github.vinceglb.filekit.readBytes
 import io.ktor.client.*
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 internal class RecipiesViewModel(context: Context) : AbstractViewModel(context) {
 
+    private val cookingRecipeService = durableRpcService<CookingRecipeService>(CookingRecipeRpcPath)
+
     fun extractFromImages() {
         val apiKey = store.geminiKey.takeIf { store.useGemini } ?: return
+        val userId = store.userId
         viewModelScope.launch {
             val files =
                 FileKit.openFilePicker(type = SUPPORTED_IMAGE_FORMATS, mode = FileKitMode.Multiple()) ?: return@launch
             val images = files.map { Image(it.readBytes(), it.extension) }
-            println(httpClient.extractRecipe(apiKey, images))
+            val recipes = httpClient.extractRecipes(apiKey, images) ?: return@launch
+            coroutineScope {
+                recipes.recipes.forEach { recipe ->
+                    launch {
+                        val ingredients = recipe.items.map { RecipeIngredient(it.name, it.measures, it.unit) }
+                        val steps = recipe.steps.map { it.description }
+                        cookingRecipeService.durableCall {
+                            createCookingRecipe(
+                                name = recipe.title,
+                                ingredients = ingredients,
+                                steps = steps,
+                                byUserId = userId,
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -85,7 +108,7 @@ private class Image(
     val format: String,
 )
 
-private suspend fun HttpClient.extractRecipe(
+private suspend fun HttpClient.extractRecipes(
     apiKey: String,
     images: List<Image>,
 ): ExtractedRecipes? {

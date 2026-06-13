@@ -51,7 +51,7 @@ internal class CookingRecipeEntity(id: EntityID<UUID>) : UUIDEntity(id) {
         }
         set(value) {
             ingredientNames = value.map { it.name }
-            ingredientMeasures = value.map { it.measure }
+            ingredientMeasures = value.map { it.measures }
             ingredientUnits = value.map { it.unit }
         }
 }

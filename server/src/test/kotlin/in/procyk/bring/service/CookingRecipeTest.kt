@@ -19,8 +19,8 @@ internal class CookingRecipeTest : BringServerIntegrationTestCase() {
         val service = cookingRecipeService()
         val name = "Pancakes"
         val ingredients = listOf(
-            RecipeIngredient(name = "flour", measure = 200.0, unit = "g"),
-            RecipeIngredient(name = "milk", measure = 300.0, unit = "ml"),
+            RecipeIngredient(name = "flour", measures = 200.0, unit = "g"),
+            RecipeIngredient(name = "milk", measures = 300.0, unit = "ml"),
         )
         val steps = listOf("Mix all ingredients", "Fry on the pan")
 
@@ -93,7 +93,7 @@ internal class CookingRecipeTest : BringServerIntegrationTestCase() {
         val recipeId = service.testCall {
             createCookingRecipe(
                 "To be removed",
-                listOf(RecipeIngredient(name = "salt", measure = 1.0, unit = "tsp")),
+                listOf(RecipeIngredient(name = "salt", measures = 1.0, unit = "tsp")),
                 listOf("Add salt"),
                 userId,
             )
@@ -119,7 +119,7 @@ internal class CookingRecipeTest : BringServerIntegrationTestCase() {
     fun `remove cooking recipe by non-owner does not delete it`() = runTest {
         val service = cookingRecipeService()
         val name = "Owner's recipe"
-        val ingredients = listOf(RecipeIngredient(name = "sugar", measure = 50.0, unit = "g"))
+        val ingredients = listOf(RecipeIngredient(name = "sugar", measures = 50.0, unit = "g"))
         val steps = listOf("Add sugar")
 
         val recipeId = service.testCall {
