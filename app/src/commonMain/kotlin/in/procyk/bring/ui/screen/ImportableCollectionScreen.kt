@@ -178,7 +178,7 @@ internal fun <V, I> ImportableCollectionScreen(
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+                        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
                     ) {
                         Box(
                             modifier = Modifier.fillMaxWidth(),
