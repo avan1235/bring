@@ -16,14 +16,14 @@ import `in`.procyk.bring.ui.components.AppScreen
 import `in`.procyk.bring.ui.components.Icon
 import `in`.procyk.bring.ui.components.IconButton
 import `in`.procyk.bring.ui.components.Text
-import `in`.procyk.bring.vm.RecipiesViewModel
+import `in`.procyk.bring.vm.RecipesViewModel
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-internal fun RecipiesScreen(
+internal fun RecipesScreen(
     padding: PaddingValues,
-    vm: RecipiesViewModel,
-) = AppScreen("screen-recipies", padding) {
+    vm: RecipesViewModel,
+) = AppScreen("screen-recipes", padding) {
     IconButton(
         onClick = vm::extractFromImages,
     ) {

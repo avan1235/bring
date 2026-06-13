@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-internal class RecipiesViewModel(context: Context) : AbstractViewModel(context) {
+internal class RecipesViewModel(context: Context) : AbstractViewModel(context) {
 
     private val cookingRecipeService = durableRpcService<CookingRecipeService>(CookingRecipeRpcPath)
 
@@ -119,7 +119,7 @@ private suspend fun HttpClient.extractRecipes(
         prompt = prompt("recipes-extraction") {
             system(
                 """
-                You are a cooking recipies extraction assistant.
+                You are a cooking recipes extraction assistant.
                 Extract specific cooking recipes from the user input images.
                 For every ingredient, strictly isolate the numerical quantity, 
                 the measurement unit, and the ingredient name.

@@ -8,7 +8,7 @@ import androidx.navigation.NavHostController
 import bring.app.generated.resources.Res
 import bring.app.generated.resources.favorites
 import bring.app.generated.resources.loyalty_cards
-import bring.app.generated.resources.recipies
+import bring.app.generated.resources.recipes
 import bring.app.generated.resources.settings
 import `in`.procyk.bring.*
 import `in`.procyk.bring.AppConfig.CLIENT_HOST
@@ -69,7 +69,7 @@ internal abstract class AbstractViewModel(
                 entry.navigatesFrom<Screen.EditList>() -> NavBarTarget.Main
                 entry.navigatesFrom<Screen.CreateList>() -> NavBarTarget.Main
                 entry.navigatesFrom<Screen.Settings>() -> NavBarTarget.Settings
-                entry.navigatesFrom<Screen.Recipies>() -> NavBarTarget.Recipies
+                entry.navigatesFrom<Screen.Recipes>() -> NavBarTarget.Recipes
                 entry.navigatesFrom<Screen.LoyaltyCards>() -> NavBarTarget.LoyaltyCards
                 entry.navigatesFrom<Screen.Favorites>() -> NavBarTarget.Favourites
                 else -> error("Unknown screen target: $entry")
@@ -84,7 +84,7 @@ internal abstract class AbstractViewModel(
         fun onNavBarTargetSelected(target: NavBarTarget) {
             val current = navBarTarget.value
             when (target) {
-                NavBarTarget.Recipies if target != current -> navigateRecipies()
+                NavBarTarget.Recipes if target != current -> navigateRecipes()
                 NavBarTarget.LoyaltyCards if target != current -> navigateCards()
                 NavBarTarget.Favourites if target != current -> navigateFavourites()
                 NavBarTarget.Settings if target != current -> navigateSettings()
@@ -115,11 +115,11 @@ internal abstract class AbstractViewModel(
             }
         }
 
-        fun navigateRecipies() {
+        fun navigateRecipes() {
             appScope.launch {
                 updateListLocationPresentation(null)
-                _topBarText.value = getString(Res.string.recipies)
-                navigateReusingState(Screen.Recipies)
+                _topBarText.value = getString(Res.string.recipes)
+                navigateReusingState(Screen.Recipes)
             }
         }
 
@@ -225,7 +225,7 @@ internal inline fun <reified T : Screen> NavBackStackEntry?.navigatesFrom(): Boo
     this?.destination?.route?.split('/')?.getOrNull(0)?.split('.')?.lastOrNull() == T::class.simpleName
 
 enum class NavBarTarget {
-    Main, Recipies, LoyaltyCards, Favourites, Settings;
+    Main, Recipes, LoyaltyCards, Favourites, Settings;
 }
 
 inline fun <T> onUpdatedItemOrder(

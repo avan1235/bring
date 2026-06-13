@@ -181,9 +181,9 @@ internal fun BringAppInternal(
                         }
                         EditListScreen(padding, vm)
                     }
-                    composable<Screen.Recipies> {
-                        val vm = viewModel { RecipiesViewModel(context) }
-                        RecipiesScreen(padding, vm)
+                    composable<Screen.Recipes> {
+                        val vm = viewModel { RecipesViewModel(context) }
+                        RecipesScreen(padding, vm)
                     }
                     composable<Screen.LoyaltyCards> {
                         val vm = viewModel { LoyaltyCardsViewModel(context) }
@@ -345,7 +345,7 @@ private val NavBarTarget.twoToneIcon: ImageVector
     get() = when (this) {
         NavBarTarget.Main -> Icons.TwoTone.Summarize
         NavBarTarget.LoyaltyCards -> Icons.TwoTone.CreditCard
-        NavBarTarget.Recipies -> Icons.TwoTone.RestaurantMenu
+        NavBarTarget.Recipes -> Icons.TwoTone.RestaurantMenu
         NavBarTarget.Favourites -> Icons.TwoTone.Favorite
         NavBarTarget.Settings -> Icons.TwoTone.Settings
     }
@@ -354,7 +354,7 @@ private val NavBarTarget.outlinedIcon: ImageVector
     get() = when (this) {
         NavBarTarget.Main -> Icons.Outlined.Summarize
         NavBarTarget.LoyaltyCards -> Icons.Outlined.CreditCard
-        NavBarTarget.Recipies -> Icons.Outlined.RestaurantMenu
+        NavBarTarget.Recipes -> Icons.Outlined.RestaurantMenu
         NavBarTarget.Favourites -> Icons.Outlined.Favorite
         NavBarTarget.Settings -> Icons.Outlined.Settings
     }
@@ -363,7 +363,7 @@ private val NavBarTarget.filledIcon: ImageVector
     get() = when (this) {
         NavBarTarget.Main -> Icons.Filled.Summarize
         NavBarTarget.LoyaltyCards -> Icons.Filled.CreditCard
-        NavBarTarget.Recipies -> Icons.Filled.RestaurantMenu
+        NavBarTarget.Recipes -> Icons.Filled.RestaurantMenu
         NavBarTarget.Favourites -> Icons.Filled.Favorite
         NavBarTarget.Settings -> Icons.Filled.Settings
     }
@@ -372,7 +372,7 @@ private val NavBarTarget.label: StringResource
     get() = when (this) {
         NavBarTarget.Main -> Res.string.lists
         NavBarTarget.LoyaltyCards -> Res.string.cards
-        NavBarTarget.Recipies -> Res.string.recipies
+        NavBarTarget.Recipes -> Res.string.recipes
         NavBarTarget.Favourites -> Res.string.favorites
         NavBarTarget.Settings -> Res.string.settings
     }
@@ -389,7 +389,7 @@ private fun AnimatedContentTransitionScope<NavBackStackEntry>.towards(): SlideDi
 private fun NavBackStackEntry.toScreenOrderOrNull(): Int? = when {
     navigatesFrom<Screen.CreateList>() -> 0
     navigatesFrom<Screen.EditList>() -> 1
-    navigatesFrom<Screen.Recipies>() -> 2
+    navigatesFrom<Screen.Recipes>() -> 2
     navigatesFrom<Screen.LoyaltyCards>() -> 3
     navigatesFrom<Screen.Favorites>() -> 4
     navigatesFrom<Screen.Settings>() -> 5
@@ -409,7 +409,7 @@ internal sealed class Screen {
     data object Favorites : Screen()
 
     @Serializable
-    data object Recipies : Screen()
+    data object Recipes : Screen()
 
     @Serializable
     data object LoyaltyCards : Screen()
