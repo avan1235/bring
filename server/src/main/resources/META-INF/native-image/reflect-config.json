@@ -81,6 +81,13 @@
         "allDeclaredConstructors": true
     },
     {
+        "name": "in.procyk.bring.db.CookingRecipeEntity",
+        "allPublicMethods": true,
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "allDeclaredConstructors": true
+    },
+    {
         "name": "in.procyk.bring.ShoppingListData",
         "allDeclaredConstructors": true,
         "fields": [
@@ -840,6 +847,157 @@
     },
     {
         "name": "in.procyk.bring.service.LoyaltyCardService$RemoveLoyaltyCardError$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.CookingRecipeData",
+        "allDeclaredConstructors": true,
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.CookingRecipeData$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.RecipeIngredient",
+        "allDeclaredConstructors": true,
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.RecipeIngredient$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$$rpcServiceStub",
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$$rpcServiceStub$createCookingRecipe$rpcMethod",
+        "allPublicMethods": true,
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$$rpcServiceStub$createCookingRecipe$rpcMethod$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$$rpcServiceStub$getCookingRecipe$rpcMethod",
+        "allPublicMethods": true,
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$$rpcServiceStub$getCookingRecipe$rpcMethod$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$$rpcServiceStub$removeCookingRecipe$rpcMethod",
+        "allPublicMethods": true,
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$$rpcServiceStub$removeCookingRecipe$rpcMethod$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$AddCookingRecipeError",
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$AddCookingRecipeError$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$GetCookingRecipeError",
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$GetCookingRecipeError$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$RemoveCookingRecipeError",
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.CookingRecipeService$RemoveCookingRecipeError$Companion",
         "allDeclaredConstructors": true,
         "methods": [
             {
