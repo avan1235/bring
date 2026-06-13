@@ -5,7 +5,7 @@ import com.fleeksoft.ksoup.nodes.Document
 internal data object KwestiaSmakuIngredientsExtractor : KsoupIngredientsExtractor() {
 
     override suspend fun supports(input: String): Boolean {
-        return input.startsWith("https://www.kwestiasmaku.com/przepis/")
+        return input.startsWith("https://www.kwestiasmaku.com/")
     }
 
     override suspend fun extractIngredients(document: Document): List<Ingredient> {
