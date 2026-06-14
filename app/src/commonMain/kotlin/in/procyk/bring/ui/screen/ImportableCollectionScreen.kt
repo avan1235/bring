@@ -66,7 +66,7 @@ internal fun <V, I> ImportableCollectionScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         state = listState,
     ) {
-        if (isLoading || !isTransitionFinished) item(key = "$testTag-loading-indicator") {
+        if (isLoading && isTransitionFinished) item(key = "$testTag-loading-indicator") {
             Row(
                 modifier = Modifier
                     .padding(start = 16.dp)
