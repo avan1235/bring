@@ -134,11 +134,9 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
         }
     }
 
-
     fun addFromFile() {
         val inputContext = validateUserInputContext(::isValidContext) ?: return
         viewModelScope.launch {
-            updateDialogActionLoading(getString(Res.string.loading_read_from_file))
             val ids = createFromFile(inputContext)
             updateConfigWithStoredIds(ids)
         }.invokeOnCompletion { closeDialogAction() }
