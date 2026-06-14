@@ -39,7 +39,7 @@
     <string name="theme_color">Color de Tema</string>
     <string name="dark_mode">Modo Oscuro</string>
     <string name="gemini_key">Clave de Gemini</string>
-    <string name="use_gemini">Usar Gemini para generar entradas</string>
+    <string name="use_gemini_lists">Usar Gemini para generar entradas</string>
     <string name="use_haptics">Usar retroalimentación háptica</string>
     <string name="use_bottom_navigation">Usar navegación inferior</string>
     <string name="use_liquid_navigation">Usar navegación de cristal líquido</string>

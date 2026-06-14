@@ -58,6 +58,18 @@ internal fun SettingsScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(modifier = Modifier.height(16.dp))
+        SettingsCategoryName(Res.string.gemini)
+        SettingSwitchRow(Res.string.use_gemini_lists, vm.useGeminiLists, vm::onUseGeminiListsChanged)
+        SettingSwitchRow(Res.string.use_gemini_recipes, vm.useGeminiRecipes, vm::onUseGeminiRecipesChanged)
+        AnimatedVisibility(vm.useGeminiLists.value || vm.useGeminiRecipes.value) {
+            SettingStringRow(
+                Res.string.gemini_key,
+                vm.geminiKey,
+                vm::onGeminiKeyChanged,
+                reference = "https://aistudio.google.com/app/apikey",
+                isSecure = true,
+            )
+        }
         SettingsCategoryName(Res.string.shopping_lists)
         SettingSwitchRow(Res.string.enable_edit_mode, vm.enableShoppingListEditMode, vm::onShoppingListEditModeChanged)
         SettingSwitchRow(Res.string.show_unchecked_first, vm.showUncheckedFirst, vm::onShowUncheckedFirstChanged)
@@ -68,16 +80,6 @@ internal fun SettingsScreen(
             vm.recentShoppingListsCount,
             vm::onRecentShoppingListsCountChanged
         )
-        SettingSwitchRow(Res.string.use_gemini, vm.useGemini, vm::onUseGeminiChanged)
-        AnimatedVisibility(vm.useGemini.value) {
-            SettingStringRow(
-                Res.string.gemini_key,
-                vm.geminiKey,
-                vm::onGeminiKeyChanged,
-                reference = "https://aistudio.google.com/app/apikey",
-                isSecure = true,
-            )
-        }
         SettingsCategoryName(Res.string.cooking_recipes)
         SettingSwitchRow(Res.string.enable_edit_mode, vm.enableRecipesEditMode, vm::onRecipesEditModeChanged)
         SettingSwitchRow(Res.string.show_color_labels, vm.showRecipesLabels, vm::onShowRecipesLabelsChanged)

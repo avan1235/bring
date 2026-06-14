@@ -25,7 +25,7 @@ internal class EditListScreenScreenshotTest : BringAppCreateScreenshotTest() {
             .absoluteOffset(y = 320.dp),
         config = {
             copy(
-                useGemini = true,
+                useGeminiLists = true,
                 geminiKey = "fake-key",
                 themeColor = Color.Green.toArgb(),
             )

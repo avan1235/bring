@@ -30,7 +30,7 @@ data class BringStore(
     @CborLabel(8) val themeColor: Int = Color.White.toArgb(),
     @CborLabel(9) val darkMode: Theme = Theme.System,
     @CborLabel(14) val geminiKey: String = "",
-    @CborLabel(10) val useGemini: Boolean = false,
+    @CborLabel(10) val useGeminiLists: Boolean = false,
     @CborLabel(11) val useHaptics: Boolean = true,
     @CborLabel(12) val useBottomNavigation: Boolean = defaultUseBottomNavigation,
     @CborLabel(17) val loyaltyCards: List<LoyaltyCard> = emptyList(),
@@ -44,6 +44,7 @@ data class BringStore(
     @CborLabel(25) val enableRecipesEditMode: Boolean = true,
     @CborLabel(26) val showRecipesLabels: Boolean = true,
     @CborLabel(27) val useRecipesCache: Boolean = true,
+    @CborLabel(28) val useGeminiRecipes: Boolean = true,
 ) {
     companion object {
         val Default: BringStore = BringStore()

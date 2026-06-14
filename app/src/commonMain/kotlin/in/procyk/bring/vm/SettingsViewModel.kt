@@ -47,8 +47,11 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
     val geminiKey: StateFlow<String> =
         storeFlow.map { it.geminiKey }.state(storeFlow.value.geminiKey)
 
-    val useGemini: StateFlow<Boolean> =
-        storeFlow.map { it.useGemini }.state(storeFlow.value.useGemini)
+    val useGeminiLists: StateFlow<Boolean> =
+        storeFlow.map { it.useGeminiLists }.state(storeFlow.value.useGeminiLists)
+
+    val useGeminiRecipes: StateFlow<Boolean> =
+        storeFlow.map { it.useGeminiRecipes }.state(storeFlow.value.useGeminiRecipes)
 
     val useHaptics: StateFlow<Boolean> =
         storeFlow.map { it.useHaptics }.state(storeFlow.value.useHaptics)
@@ -114,8 +117,12 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
         launchUpdateConfig { it.copy(geminiKey = value) }
     }
 
-    fun onUseGeminiChanged(value: Boolean) {
-        launchUpdateConfig { it.copy(useGemini = value) }
+    fun onUseGeminiListsChanged(value: Boolean) {
+        launchUpdateConfig { it.copy(useGeminiLists = value) }
+    }
+
+    fun onUseGeminiRecipesChanged(value: Boolean) {
+        launchUpdateConfig { it.copy(useGeminiRecipes = value) }
     }
 
     fun onUseHapticsChanged(value: Boolean) {

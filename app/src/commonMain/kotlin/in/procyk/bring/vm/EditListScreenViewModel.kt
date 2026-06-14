@@ -48,7 +48,7 @@ internal class EditListScreenViewModel(
     private val _suggestedItems = MutableStateFlow<List<SuggestedItem>>(emptyList())
     val suggestedItems: StateFlow<List<SuggestedItem>> = _suggestedItems.asStateFlow()
 
-    val useGeminiSettings = storeFlow.map { it.useGemini }.distinctUntilChanged().state(store.useGemini)
+    val useGeminiSettings = storeFlow.map { it.useGeminiLists }.distinctUntilChanged().state(store.useGeminiLists)
 
     init {
         if (fetchSuggestionsAndFavoriteElements) viewModelScope.launch {

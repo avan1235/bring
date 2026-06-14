@@ -62,7 +62,7 @@ internal class RecipesViewModel(
     override val useCacheStored: BringStore.() -> Boolean = { useRecipesCache }
     override val enableEditModeStored: BringStore.() -> Boolean = { enableRecipesEditMode }
     override val showLabelsStored: BringStore.() -> Boolean = { showRecipesLabels }
-    override val enabledScanButtonStored: BringStore.() -> Boolean = { useGemini && geminiKey.isNotBlank() }
+    override val enabledScanButtonStored: BringStore.() -> Boolean = { useGeminiRecipes && geminiKey.isNotBlank() }
 
     override suspend fun fetchData(stored: CookingRecipe): Either<CookingRecipeData, FetchError> =
         cookingRecipeService.durableCall { getCookingRecipe(stored.recipeId) }.mapRight { err ->
@@ -78,7 +78,7 @@ internal class RecipesViewModel(
     override fun newStored(id: Uuid, order: Double): CookingRecipe = CookingRecipe(recipeId = id, order = order)
 
     override suspend fun createFromFile(input: Unit): List<Uuid> {
-        val apiKey = store.geminiKey.takeIf { store.useGemini } ?: return emptyList()
+        val apiKey = store.geminiKey.takeIf { store.useGeminiRecipes } ?: return emptyList()
         val userId = store.userId
         val files = FileKit.openFilePicker(
             type = SUPPORTED_IMAGE_FORMATS,

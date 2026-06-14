@@ -42,7 +42,9 @@
     <string name="theme_color">Theme Color</string>
     <string name="dark_mode">Dark Mode</string>
     <string name="gemini_key">Gemini Key</string>
-    <string name="use_gemini">Use Gemini to generate inputs</string>
+    <string name="use_gemini_lists">Generate list items</string>
+    <string name="use_gemini_recipes">Extract recipes</string>
+    <string name="gemini">Gemini</string>
     <string name="use_haptics">Use haptic feedback</string>
     <string name="use_bottom_navigation">Use bottom navigation</string>
     <string name="use_liquid_navigation">Use liquid glass navigation</string>
