@@ -81,10 +81,15 @@ internal abstract class AbstractViewModel(
         fun onNavBarTargetSelected(target: NavBarTarget) {
             val current = navBarTarget.value
             when (target) {
-                NavBarTarget.Recipes if target != current -> navigateRecipes()
                 NavBarTarget.LoyaltyCards if target != current -> navigateCards()
                 NavBarTarget.Favourites if target != current -> navigateFavourites()
                 NavBarTarget.Settings if target != current -> navigateSettings()
+                NavBarTarget.Recipes -> when {
+                    navController.currentBackStackEntry.navigatesFrom<Screen.Recipe>() -> navigateRecipes()
+                    target != current -> navigateRecipes()
+                    else -> {}
+                }
+
                 NavBarTarget.Main -> when {
                     navController.currentBackStackEntry.navigatesFrom<Screen.EditList>() ->
                         navigateCreateList(cleanLastListId = true)
@@ -184,10 +189,6 @@ internal abstract class AbstractViewModel(
             withContext(Dispatchers.Main) {
                 navController.navigate(screen) {
                     launchSingleTop = true
-                    restoreState = true
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState = true
-                    }
                 }
             }
         }
