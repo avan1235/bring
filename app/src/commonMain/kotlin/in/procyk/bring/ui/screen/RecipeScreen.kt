@@ -2,6 +2,7 @@ package `in`.procyk.bring.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -13,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -134,12 +136,24 @@ internal fun RecipeScreen(
                             .padding(top = 4.dp)
                             .runIf(doneStep >= index) {
                                 background(
-                                    BringAppTheme.colors.disabled,
+                                    BringAppTheme.colors.disabled.copy(alpha = 0.9f),
                                     RoundedCornerShape(4.dp),
                                 )
                             }
                             .border(1.dp, BringAppTheme.colors.secondary, RoundedCornerShape(4.dp))
                             .padding(4.dp)
+                            .pointerInput(Unit) {
+                                var amount = 0f
+                                detectHorizontalDragGestures(
+                                    onDragEnd = {
+                                        val lastAmount = amount
+                                        amount = 0f
+                                        if (lastAmount > 0) vm.onNextStep() else if (lastAmount < 0) vm.onPrevStep()
+                                    },
+                                ) { _, dragAmount ->
+                                    amount += dragAmount
+                                }
+                            }
                             .fillMaxWidth(),
                         maxLines = Int.MAX_VALUE,
                         color = if (doneStep >= index) BringAppTheme.colors.onDisabled else LocalContentColor.current,
