@@ -62,6 +62,7 @@ internal class RecipesViewModel(
     override val useCacheStored: BringStore.() -> Boolean = { useRecipesCache }
     override val enableEditModeStored: BringStore.() -> Boolean = { enableRecipesEditMode }
     override val showLabelsStored: BringStore.() -> Boolean = { showRecipesLabels }
+    override val enabledScanButtonStored: BringStore.() -> Boolean = { useGemini && geminiKey.isNotBlank() }
 
     override suspend fun fetchData(stored: CookingRecipe): Either<CookingRecipeData, FetchError> =
         cookingRecipeService.durableCall { getCookingRecipe(stored.recipeId) }.mapRight { err ->

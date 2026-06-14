@@ -111,12 +111,14 @@ internal fun <V, I> ImportableCollectionScreen(
                     variant = IconButtonVariant.PrimaryGhost,
                     onClick = vm::shareAll,
                 )
+                val enabledScanButton by vm.enabledScanButton.collectAsState()
                 ActionButton(
                     icon = Icons.Outlined.QrCodeScanner,
                     text = stringResource(Res.string.scan),
                     variant = IconButtonVariant.Primary,
                     onClick = vm::openAddFromFileDialog,
                     testTag = scanButtonTestTag,
+                    enabled = enabledScanButton,
                 )
                 ActionButton(
                     icon = Icons.Outlined.EditNote,
@@ -218,6 +220,7 @@ private fun ActionButton(
     icon: ImageVector,
     variant: IconButtonVariant,
     onClick: () -> Unit,
+    enabled: Boolean = true,
     text: String? = null,
     testTag: String? = null,
 ) {
@@ -235,6 +238,7 @@ private fun ActionButton(
         variant = variant,
         onClick = onClick,
         modifier = if (testTag != null) Modifier.testTag(testTag) else Modifier,
+        enabled = enabled,
     )
 }
 

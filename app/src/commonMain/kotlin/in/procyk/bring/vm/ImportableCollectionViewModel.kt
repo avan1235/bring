@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import arrow.core.Either
 import bring.app.generated.resources.Res
 import bring.app.generated.resources.loading_importing
-import bring.app.generated.resources.loading_read_from_file
 import `in`.procyk.bring.BringStore
 import `in`.procyk.bring.Identifiable
 import `in`.procyk.bring.Orderable
@@ -49,6 +48,8 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
 
     protected abstract val showLabelsStored: BringStore.() -> Boolean
 
+    protected abstract val enabledScanButtonStored: BringStore.() -> Boolean
+
     protected open val idSeparator: String get() = ";"
 
     protected abstract fun newStored(id: Uuid, order: Double): TStored
@@ -87,6 +88,10 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
 
     val showLabels: StateFlow<Boolean> by lazy {
         storeFlow.map { it.showLabelsStored() }.state(store.showLabelsStored())
+    }
+
+    val enabledScanButton: StateFlow<Boolean> by lazy {
+        storeFlow.map { it.enabledScanButtonStored() }.state(store.enabledScanButtonStored())
     }
 
     protected fun updateStoredItemsInBackground() {

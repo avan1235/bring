@@ -67,6 +67,7 @@ internal class LoyaltyCardsViewModel(
     override val useCacheStored: BringStore.() -> Boolean = { useCardsCache }
     override val enableEditModeStored: BringStore.() -> Boolean = { enableCardsEditMode }
     override val showLabelsStored: BringStore.() -> Boolean = { showCardsLabels }
+    override val enabledScanButtonStored: BringStore.() -> Boolean = { true }
 
     override suspend fun fetchData(stored: LoyaltyCard): Either<LoyaltyCardData, FetchError> =
         loyaltyCardService.durableCall { getLoyaltyCard(stored.cardId) }.mapRight { err ->
