@@ -4,7 +4,9 @@ import androidx.lifecycle.viewModelScope
 import `in`.procyk.bring.CookingRecipeData
 import `in`.procyk.bring.CookingRecipeRpcPath
 import `in`.procyk.bring.service.CookingRecipeService
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
@@ -22,6 +24,9 @@ internal class RecipeViewModel(
 
     private val _scale = MutableStateFlow(1.0)
     val scale = _scale.asStateFlow()
+
+    private val _doneStep = MutableStateFlow(-1)
+    val doneStep = _doneStep.asStateFlow()
 
     init {
         val storedRecipe = store.recipes.find { it.recipeId == parsedRecipeId }
@@ -48,5 +53,19 @@ internal class RecipeViewModel(
         if (newScale > 0) {
             _scale.value = newScale
         }
+    }
+
+    fun onShareRecipe() {
+        viewModelScope.launch {
+            onShareRecipe(recipeId, context)
+        }
+    }
+
+    fun onNextStep() {
+        _doneStep.update { if (it < (recipe.value?.steps?.lastIndex ?: Int.MIN_VALUE)) it + 1 else it }
+    }
+
+    fun onPrevStep() {
+        _doneStep.update { if (it > -1) it - 1 else it }
     }
 }

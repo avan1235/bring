@@ -181,7 +181,7 @@ internal fun BringAppInternal(
                     }
                     composable<Screen.Recipe> { backStackEntry ->
                         val route = backStackEntry.toRoute<Screen.Recipe>()
-                        val vm = viewModel { RecipeViewModel(context, route.recipeId) }
+                        val vm = viewModel(key = route.recipeId) { RecipeViewModel(context, route.recipeId) }
                         RecipeScreen(padding, vm)
                     }
                     composable<Screen.LoyaltyCards> {

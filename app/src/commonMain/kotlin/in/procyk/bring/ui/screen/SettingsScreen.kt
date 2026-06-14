@@ -1,19 +1,15 @@
 package `in`.procyk.bring.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.outlined.ExposureNeg1
-import androidx.compose.material.icons.outlined.ExposurePlus1
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.runtime.*
@@ -24,9 +20,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.input.KeyboardType.Companion.Password
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import bring.app.generated.resources.*
 import `in`.procyk.bring.LocalUseHaptics
 import `in`.procyk.bring.onClickWithHaptics
@@ -55,7 +49,7 @@ internal fun SettingsScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Top,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
         SettingsCategoryName(Res.string.gemini)
@@ -78,7 +72,7 @@ internal fun SettingsScreen(
         SettingNumberRow(
             Res.string.store_recent_shopping_lists,
             vm.recentShoppingListsCount,
-            vm::onRecentShoppingListsCountChanged
+            vm::onRecentShoppingListsCountChanged,
         )
         SettingsCategoryName(Res.string.cooking_recipes)
         SettingSwitchRow(Res.string.enable_edit_mode, vm.enableRecipesEditMode, vm::onRecipesEditModeChanged)
@@ -89,13 +83,16 @@ internal fun SettingsScreen(
         SettingSwitchRow(Res.string.show_color_labels, vm.showCardsLabels, vm::onShowCardsLabelsChanged)
         SettingSwitchRow(Res.string.use_cached_data, vm.useCardsCache, vm::onUseCardsCacheChanged)
         SettingsCategoryName(Res.string.theme)
-        SettingSelectionRow(Res.string.dark_mode, vm.theme, vm::onThemeChanged, Theme.entries, optionLabel = {
-            when (it) {
-                Theme.System -> Res.string.system_theme
-                Theme.Light -> Res.string.light_theme
-                Theme.Dark -> Res.string.dark_theme
-            }
-        })
+        SettingSelectionRow(
+            Res.string.dark_mode, vm.theme, vm::onThemeChanged, Theme.entries,
+            optionLabel = {
+                when (it) {
+                    Theme.System -> Res.string.system_theme
+                    Theme.Light -> Res.string.light_theme
+                    Theme.Dark -> Res.string.dark_theme
+                }
+            },
+        )
         SettingColorPickerRow(Res.string.theme_color, vm.themeColor, vm::onThemeColorChanged)
         SettingsCategoryName(Res.string.miscellaneous)
         SettingSwitchRow(Res.string.use_haptics, vm.useHaptics, vm::onUseHapticsChanged)
@@ -104,7 +101,7 @@ internal fun SettingsScreen(
             SettingSwitchRow(
                 Res.string.use_liquid_navigation,
                 vm.useLiquidGlassNavigation,
-                vm::onUseLiquidGlassNavigation
+                vm::onUseLiquidGlassNavigation,
             )
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -137,7 +134,7 @@ private inline fun <T : Any> SettingSelectionRow(
             horizontalArrangement = Arrangement.Start,
         ) {
             Text(
-                text = stringResource(label), style = BringAppTheme.typography.h4
+                text = stringResource(label), style = BringAppTheme.typography.h4,
             )
         }
 
@@ -145,23 +142,26 @@ private inline fun <T : Any> SettingSelectionRow(
 
         val selectedOption by selected.collectAsState()
         Column(
-            modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()
+            modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth(),
         ) {
             entries.forEach { option ->
                 Row(
-                    modifier = Modifier.padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically,
                 ) {
                     RadioButton(
                         selected = selectedOption == option,
-                        onClick = LocalUseHaptics.onClickWithHaptics(onClick = {
-                            onSelectedChange(option)
-                        }),
+                        onClick = LocalUseHaptics.onClickWithHaptics(
+                            onClick = {
+                                onSelectedChange(option)
+                            },
+                        ),
                         content = {
                             Text(
                                 text = stringResource(optionLabel(option)),
-                                modifier = Modifier.padding(start = 8.dp)
+                                modifier = Modifier.padding(start = 8.dp),
                             )
-                        })
+                        },
+                    )
                 }
             }
         }
@@ -210,7 +210,8 @@ private inline fun SettingSwitchRow(
             checked = isChecked,
             onCheckedChange = {
                 onCheckedChange(it)
-            })
+            },
+        )
     }
 }
 
@@ -220,44 +221,11 @@ private inline fun SettingNumberRow(
     value: StateFlow<Int>,
     crossinline onValueChange: (Int) -> Unit,
 ) {
-    Row(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        val value by value.collectAsState()
+    val value by value.collectAsState()
+    NumberRow(value, onValueChange, modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth()) {
         Text(
             text = stringResource(label),
             modifier = Modifier.weight(1f),
-        )
-        AnimatedVisibilityGhostButton(
-            visible = value > 0,
-            icon = Icons.Outlined.ExposureNeg1,
-            onClick = { onValueChange(value - 1) },
-        )
-        Text(
-            text = value.toString(),
-            textAlign = TextAlign.Center,
-            style = BringAppTheme.typography.input,
-            fontSize = 18.sp,
-            modifier = Modifier
-                .padding(
-                    top = 4.dp,
-                    bottom = 5.dp,
-                    start = 2.dp,
-                    end = 2.dp,
-                )
-                .border(2.dp, BringAppTheme.colors.primary, RoundedCornerShape(8.dp))
-                .padding(
-                    top = 4.dp,
-                    bottom = 5.dp,
-                    start = 4.dp,
-                    end = 4.dp,
-                )
-                .width(32.dp),
-        )
-        AnimatedVisibilityGhostButton(
-            onClick = { onValueChange(value + 1) },
-            icon = Icons.Outlined.ExposurePlus1,
         )
     }
 }
@@ -273,7 +241,7 @@ private inline fun SettingStringRow(
     Row(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         val value by value.collectAsState()
         var show by remember { mutableStateOf(false) }
@@ -337,7 +305,7 @@ private inline fun SettingColorPickerRow(
             modifier = Modifier.clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = { previousColor.value = selectedColor }
+                onClick = { previousColor.value = selectedColor },
             )
                 .weight(1f),
         )
