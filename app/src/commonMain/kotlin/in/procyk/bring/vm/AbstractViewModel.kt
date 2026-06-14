@@ -156,7 +156,9 @@ internal abstract class AbstractViewModel(
             appScope.launch {
                 updateListLocationPresentation(listId)
                 store.update { it?.copy(lastListId = listId) }
-                navigateReusingState(Screen.EditList(listId, fetchSuggestions))
+                withContext(Dispatchers.Main) {
+                    navController.navigate<Screen>(Screen.EditList(listId, fetchSuggestions))
+                }
             }
         }
 
