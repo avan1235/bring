@@ -10,6 +10,8 @@ import bring.app.generated.resources.loading_read_from_file
 import `in`.procyk.bring.BringStore
 import `in`.procyk.bring.Identifiable
 import `in`.procyk.bring.Orderable
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
@@ -137,7 +139,7 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
 
     fun addFromFile() {
         val inputContext = validateUserInputContext(::isValidContext) ?: return
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main.immediate) {
             updateDialogActionLoading(getString(Res.string.loading_read_from_file))
             val ids = createFromFile(inputContext)
             updateConfigWithStoredIds(ids)
