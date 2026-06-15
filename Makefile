@@ -20,6 +20,9 @@ desktop: .executable
 wasm: .executable
 	./gradlew app:wasmJsBrowserProductionRun
 
+screenshots: .executable
+	./gradlew app:testDebugUnitTest
+
 .clean-docker:
 	docker compose --file docker-compose.yml --env-file .env down
 
