@@ -75,7 +75,6 @@ internal class EditListScreenScreenshotTest : BringAppCreateScreenshotTest() {
     ) {
         createShoppingList(
             listName = "Clean Start",
-            clickButton = "button-toggle-gemini",
         )
 
         onNodeWithTag("button-expand-options")
@@ -119,9 +118,9 @@ internal class EditListScreenScreenshotTest : BringAppCreateScreenshotTest() {
             .assertHasClickAction()
             .performClick()
 
-        waitUntilExactlyOneTestTagExists("button-toggle-gemini")
+        waitUntilExactlyOneTestTagExists("button-generate-with-gemini")
 
-        onNodeWithTag("button-toggle-gemini")
+        onNodeWithTag("button-generate-with-gemini")
             .assertExists()
             .assertHasClickAction()
             .performClick()

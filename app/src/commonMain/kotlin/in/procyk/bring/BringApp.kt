@@ -273,7 +273,10 @@ private fun BoxScope.LiquidNavigation(
         val currentTarget by context.navBarTarget.collectAsState()
         NavBarTarget.entries.forEach { target ->
             val selected = currentTarget == target
-            LiquidBottomTab({ context.onNavBarTargetSelected(target) }) {
+            LiquidBottomTab(
+                onClick = { context.onNavBarTargetSelected(target) },
+                modifier = Modifier.testTag("button-navigate-${target.name.lowercase()}"),
+            ) {
                 val painter = rememberVectorPainter(image = if (selected) target.filledIcon else target.outlinedIcon)
                 Box(
                     Modifier

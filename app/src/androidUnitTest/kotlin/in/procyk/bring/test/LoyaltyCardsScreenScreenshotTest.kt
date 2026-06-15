@@ -16,7 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import `in`.procyk.bring.Code
 import `in`.procyk.bring.LoyaltyCard
+import `in`.procyk.bring.LoyaltyCardData
 import org.junit.Test
 import kotlin.uuid.Uuid
 
@@ -29,15 +31,25 @@ internal class LoyaltyCardsScreenScreenshotTest : BringAppCreateScreenshotTest()
             .scale(MidScale),
         config = {
             copy(
-                themeColor = Color.Red.toArgb(),
-                loyaltyCards = "76798ee6-6385-4bc6-964a-e6a8a8938981;6022262e-b31a-450c-a83b-6c9f93bfa529;8441fed0-b99b-49e9-9cb7-b7e9effb8774"
-                    .split(';')
-                    .mapIndexed { idx, uuid ->
-                        LoyaltyCard(
-                            Uuid.parse(uuid),
-                            idx.toDouble() + 1.0,
-                        )
-                    }
+                themeColor = Color.Magenta.toArgb(),
+                loyaltyCards =
+                    listOf(
+                        "76798ee6-6385-4bc6-964a-e6a8a8938981" to "Lidl",
+                        "6022262e-b31a-450c-a83b-6c9f93bfa529" to "Biedronka",
+                        "8441fed0-b99b-49e9-9cb7-b7e9effb8774" to "H&M",
+                    )
+                        .mapIndexed { idx, (uuid, label) ->
+                            val uuid = Uuid.parse(uuid)
+                            LoyaltyCard(
+                                cardId = uuid,
+                                order = idx.toDouble() + 1.0,
+                                cachedData = LoyaltyCardData(
+                                    uuid,
+                                    label,
+                                    Code("", Code.Format.QR_CODE, Code.Bits(0, 0, booleanArrayOf())),
+                                ),
+                            )
+                        },
             )
         },
         text = {
@@ -50,7 +62,7 @@ internal class LoyaltyCardsScreenScreenshotTest : BringAppCreateScreenshotTest()
             ) {
                 BigScreenshotText(
                     text = buildAnnotatedString {
-                        append("Keep ")
+                        append("And ")
                         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                             append("All")
                         }
@@ -67,7 +79,7 @@ internal class LoyaltyCardsScreenScreenshotTest : BringAppCreateScreenshotTest()
                     },
                 )
             }
-        }
+        },
     ) {
         navigateLoyaltyCardsScreen()
 

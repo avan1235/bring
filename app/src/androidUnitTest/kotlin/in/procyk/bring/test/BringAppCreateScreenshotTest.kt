@@ -49,7 +49,7 @@ import kotlin.uuid.Uuid
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(Mode.NATIVE)
 @Config(
-    qualifiers = "w411dp-h842dp-xxhdpi"
+    qualifiers = "w411dp-h842dp-xxhdpi",
 )
 internal abstract class BringAppCreateScreenshotTest {
 
@@ -102,18 +102,18 @@ internal abstract class BringAppCreateScreenshotTest {
                 Box(
                     modifier = Modifier
                         .background(BringAppTheme.colors.surface)
-                        .fillMaxSize()
+                        .fillMaxSize(),
                 ) {
                     Box(
                         modifier = Modifier
                             .background(BringAppTheme.colors.primary.copy(alpha = 0.25f))
-                            .fillMaxSize()
+                            .fillMaxSize(),
                     ) {
                         text()
                     }
                 }
                 Box(
-                    modifier = modifier.then(DefaultSizeModifier)
+                    modifier = modifier.then(DefaultSizeModifier),
                 ) {
                     Box(
                         modifier = Modifier
@@ -121,15 +121,15 @@ internal abstract class BringAppCreateScreenshotTest {
                             .clip(RoundedCornerShape(36.dp))
                             .background(BringAppTheme.colors.background)
                             .padding(top = 32.dp, bottom = 16.dp)
-                            .fillMaxSize()
+                            .fillMaxSize(),
 
-                    ) {
+                        ) {
                         BringAppInternal(context)
                     }
                 }
                 Popup {
                     Box(
-                        modifier = modifier.then(DefaultSizeModifier)
+                        modifier = modifier.then(DefaultSizeModifier),
                     ) {
                         Image(
                             modifier = Modifier
@@ -156,7 +156,7 @@ internal fun BigScreenshotText(text: AnnotatedString) {
         textAlign = TextAlign.Center,
         fontSize = 36.sp,
         lineHeight = 52.sp,
-        maxLines = Int.MAX_VALUE
+        maxLines = Int.MAX_VALUE,
     )
 }
 
@@ -210,6 +210,15 @@ internal fun ComposeTestRule.navigateLoyaltyCardsScreen() {
     waitUntilExactlyOneTestTagExists("screen-loyalty-cards")
 }
 
+internal fun ComposeTestRule.navigateRecipesScreen() {
+    onNodeWithTag("button-navigate-recipes")
+        .assertExists()
+        .assertHasClickAction()
+        .performClick()
+
+    waitUntilExactlyOneTestTagExists("screen-recipes")
+}
+
 internal fun ComposeTestRule.navigateSettingsScreen() {
     onNodeWithTag("button-navigate-settings")
         .assertExists()
@@ -221,7 +230,8 @@ internal fun ComposeTestRule.navigateSettingsScreen() {
 
 internal fun ComposeTestRule.createShoppingList(
     listName: String,
-    clickButton: String,
+    waitForExpanded: String? = null,
+    clickWaitFor: Boolean = false,
 ) {
     onNodeWithTag("screen-create-list")
         .assertExists()
@@ -253,10 +263,13 @@ internal fun ComposeTestRule.createShoppingList(
         .assertHasClickAction()
         .performClick()
 
-    waitUntilExactlyOneTestTagExists(clickButton)
-
-    onNodeWithTag(clickButton)
-        .assertExists()
-        .assertHasClickAction()
-        .performClick()
+    if (waitForExpanded != null) {
+        waitUntilExactlyOneTestTagExists(waitForExpanded)
+    }
+    if (clickWaitFor && waitForExpanded != null) {
+        onNodeWithTag(waitForExpanded)
+            .assertExists()
+            .assertHasClickAction()
+            .performClick()
+    }
 }

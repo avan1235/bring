@@ -25,7 +25,7 @@ internal class SettingsScreenScreenshotTest : BringAppCreateScreenshotTest() {
         modifier = Modifier
             .scale(MidScale),
         config = {
-            copy(themeColor = Color.Magenta.toArgb())
+            copy(themeColor = Color.DarkGray.toArgb())
         },
         text = {
             Column(

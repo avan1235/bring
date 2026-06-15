@@ -7,7 +7,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -48,21 +51,24 @@ internal class FavoritesScreenScreenshotTest : BringAppCreateScreenshotTest() {
                     },
                 )
             }
-        }
+        },
     ) {
         createShoppingList(
             listName = "Cleaning Supplies",
-            clickButton = "button-toggle-favorite",
+            waitForExpanded = "button-toggle-favorite",
+            clickWaitFor = true,
         )
         navigateCleanMainScreen()
         createShoppingList(
             listName = "Dinner Ingredients",
-            clickButton = "button-toggle-favorite",
+            waitForExpanded = "button-toggle-favorite",
+            clickWaitFor = true,
         )
         navigateCleanMainScreen()
         createShoppingList(
             listName = "Weekend Shopping",
-            clickButton = "button-toggle-favorite",
+            waitForExpanded = "button-toggle-favorite",
+            clickWaitFor = true,
         )
 
         navigateFavoritesScreen()
