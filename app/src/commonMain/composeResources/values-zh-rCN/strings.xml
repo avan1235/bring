@@ -39,7 +39,7 @@
     <string name="theme_color">主题颜色</string>
     <string name="dark_mode">深色模式</string>
     <string name="gemini_key">Gemini密钥</string>
-    <string name="use_gemini_lists">使用Gemini生成输入</string>
+    <string name="use_gemini_lists">生成列表项</string>
     <string name="use_haptics">使用触觉反馈</string>
     <string name="use_bottom_navigation">使用底部导航</string>
     <string name="use_liquid_navigation">使用液态玻璃导航</string>
@@ -57,4 +57,15 @@
     <string name="find_me_on">在这里找到我</string>
     <string name="show_color_labels">显示颜色标签</string>
     <string name="use_cached_data">缓存数据</string>
+    <string name="recipes">食谱</string>
+    <string name="cooking_recipes">烹饪食谱</string>
+    <string name="copied_recipe_id_to_clipboard">食谱ID已复制到剪贴板</string>
+    <string name="use_gemini_recipes">提取食谱</string>
+    <string name="gemini">Gemini</string>
+    <string name="add_recipe">添加食谱</string>
+    <string name="import_recipe">导入食谱</string>
+    <string name="loading_read_from_file">正在读取输入文件…</string>
+    <string name="loading_scanning">正在扫描输入文件…</string>
+    <string name="loading_saving">正在保存提取的数据…</string>
+    <string name="loading_importing">正在导入数据…</string>
 </resources>

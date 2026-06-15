@@ -39,7 +39,7 @@
     <string name="theme_color">Цвет темы</string>
     <string name="dark_mode">Тёмный режим</string>
     <string name="gemini_key">Ключ Gemini</string>
-    <string name="use_gemini_lists">Использовать Gemini для генерации ввода</string>
+    <string name="use_gemini_lists">Сгенерировать элементы списка</string>
     <string name="use_haptics">Использовать тактильную отдачу</string>
     <string name="use_bottom_navigation">Использовать нижнюю навигацию</string>
     <string name="use_liquid_navigation">Использовать навигацию Liquid Glass</string>
@@ -57,4 +57,15 @@
     <string name="find_me_on">Найти меня:</string>
     <string name="show_color_labels">Показывать цветовые метки</string>
     <string name="use_cached_data">Кэшировать данные</string>
+    <string name="recipes">Рецепты</string>
+    <string name="cooking_recipes">Кулинарные рецепты</string>
+    <string name="copied_recipe_id_to_clipboard">ID рецепта скопирован в буфер обмена</string>
+    <string name="use_gemini_recipes">Извлечь рецепты</string>
+    <string name="gemini">Gemini</string>
+    <string name="add_recipe">Добавить рецепт</string>
+    <string name="import_recipe">Импортировать рецепт</string>
+    <string name="loading_read_from_file">Чтение входных файлов…</string>
+    <string name="loading_scanning">Сканирование входных файлов…</string>
+    <string name="loading_saving">Сохранение извлеченных данных…</string>
+    <string name="loading_importing">Импорт данных…</string>
 </resources>

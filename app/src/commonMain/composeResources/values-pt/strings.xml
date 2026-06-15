@@ -39,7 +39,7 @@
     <string name="theme_color">Cor do Tema</string>
     <string name="dark_mode">Modo Escuro</string>
     <string name="gemini_key">Chave Gemini</string>
-    <string name="use_gemini_lists">Usar Gemini para gerar entradas</string>
+    <string name="use_gemini_lists">Gerar itens da lista</string>
     <string name="use_haptics">Usar feedback tátil</string>
     <string name="use_bottom_navigation">Usar navegação inferior</string>
     <string name="use_liquid_navigation">Usar navegação de vidro líquido</string>
@@ -57,4 +57,15 @@
     <string name="find_me_on">Encontre-me em</string>
     <string name="show_color_labels">Mostrar etiquetas de cores</string>
     <string name="use_cached_data">Cache de dados</string>
+    <string name="recipes">Receitas</string>
+    <string name="cooking_recipes">Receitas de cozinha</string>
+    <string name="copied_recipe_id_to_clipboard">ID da receita copiado para a área de transferência</string>
+    <string name="use_gemini_recipes">Extrair receitas</string>
+    <string name="gemini">Gemini</string>
+    <string name="add_recipe">Adicionar receita</string>
+    <string name="import_recipe">Importar receita</string>
+    <string name="loading_read_from_file">Lendo arquivos de entrada…</string>
+    <string name="loading_scanning">Escaneando arquivos de entrada…</string>
+    <string name="loading_saving">Salvando dados extraídos…</string>
+    <string name="loading_importing">Importando dados…</string>
 </resources>
