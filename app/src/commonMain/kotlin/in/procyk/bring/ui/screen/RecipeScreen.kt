@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.outlined.Summarize
 import androidx.compose.runtime.*
@@ -28,10 +29,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import bring.app.generated.resources.Res
-import bring.app.generated.resources.ingredients
-import bring.app.generated.resources.step_format
-import bring.app.generated.resources.steps
+import bring.app.generated.resources.*
 import `in`.procyk.bring.runIf
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.components.*
@@ -80,6 +78,14 @@ internal fun RecipeScreen(
                             },
                             variant = IconButtonVariant.SecondaryGhost,
                             onClick = vm::onShareRecipe,
+                        )
+                        IconButton(
+                            content = {
+                                Icon(Icons.Outlined.DeleteOutline)
+                            },
+                            variant = IconButtonVariant.SecondaryGhost,
+                            onClick = { vm.context.showSnackbar(Res.string.long_click_to_remove) },
+                            onLongClick = vm::onRemoveRecipe,
                         )
                     }
                 }

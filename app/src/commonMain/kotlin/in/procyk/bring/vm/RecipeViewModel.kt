@@ -1,6 +1,8 @@
 package `in`.procyk.bring.vm
 
 import androidx.lifecycle.viewModelScope
+import bring.app.generated.resources.Res
+import bring.app.generated.resources.recipe_removed
 import `in`.procyk.bring.CookingRecipeData
 import `in`.procyk.bring.CookingRecipeRpcPath
 import `in`.procyk.bring.ShoppingListRpcPath
@@ -75,6 +77,26 @@ internal class RecipeViewModel(
     fun onShareRecipe() {
         viewModelScope.launch {
             onShareRecipe(recipeId, context)
+        }
+    }
+
+    fun onRemoveRecipe() {
+        val byUserId = store.userId
+        viewModelScope.launch {
+            updateConfig { it.copy(recipes = it.recipes.filterNot { it.recipeId == parsedRecipeId }) }
+
+            cookingRecipeService.durableCall {
+                removeCookingRecipe(parsedRecipeId, byUserId).fold(
+                    ifLeft = {
+                        context.showSnackbar(Res.string.recipe_removed)
+                        context.navigateRecipes()
+                    },
+                    ifRight = {
+                        /* TODO: handle errors */
+                        context.navigateRecipes()
+                    }
+                )
+            }
         }
     }
 

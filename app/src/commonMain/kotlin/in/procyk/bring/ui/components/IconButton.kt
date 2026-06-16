@@ -33,6 +33,7 @@ internal fun IconButton(
     variant: IconButtonVariant = IconButtonVariant.Primary,
     shape: Shape = IconButtonDefaults.ButtonSquareShape,
     onClick: () -> Unit = {},
+    onLongClick: () -> Unit = onClick,
     contentPadding: PaddingValues = IconButtonDefaults.ButtonPadding,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: @Composable () -> Unit,
@@ -45,6 +46,7 @@ internal fun IconButton(
         loading = loading,
         style = style,
         onClick = onClick,
+        onLongClick = onLongClick,
         contentPadding = contentPadding,
         interactionSource = interactionSource,
         content = content,
@@ -58,6 +60,7 @@ private fun IconButtonComponent(
     loading: Boolean,
     style: IconButtonStyle,
     onClick: () -> Unit,
+    onLongClick: () -> Unit = onClick,
     contentPadding: PaddingValues,
     interactionSource: MutableInteractionSource,
     content: @Composable () -> Unit,
@@ -71,6 +74,7 @@ private fun IconButtonComponent(
 
     Surface(
         onClick = LocalUseHaptics.onClickWithHaptics(onClick),
+        onLongClick = LocalUseHaptics.onClickWithHaptics(onLongClick),
         modifier =
             modifier.defaultMinSize(
                 minWidth = IconButtonDefaults.ButtonSize,

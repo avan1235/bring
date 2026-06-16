@@ -56,6 +56,7 @@
     <string name="import_loyalty_card">Import Loyalty Card</string>
     <string name="add_recipe">Add Recipe</string>
     <string name="import_recipe">Import Recipe</string>
+    <string name="recipe_removed">Recipe removed</string>
     <string name="select_file">Select File</string>
     <string name="close">Close</string>
     <string name="remove">Remove</string>
