@@ -7,10 +7,8 @@ import `in`.procyk.bring.ShoppingListData
 import `in`.procyk.bring.ShoppingListItemData
 import `in`.procyk.bring.ShoppingListItemData.CheckedStatusData.Unchecked
 import `in`.procyk.bring.UserShoppingListSuggestionsData
+import `in`.procyk.bring.db.*
 import `in`.procyk.bring.db.Database
-import `in`.procyk.bring.db.ShoppingListEntity
-import `in`.procyk.bring.db.ShoppingListItemEntity
-import `in`.procyk.bring.db.ShoppingListItemsTable
 import `in`.procyk.bring.extract.*
 import `in`.procyk.bring.service.ShoppingListService.*
 import kotlinx.coroutines.*
@@ -64,6 +62,20 @@ internal class ShoppingListServiceImpl(
         }
         return txn(CreateNewShoppingListError.Internal) {
             createNewShoppingList(userId, title) { listId ->
+                addEntriesToShoppingListInTransaction(userId.toJavaUuid(), listId, ingredients).left()
+            }
+        }
+    }
+
+    override suspend fun createNewShoppingListFromRecipe(
+        userId: Uuid,
+        recipeId: Uuid
+    ): Either<Uuid, CreateNewShoppingListFromRecipeError> {
+        return txn(CreateNewShoppingListFromRecipeError.Internal) {
+            val recipe = CookingRecipeEntity.findById(recipeId.toJavaUuid())
+                ?: return@txn CreateNewShoppingListFromRecipeError.UnknownRecipeId.right()
+            val ingredients = recipe.ingredients.map { it.toString() to 1 }
+            createNewShoppingList(userId, recipe.name) { listId ->
                 addEntriesToShoppingListInTransaction(userId.toJavaUuid(), listId, ingredients).left()
             }
         }

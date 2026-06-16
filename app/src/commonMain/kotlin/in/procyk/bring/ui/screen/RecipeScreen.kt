@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.IosShare
+import androidx.compose.material.icons.outlined.Summarize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,10 +73,17 @@ internal fun RecipeScreen(
                         )
                         IconButton(
                             content = {
+                                Icon(Icons.Outlined.Summarize)
+                            },
+                            variant = IconButtonVariant.SecondaryGhost,
+                            onClick = vm::onCreateShoppingListFromRecipe,
+                        )
+                        IconButton(
+                            content = {
                                 Icon(Icons.Outlined.IosShare)
                             },
                             variant = IconButtonVariant.SecondaryGhost,
-                            onClick = { vm.onShareRecipe() },
+                            onClick = vm::onShareRecipe,
                         )
                     }
                 }
@@ -114,16 +122,7 @@ internal fun RecipeScreen(
                         Text(
                             text = buildAnnotatedString {
                                 recipe.ingredients.forEachIndexed { idx, ingredient ->
-                                    val scaledMeasure = ingredient.measures * scale
-                                    val description = stringResource(
-                                        Res.string.ingredient_format,
-                                        scaledMeasure.toString().removeSuffix(".0")
-                                            .takeUnless { it == "0" }
-                                            ?.let { "$it " }
-                                            ?: "",
-                                        ingredient.unit,
-                                        ingredient.name,
-                                    )
+                                    val description = ingredient.toString(scale)
                                     withStyle(
                                         style = ParagraphStyle(
                                             textIndent = TextIndent(firstLine = 0.sp, restLine = 13.sp),

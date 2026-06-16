@@ -20,6 +20,14 @@ interface ShoppingListService {
     ): Either<Uuid, CreateNewShoppingListError>
 
     @Serializable
+    enum class CreateNewShoppingListFromRecipeError { Internal, UnknownRecipeId }
+
+    suspend fun createNewShoppingListFromRecipe(
+        userId: Uuid,
+        recipeId: Uuid,
+    ): Either<Uuid, CreateNewShoppingListFromRecipeError>
+
+    @Serializable
     enum class RemoveShoppingListItemError { Internal, UnknownItemId }
 
     suspend fun removeShoppingListItem(

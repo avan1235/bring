@@ -122,6 +122,23 @@
         ]
     },
     {
+        "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$createNewShoppingListFromRecipe$rpcMethod",
+        "allPublicMethods": true,
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$createNewShoppingListFromRecipe$rpcMethod$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
         "name": "in.procyk.bring.service.ShoppingListService$$rpcServiceStub$removeShoppingListItem$rpcMethod",
         "allPublicMethods": true,
         "allDeclaredFields": true,
@@ -631,6 +648,24 @@
     },
     {
         "name": "in.procyk.bring.service.ShoppingListService$CreateNewShoppingListError$Companion",
+        "allDeclaredConstructors": true,
+        "methods": [
+            {
+                "name": "serializer",
+                "parameterTypes": []
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.ShoppingListService$CreateNewShoppingListFromRecipeError",
+        "fields": [
+            {
+                "name": "Companion"
+            }
+        ]
+    },
+    {
+        "name": "in.procyk.bring.service.ShoppingListService$CreateNewShoppingListFromRecipeError$Companion",
         "allDeclaredConstructors": true,
         "methods": [
             {

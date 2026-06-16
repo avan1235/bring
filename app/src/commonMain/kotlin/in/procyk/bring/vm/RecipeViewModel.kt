@@ -3,7 +3,9 @@ package `in`.procyk.bring.vm
 import androidx.lifecycle.viewModelScope
 import `in`.procyk.bring.CookingRecipeData
 import `in`.procyk.bring.CookingRecipeRpcPath
+import `in`.procyk.bring.ShoppingListRpcPath
 import `in`.procyk.bring.service.CookingRecipeService
+import `in`.procyk.bring.service.ShoppingListService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -18,6 +20,8 @@ internal class RecipeViewModel(
     private val parsedRecipeId = Uuid.parse(recipeId)
 
     private val cookingRecipeService = durableRpcService<CookingRecipeService>(CookingRecipeRpcPath)
+
+    private val shoppingListService = durableRpcService<ShoppingListService>(ShoppingListRpcPath)
 
     private val _recipe = MutableStateFlow<CookingRecipeData?>(null)
     val recipe = _recipe.asStateFlow()
@@ -52,6 +56,18 @@ internal class RecipeViewModel(
     fun setScale(newScale: Double) {
         if (newScale > 0) {
             _scale.value = newScale
+        }
+    }
+
+    fun onCreateShoppingListFromRecipe() {
+        val userId = store.userId
+        viewModelScope.launch {
+            shoppingListService.durableCall {
+                createNewShoppingListFromRecipe(userId, parsedRecipeId).fold(
+                    ifLeft = { context.navigateEditList(it, fetchSuggestions = false) },
+                    ifRight = { /* TODO: handle errors */ }
+                )
+            }
         }
     }
 

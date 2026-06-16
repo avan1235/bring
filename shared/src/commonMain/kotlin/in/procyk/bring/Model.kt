@@ -149,4 +149,16 @@ data class RecipeIngredient(
     @CborLabel(0) val name: String,
     @CborLabel(1) val measures: Double,
     @CborLabel(2) val unit: String,
-)
+) {
+    fun toString(scale: Double): String {
+        val scaledMeasure = measures * scale
+        val measurePrefix = scaledMeasure.toString().removeSuffix(".0")
+            .takeUnless { it == "0" }
+            ?.let { "$it " }
+            ?: ""
+        return "$measurePrefix$unit $name"
+    }
+
+    override fun toString(): String =
+        toString(1.0)
+}
