@@ -1,8 +1,10 @@
 package `in`.procyk.bring.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,8 +22,8 @@ internal inline fun RowScope.AnimatedVisibilityGhostButton(
 ) {
     AnimatedVisibility(
         visible = visible,
-        enter = fadeIn(),
-        exit = fadeOut(),
+        enter = fadeIn() + expandHorizontally(),
+        exit = fadeOut() + shrinkHorizontally(),
     ) {
         IconButton(
             enabled = enabled,

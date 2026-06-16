@@ -71,6 +71,6 @@
     <string name="scale">Scale:</string>
     <string name="ingredients">Ingredients</string>
     <string name="steps">Steps</string>
-    <string name="ingredient_format">◦ %1$s %2$s %3$s</string>
+    <string name="ingredient_format">- %1$s%2$s %3$s</string>
     <string name="step_format">%1$d. %2$s</string>
 </resources>

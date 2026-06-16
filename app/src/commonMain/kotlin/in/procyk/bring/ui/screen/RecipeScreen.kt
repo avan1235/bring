@@ -54,28 +54,22 @@ internal fun RecipeScreen(
 
         else -> {
             val doneStep by vm.doneStep.collectAsState()
-            val bulletItemParagraphStyle = remember {
-                ParagraphStyle(
-                    textIndent = TextIndent(firstLine = 0.sp, restLine = 13.sp),
-                )
-            }
-            val numberedItemParagraphStyle = remember {
-                ParagraphStyle(
-                    textIndent = TextIndent(firstLine = 0.sp, restLine = 18.sp),
-                )
-            }
             LazyColumn(
                 modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-                contentPadding = PaddingValues(bottom = 16.dp),
+                contentPadding = PaddingValues(bottom = 16.dp, top = 16.dp),
             ) {
                 item("${recipe.id}-name") {
-                    Row {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
                         Text(
                             text = recipe.name,
                             style = BringAppTheme.typography.h1,
-                            modifier = Modifier.padding(bottom = 16.dp),
+                            maxLines = Int.MAX_VALUE,
+                            modifier = Modifier.weight(1f),
                         )
-                        Spacer(Modifier.weight(1f))
                         IconButton(
                             content = {
                                 Icon(Icons.Outlined.IosShare)
@@ -87,44 +81,57 @@ internal fun RecipeScreen(
                 }
                 item("${recipe.id}-ingredients-title") {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
                             text = stringResource(Res.string.ingredients),
                             style = BringAppTheme.typography.h2,
-                            modifier = Modifier.padding(vertical = 8.dp),
+                            modifier = Modifier.weight(1f),
                         )
-                        Spacer(Modifier.weight(1f))
                         NumberRow(
+                            minVisible = 2,
                             value = scale.toInt(),
                             onValueChange = { vm.setScale(it.toDouble()) },
                         ) {
-                            Text(stringResource(Res.string.scale))
+                            Text(
+                                text = stringResource(Res.string.scale),
+                                modifier = Modifier.padding(horizontal = 12.dp),
+                            )
                         }
                     }
                 }
                 item("${recipe.id}-ingredients") {
-                    Column(
-                        Modifier
-                            .border(1.dp, BringAppTheme.colors.primary, RoundedCornerShape(8.dp))
-                            .padding(8.dp)
+                    Box(
+                        modifier = Modifier
+                            .border(1.dp, stepsBackground, RoundedCornerShape(8.dp))
+                            .padding(12.dp)
                             .fillMaxWidth(),
                     ) {
                         Text(
                             text = buildAnnotatedString {
-                                recipe.ingredients.forEach { ingredient ->
+                                recipe.ingredients.forEachIndexed { idx, ingredient ->
                                     val scaledMeasure = ingredient.measures * scale
                                     val description = stringResource(
                                         Res.string.ingredient_format,
-                                        scaledMeasure.toString().removeSuffix(".0"),
+                                        scaledMeasure.toString().removeSuffix(".0")
+                                            .takeUnless { it == "0" }
+                                            ?.let { "$it " }
+                                            ?: "",
                                         ingredient.unit,
                                         ingredient.name,
                                     )
-                                    withStyle(bulletItemParagraphStyle) {
-                                        append(
-                                            description,
+                                    withStyle(
+                                        style = ParagraphStyle(
+                                            textIndent = TextIndent(firstLine = 0.sp, restLine = 13.sp),
+                                            lineHeight = 24.sp,
                                         )
+                                    ) {
+                                        if (idx < recipe.ingredients.lastIndex) appendLine(description)
+                                        else append(description)
                                     }
                                 }
                             },
@@ -156,7 +163,11 @@ internal fun RecipeScreen(
                         Text(
                             text = buildAnnotatedString {
                                 val stepDescription = stringResource(Res.string.step_format, index + 1, step)
-                                withStyle(numberedItemParagraphStyle) {
+                                withStyle(
+                                    style = ParagraphStyle(
+                                        textIndent = TextIndent(firstLine = 0.sp, restLine = 18.sp),
+                                    )
+                                ) {
                                     append(stepDescription)
                                 }
                             },

@@ -18,6 +18,7 @@ import `in`.procyk.bring.ui.BringAppTheme
 internal inline fun NumberRow(
     value: Int,
     crossinline onValueChange: (Int) -> Unit,
+    minVisible: Int = 1,
     modifier: Modifier = Modifier,
     before: @Composable RowScope.() -> Unit = {},
 ) {
@@ -27,7 +28,7 @@ internal inline fun NumberRow(
     ) {
         before()
         AnimatedVisibilityGhostButton(
-            visible = value > 0,
+            visible = value > minVisible - 1,
             icon = Icons.Outlined.ExposureNeg1,
             onClick = { onValueChange(value - 1) },
         )
