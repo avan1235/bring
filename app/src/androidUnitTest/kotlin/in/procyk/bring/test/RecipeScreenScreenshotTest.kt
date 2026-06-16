@@ -12,9 +12,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.doubleClick
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -116,6 +118,13 @@ internal class RecipeScreenScreenshotTest : BringAppCreateScreenshotTest() {
             .performClick()
 
         waitUntilExactlyOneTestTagExists("screen-recipe")
+
+        waitUntilExactlyOneTestTagExists("recipe-step-in-progress-0")
+        onAllNodesWithTag("recipe-step-in-progress-0")
+            .onFirst()
+            .performTouchInput { doubleClick(centerRight) }
+
+        waitUntilExactlyOneTestTagExists("recipe-step-done-0")
     }
 }
 
