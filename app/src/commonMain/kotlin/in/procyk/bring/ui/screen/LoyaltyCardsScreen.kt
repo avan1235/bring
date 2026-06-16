@@ -84,12 +84,6 @@ private fun LoyaltyCardRow(
             style = BringAppTheme.typography.h3,
             modifier = Modifier.weight(1f, fill = true),
         )
-        IconButton(
-            variant = IconButtonVariant.Ghost,
-            onClick = { vm.shareCard(card) },
-        ) {
-            Icon(Icons.Outlined.IosShare)
-        }
         SelectColorDialog(
             selectedColor = selectedColor,
             previousColor = previousColor,

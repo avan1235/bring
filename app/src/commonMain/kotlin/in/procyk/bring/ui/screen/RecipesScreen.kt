@@ -79,12 +79,6 @@ private fun RecipeRow(
             style = BringAppTheme.typography.h3,
             modifier = Modifier.weight(1f, fill = true),
         )
-        IconButton(
-            variant = IconButtonVariant.Ghost,
-            onClick = { vm.shareItem(recipe) },
-        ) {
-            Icon(Icons.Outlined.IosShare)
-        }
         SelectColorDialog(
             selectedColor = selectedColor,
             previousColor = previousColor,
