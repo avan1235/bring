@@ -49,7 +49,7 @@ materialKolor = "4.1.1"
 koog = "1.0.0"
 koog-beta = "1.0.0-beta"
 filekit = "0.12.0"
-versionCode = "82"
+versionCode = "83"
 
 [libraries]
 androidx-navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "androidx-navigation-compose" }
