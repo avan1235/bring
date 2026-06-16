@@ -129,10 +129,6 @@ internal class RecipesViewModel(
     override fun openAddFromFileDialog() {
         addFromFile()
     }
-
-    init {
-        updateStoredItemsInBackground()
-    }
 }
 
 private val SUPPORTED_IMAGE_FORMATS = FileKitType.File("png", "PNG", "jpg", "JPG", "jpeg", "JPEG")

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalAtomicApi::class)
+
 package `in`.procyk.bring.vm
 
 import androidx.compose.ui.graphics.Color
@@ -12,6 +14,8 @@ import `in`.procyk.bring.Orderable
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.uuid.Uuid
 
 internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TInputContext>(
@@ -94,7 +98,11 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
         storeFlow.map { it.enabledScanButtonStored() }.state(store.enabledScanButtonStored())
     }
 
-    protected fun updateStoredItemsInBackground() {
+    private val launchedUpdateStoredItemsInBackground = AtomicBoolean(false)
+
+    fun updateStoredItemsInBackground() {
+        if (!launchedUpdateStoredItemsInBackground.compareAndSet(expectedValue = false, newValue = true)) return
+
         viewModelScope.launch {
             val inMemoryCache = mutableMapOf<Uuid, TItem>()
             context.storeFlow.map { it.storedItems() }.distinctUntilIdsChanged().collectLatest { stored ->

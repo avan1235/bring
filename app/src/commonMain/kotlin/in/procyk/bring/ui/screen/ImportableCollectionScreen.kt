@@ -11,6 +11,7 @@ import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.outlined.NewLabel
 import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -59,14 +60,18 @@ internal fun <V, I> ImportableCollectionScreen(
     }
 
     val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
-    val isTransitionFinished = lifecycleState == Lifecycle.State.RESUMED
+    LaunchedEffect(lifecycleState) {
+        if (lifecycleState == Lifecycle.State.RESUMED) {
+            vm.updateStoredItemsInBackground()
+        }
+    }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         state = listState,
     ) {
-        if (isLoading && isTransitionFinished) item(key = "$testTag-loading-indicator") {
+        if (isLoading) item(key = "$testTag-loading-indicator") {
             Row(
                 modifier = Modifier
                     .padding(start = 16.dp)
@@ -77,7 +82,7 @@ internal fun <V, I> ImportableCollectionScreen(
                 CircularProgressIndicator(modifier = Modifier.size(32.dp))
             }
         }
-        if (isTransitionFinished) items(items, key = { it.id }) { item ->
+        items(items, key = { it.id }) { item ->
             ReorderableItemRow(
                 state = reorderableLazyListState,
                 key = item.id,

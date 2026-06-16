@@ -128,10 +128,6 @@ internal class LoyaltyCardsViewModel(
 
     override fun replaceOrder(item: Card, order: Double): Card = item.copy(order = order)
     override fun replaceStoredOrder(stored: LoyaltyCard, order: Double): LoyaltyCard = stored.copy(order = order)
-
-    init {
-        updateStoredItemsInBackground()
-    }
 }
 
 private val SUPPORTED_IMAGE_FORMATS = FileKitType.File("png", "PNG", "jpg", "JPG", "jpeg", "JPEG")
