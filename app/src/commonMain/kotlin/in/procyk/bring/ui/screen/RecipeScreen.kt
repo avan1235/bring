@@ -26,6 +26,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import bring.app.generated.resources.*
 import `in`.procyk.bring.runIf
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.components.*
@@ -33,6 +34,7 @@ import `in`.procyk.bring.ui.components.liquid.LiquidBottomTabsSpacer
 import `in`.procyk.bring.ui.components.progressindicators.LinearProgressIndicator
 import `in`.procyk.bring.ui.contentColorFor
 import `in`.procyk.bring.vm.RecipeViewModel
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun RecipeScreen(
@@ -79,7 +81,7 @@ internal fun RecipeScreen(
                             value = scale.toInt(),
                             onValueChange = { vm.setScale(it.toDouble()) },
                         ) {
-                            Text("Scale:")
+                            Text(stringResource(Res.string.scale))
                         }
                         Spacer(Modifier.weight(1f))
                         IconButton(
@@ -93,7 +95,7 @@ internal fun RecipeScreen(
                 }
                 item("${recipe.id}-ingredients-title") {
                     Text(
-                        text = "Ingredients",
+                        text = stringResource(Res.string.ingredients),
                         style = BringAppTheme.typography.h2,
                         modifier = Modifier.padding(vertical = 8.dp),
                     )
@@ -111,9 +113,12 @@ internal fun RecipeScreen(
                                     val scaledMeasure = ingredient.measures * scale
                                     withStyle(bulletItemParagraphStyle) {
                                         append(
-                                            "◦ ${
-                                                scaledMeasure.toString().removeSuffix(".0")
-                                            } ${ingredient.unit} ${ingredient.name}",
+                                            stringResource(
+                                                Res.string.ingredient_format,
+                                                scaledMeasure.toString().removeSuffix(".0"),
+                                                ingredient.unit,
+                                                ingredient.name,
+                                            ),
                                         )
                                     }
                                 }
@@ -129,7 +134,7 @@ internal fun RecipeScreen(
                 item("${recipe.id}-steps-title") {
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Steps",
+                        text = stringResource(Res.string.steps),
                         style = BringAppTheme.typography.h2,
                         modifier = Modifier.padding(vertical = 8.dp),
                     )
@@ -146,7 +151,7 @@ internal fun RecipeScreen(
                         Text(
                             text = buildAnnotatedString {
                                 withStyle(numberedItemParagraphStyle) {
-                                    append("${index + 1}. $step")
+                                    append(stringResource(Res.string.step_format, index + 1, step))
                                 }
                             },
                             style = BringAppTheme.typography.body1,

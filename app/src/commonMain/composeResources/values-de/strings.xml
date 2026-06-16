@@ -68,4 +68,9 @@
     <string name="loading_scanning">Eingabedateien werden gescannt…</string>
     <string name="loading_saving">Extrahierte Daten werden gespeichert…</string>
     <string name="loading_importing">Daten werden importiert…</string>
+    <string name="scale">Maßstab:</string>
+    <string name="ingredients">Zutaten</string>
+    <string name="steps">Schritte</string>
+    <string name="ingredient_format">◦ %1$s %2$s %3$s</string>
+    <string name="step_format">%1$d. %2$s</string>
 </resources>

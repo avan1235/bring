@@ -68,4 +68,9 @@
     <string name="loading_scanning">Escaneando archivos de entrada…</string>
     <string name="loading_saving">Guardando datos extraídos…</string>
     <string name="loading_importing">Importando datos…</string>
+    <string name="scale">Escala:</string>
+    <string name="ingredients">Ingredientes</string>
+    <string name="steps">Pasos</string>
+    <string name="ingredient_format">◦ %1$s %2$s %3$s</string>
+    <string name="step_format">%1$d. %2$s</string>
 </resources>

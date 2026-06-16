@@ -68,4 +68,9 @@
     <string name="loading_scanning">Сканирование входных файлов…</string>
     <string name="loading_saving">Сохранение извлеченных данных…</string>
     <string name="loading_importing">Импорт данных…</string>
+    <string name="scale">Масштаб:</string>
+    <string name="ingredients">Ингредиенты</string>
+    <string name="steps">Шаги</string>
+    <string name="ingredient_format">◦ %1$s %2$s %3$s</string>
+    <string name="step_format">%1$d. %2$s</string>
 </resources>

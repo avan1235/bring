@@ -68,4 +68,9 @@
     <string name="loading_scanning">正在扫描输入文件…</string>
     <string name="loading_saving">正在保存提取的数据…</string>
     <string name="loading_importing">正在导入数据…</string>
+    <string name="scale">比例:</string>
+    <string name="ingredients">配料</string>
+    <string name="steps">步骤</string>
+    <string name="ingredient_format">◦ %1$s %2$s %3$s</string>
+    <string name="step_format">%1$d. %2$s</string>
 </resources>

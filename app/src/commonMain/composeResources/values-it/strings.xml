@@ -68,4 +68,9 @@
     <string name="loading_scanning">Scansione dei file di input…</string>
     <string name="loading_saving">Salvataggio dei dati estratti…</string>
     <string name="loading_importing">Importazione dei dati…</string>
+    <string name="scale">Scala:</string>
+    <string name="ingredients">Ingredienti</string>
+    <string name="steps">Passaggi</string>
+    <string name="ingredient_format">◦ %1$s %2$s %3$s</string>
+    <string name="step_format">%1$d. %2$s</string>
 </resources>
