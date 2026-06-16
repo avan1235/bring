@@ -1,36 +1,45 @@
 package `in`.procyk.bring.ui.screen
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.IosShare
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import `in`.procyk.bring.runIf
 import `in`.procyk.bring.ui.BringAppTheme
-import `in`.procyk.bring.ui.LocalContentColor
 import `in`.procyk.bring.ui.components.*
 import `in`.procyk.bring.ui.components.liquid.LiquidBottomTabsSpacer
 import `in`.procyk.bring.ui.components.progressindicators.LinearProgressIndicator
+import `in`.procyk.bring.ui.contentColorFor
 import `in`.procyk.bring.vm.RecipeViewModel
 
 @Composable
 internal fun RecipeScreen(
     padding: PaddingValues,
     vm: RecipeViewModel,
+    rounded: Dp = 12.dp,
+    stepsBackground: Color = BringAppTheme.colors.primary,
 ) = AppScreen("screen-recipe", padding) {
     val recipeData by vm.recipe.collectAsState()
     val scale by vm.scale.collectAsState()
@@ -42,6 +51,16 @@ internal fun RecipeScreen(
 
         else -> {
             val doneStep by vm.doneStep.collectAsState()
+            val bulletItemParagraphStyle = remember {
+                ParagraphStyle(
+                    textIndent = TextIndent(firstLine = 0.sp, restLine = 13.sp),
+                )
+            }
+            val numberedItemParagraphStyle = remember {
+                ParagraphStyle(
+                    textIndent = TextIndent(firstLine = 0.sp, restLine = 18.sp),
+                )
+            }
             LazyColumn(
                 modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
                 contentPadding = PaddingValues(bottom = 16.dp),
@@ -86,19 +105,16 @@ internal fun RecipeScreen(
                             .padding(8.dp)
                             .fillMaxWidth(),
                     ) {
-
                         Text(
                             text = buildAnnotatedString {
-                                withBulletList {
-                                    recipe.ingredients.forEach { ingredient ->
-                                        val scaledMeasure = ingredient.measures * scale
-                                        withBulletListItem {
-                                            append(
-                                                "${
-                                                    scaledMeasure.toString().removeSuffix(".0")
-                                                } ${ingredient.unit} ${ingredient.name}",
-                                            )
-                                        }
+                                recipe.ingredients.forEach { ingredient ->
+                                    val scaledMeasure = ingredient.measures * scale
+                                    withStyle(bulletItemParagraphStyle) {
+                                        append(
+                                            "◦ ${
+                                                scaledMeasure.toString().removeSuffix(".0")
+                                            } ${ingredient.unit} ${ingredient.name}",
+                                        )
                                     }
                                 }
                             },
@@ -119,45 +135,71 @@ internal fun RecipeScreen(
                     )
                 }
                 itemsIndexed(recipe.steps, key = { idx, _ -> "${recipe.id}-step-$idx" }) { index, step ->
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(
-                                SpanStyle(
-                                    color = BringAppTheme.colors.onPrimary,
-                                    background = BringAppTheme.colors.primary,
-                                ),
-                            ) {
-                                append(" ${index + 1}. ")
-                            }
-                            append(" $step")
-                        },
-                        style = BringAppTheme.typography.body1,
-                        modifier = Modifier
-                            .padding(top = 4.dp)
-                            .runIf(doneStep >= index) {
-                                background(
-                                    BringAppTheme.colors.disabled.copy(alpha = 0.9f),
-                                    RoundedCornerShape(4.dp),
-                                )
-                            }
-                            .border(1.dp, BringAppTheme.colors.secondary, RoundedCornerShape(4.dp))
-                            .padding(4.dp)
-                            .pointerInput(Unit) {
-                                var amount = 0f
-                                detectHorizontalDragGestures(
-                                    onDragEnd = {
-                                        val lastAmount = amount
-                                        amount = 0f
-                                        if (lastAmount > 0) vm.onNextStep() else if (lastAmount < 0) vm.onPrevStep()
-                                    },
-                                ) { _, dragAmount ->
-                                    amount += dragAmount
-                                }
-                            }
-                            .fillMaxWidth(),
-                        maxLines = Int.MAX_VALUE,
-                        color = if (doneStep >= index) BringAppTheme.colors.onDisabled else LocalContentColor.current,
+                    val textColor = contentColorFor(stepsBackground)
+                    val stepsBackground by remember { derivedStateOf { stepsBackground.copy(alpha = 0.6f) } }
+                    val alpha by animateFloatAsState(
+                        if (doneStep >= index) 0.1f else 1f,
+                        animationSpec = tween(durationMillis = 500, easing = LinearEasing),
                     )
+                    BoxWithConstraints {
+                        val width = constraints.maxWidth
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(numberedItemParagraphStyle) {
+                                    append("${index + 1}. $step")
+                                }
+                            },
+                            style = BringAppTheme.typography.body1,
+                            modifier = Modifier
+                                .alpha(alpha)
+                                .runIf(index == 0 && recipe.steps.size > 1) {
+                                    background(
+                                        stepsBackground,
+                                        RoundedCornerShape(topStart = rounded, topEnd = rounded),
+                                    )
+                                }
+                                .runIf(index == recipe.steps.lastIndex && recipe.steps.size > 1) {
+                                    background(
+                                        stepsBackground,
+                                        RoundedCornerShape(bottomStart = rounded, bottomEnd = rounded),
+                                    )
+                                }
+                                .runIf(index in 1..<recipe.steps.lastIndex && recipe.steps.size > 1) {
+                                    background(stepsBackground)
+                                }
+                                .runIf(recipe.steps.size == 1) {
+                                    background(stepsBackground, RoundedCornerShape(rounded))
+                                }
+                                .padding(
+                                    top = if (index == 0) 16.dp else 8.dp,
+                                    bottom = if (index == recipe.steps.lastIndex) 16.dp else 8.dp,
+                                    start = 8.dp,
+                                    end = 8.dp,
+                                )
+                                .pointerInput(Unit) {
+                                    detectTapGestures(
+                                        onDoubleTap = {
+                                            if (it.x > width / 2) vm.onNextStep() else vm.onPrevStep()
+                                        },
+                                    )
+                                }
+                                .pointerInput(Unit) {
+                                    var amount = 0f
+                                    detectHorizontalDragGestures(
+                                        onDragEnd = {
+                                            val lastAmount = amount
+                                            amount = 0f
+                                            if (lastAmount > 0) vm.onNextStep() else if (lastAmount < 0) vm.onPrevStep()
+                                        },
+                                    ) { _, dragAmount ->
+                                        amount += dragAmount
+                                    }
+                                }
+                                .fillMaxWidth(),
+                            maxLines = Int.MAX_VALUE,
+                            color = textColor,
+                        )
+                    }
                 }
                 item("spacer") {
                     LiquidBottomTabsSpacer(vm)
