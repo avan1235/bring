@@ -49,7 +49,7 @@ internal fun LiquidBottomTabsSpacer(
     if (useBottomNavigation && useLiquidGlassNavigation) {
         Box(
             Modifier
-                .height(80.dp)
+                .height(88.dp)
                 .fillMaxWidth(),
         )
     }
