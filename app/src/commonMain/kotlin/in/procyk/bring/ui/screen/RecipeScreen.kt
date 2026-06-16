@@ -122,7 +122,7 @@ internal fun RecipeScreen(
                         Text(
                             text = buildAnnotatedString {
                                 recipe.ingredients.forEachIndexed { idx, ingredient ->
-                                    val description = ingredient.toString(scale)
+                                    val description = "- ${ingredient.toString(scale)}"
                                     withStyle(
                                         style = ParagraphStyle(
                                             textIndent = TextIndent(firstLine = 0.sp, restLine = 13.sp),
