@@ -96,7 +96,7 @@ internal abstract class BringAppCreateScreenshotTest {
             BringAppTheme(PlatformContext(LocalContext.current)) { context ->
                 LaunchedEffect(Unit) {
                     context.store.update {
-                        it?.config()
+                        it?.copy(useLiquidGlassNavigation = true)?.config()
                     }
                 }
                 Box(
@@ -142,6 +142,8 @@ internal abstract class BringAppCreateScreenshotTest {
             }
         }
         waitForIdle()
+
+        waitUntilExactlyOneTestTagExists("liquid-bottom-tabs")
 
         context()
 

@@ -268,7 +268,8 @@ private fun BoxScope.LiquidNavigation(
             .padding(bottom = 24.dp)
             .padding(horizontal = 16.dp)
             .padding(paddingValues)
-            .align(Alignment.BottomCenter),
+            .align(Alignment.BottomCenter)
+            .testTag("liquid-bottom-tabs"),
     ) {
         val currentTarget by context.navBarTarget.collectAsState()
         NavBarTarget.entries.forEach { target ->
