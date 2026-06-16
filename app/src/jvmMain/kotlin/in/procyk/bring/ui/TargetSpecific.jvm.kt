@@ -4,4 +4,4 @@ internal actual val defaultUseBottomNavigation: Boolean
     get() = false
 
 internal actual val defaultUseLiquidGlassNavigation: Boolean
-    get() = false
+    get() = true
