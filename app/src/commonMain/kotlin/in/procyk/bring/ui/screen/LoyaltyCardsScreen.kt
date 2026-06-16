@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.automirrored.twotone.Label
+import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -96,7 +97,7 @@ private fun LoyaltyCardRow(
 @Composable
 private fun SelectedCardDialog(vm: LoyaltyCardsViewModel) {
     val selectedCard by vm.selectedCard.collectAsState()
-    selectedCard?.let {
+    selectedCard?.let { selectedCard ->
         var showRemoveNotification by remember { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
         AlertDialogComponent(
@@ -110,9 +111,8 @@ private fun SelectedCardDialog(vm: LoyaltyCardsViewModel) {
                 )
             },
             dismissButton = {
-                Button(
-                    variant = ButtonVariant.Ghost,
-                    text = stringResource(Res.string.remove),
+                IconButton(
+                    variant = IconButtonVariant.Ghost,
                     onClick = {
                         scope.launch {
                             showRemoveNotification = true
@@ -123,10 +123,18 @@ private fun SelectedCardDialog(vm: LoyaltyCardsViewModel) {
                             }
                         }
                     },
-                    onLongClick = { vm.removeCard(it) },
-                )
+                    onLongClick = { vm.removeCard(selectedCard) },
+                ) {
+                    Icon(Icons.Outlined.DeleteOutline)
+                }
+                IconButton(
+                    variant = IconButtonVariant.Ghost,
+                    onClick = { vm.shareCard(selectedCard) },
+                ) {
+                    Icon(Icons.Outlined.IosShare)
+                }
             },
-            title = { Text(text = it.data.label) },
+            title = { Text(text = selectedCard.data.label) },
             text = {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -139,7 +147,7 @@ private fun SelectedCardDialog(vm: LoyaltyCardsViewModel) {
                         horizontalArrangement = Arrangement.Center,
                     ) {
                         CodeGenerator(
-                            code = it.data.code,
+                            code = selectedCard.data.code,
                             color = LocalColors.current.onSurface,
                             width = 256.dp,
                             modifier = Modifier.clickable(
@@ -150,7 +158,7 @@ private fun SelectedCardDialog(vm: LoyaltyCardsViewModel) {
                     }
                     AnimatedVisibility(visibleDetails) {
                         Text(
-                            text = it.data.code.text,
+                            text = selectedCard.data.code.text,
                             style = BringAppTheme.typography.body1,
                         )
                     }

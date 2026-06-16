@@ -74,18 +74,18 @@ internal fun RecipeScreen(
                         )
                         IconButton(
                             content = {
-                                Icon(Icons.Outlined.IosShare)
-                            },
-                            variant = IconButtonVariant.SecondaryGhost,
-                            onClick = vm::onShareRecipe,
-                        )
-                        IconButton(
-                            content = {
                                 Icon(Icons.Outlined.DeleteOutline)
                             },
                             variant = IconButtonVariant.SecondaryGhost,
                             onClick = { vm.context.showSnackbar(Res.string.long_click_to_remove) },
                             onLongClick = vm::onRemoveRecipe,
+                        )
+                        IconButton(
+                            content = {
+                                Icon(Icons.Outlined.IosShare)
+                            },
+                            variant = IconButtonVariant.SecondaryGhost,
+                            onClick = vm::onShareRecipe,
                         )
                     }
                 }
