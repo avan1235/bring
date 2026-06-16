@@ -69,12 +69,13 @@ internal class ShoppingListServiceImpl(
 
     override suspend fun createNewShoppingListFromRecipe(
         userId: Uuid,
-        recipeId: Uuid
+        recipeId: Uuid,
+        scale: Double
     ): Either<Uuid, CreateNewShoppingListFromRecipeError> {
         return txn(CreateNewShoppingListFromRecipeError.Internal) {
             val recipe = CookingRecipeEntity.findById(recipeId.toJavaUuid())
                 ?: return@txn CreateNewShoppingListFromRecipeError.UnknownRecipeId.right()
-            val ingredients = recipe.ingredients.map { it.toString() to 1 }
+            val ingredients = recipe.ingredients.map { it.toString(scale = scale) to 1 }
             createNewShoppingList(userId, recipe.name) { listId ->
                 addEntriesToShoppingListInTransaction(userId.toJavaUuid(), listId, ingredients).left()
             }

@@ -61,9 +61,10 @@ internal class RecipeViewModel(
 
     fun onCreateShoppingListFromRecipe() {
         val userId = store.userId
+        val scale = scale.value
         viewModelScope.launch {
             shoppingListService.durableCall {
-                createNewShoppingListFromRecipe(userId, parsedRecipeId).fold(
+                createNewShoppingListFromRecipe(userId, parsedRecipeId, scale).fold(
                     ifLeft = { context.navigateEditList(it, fetchSuggestions = false) },
                     ifRight = { /* TODO: handle errors */ }
                 )

@@ -25,6 +25,7 @@ interface ShoppingListService {
     suspend fun createNewShoppingListFromRecipe(
         userId: Uuid,
         recipeId: Uuid,
+        scale: Double,
     ): Either<Uuid, CreateNewShoppingListFromRecipeError>
 
     @Serializable

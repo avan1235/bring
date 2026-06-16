@@ -28,7 +28,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import bring.app.generated.resources.*
+import bring.app.generated.resources.Res
+import bring.app.generated.resources.ingredients
+import bring.app.generated.resources.step_format
+import bring.app.generated.resources.steps
 import `in`.procyk.bring.runIf
 import `in`.procyk.bring.ui.BringAppTheme
 import `in`.procyk.bring.ui.components.*
@@ -73,13 +76,6 @@ internal fun RecipeScreen(
                         )
                         IconButton(
                             content = {
-                                Icon(Icons.Outlined.Summarize)
-                            },
-                            variant = IconButtonVariant.SecondaryGhost,
-                            onClick = vm::onCreateShoppingListFromRecipe,
-                        )
-                        IconButton(
-                            content = {
                                 Icon(Icons.Outlined.IosShare)
                             },
                             variant = IconButtonVariant.SecondaryGhost,
@@ -104,12 +100,14 @@ internal fun RecipeScreen(
                             minVisible = 2,
                             value = scale.toInt(),
                             onValueChange = { vm.setScale(it.toDouble()) },
-                        ) {
-                            Text(
-                                text = stringResource(Res.string.scale),
-                                modifier = Modifier.padding(horizontal = 12.dp),
-                            )
-                        }
+                        )
+                        IconButton(
+                            content = {
+                                Icon(Icons.Outlined.Summarize)
+                            },
+                            variant = IconButtonVariant.SecondaryGhost,
+                            onClick = vm::onCreateShoppingListFromRecipe,
+                        )
                     }
                 }
                 item("${recipe.id}-ingredients") {
