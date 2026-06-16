@@ -69,21 +69,12 @@ internal fun RecipeScreen(
                 contentPadding = PaddingValues(bottom = 16.dp),
             ) {
                 item("${recipe.id}-name") {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = recipe.name,
-                        style = BringAppTheme.typography.h1,
-                        modifier = Modifier.padding(bottom = 16.dp),
-                    )
-                }
-                item("${recipe.id}-scale") {
                     Row {
-                        NumberRow(
-                            value = scale.toInt(),
-                            onValueChange = { vm.setScale(it.toDouble()) },
-                        ) {
-                            Text(stringResource(Res.string.scale))
-                        }
+                        Text(
+                            text = recipe.name,
+                            style = BringAppTheme.typography.h1,
+                            modifier = Modifier.padding(bottom = 16.dp),
+                        )
                         Spacer(Modifier.weight(1f))
                         IconButton(
                             content = {
@@ -95,11 +86,23 @@ internal fun RecipeScreen(
                     }
                 }
                 item("${recipe.id}-ingredients-title") {
-                    Text(
-                        text = stringResource(Res.string.ingredients),
-                        style = BringAppTheme.typography.h2,
-                        modifier = Modifier.padding(vertical = 8.dp),
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.ingredients),
+                            style = BringAppTheme.typography.h2,
+                            modifier = Modifier.padding(vertical = 8.dp),
+                        )
+                        Spacer(Modifier.weight(1f))
+                        NumberRow(
+                            value = scale.toInt(),
+                            onValueChange = { vm.setScale(it.toDouble()) },
+                        ) {
+                            Text(stringResource(Res.string.scale))
+                        }
+                    }
                 }
                 item("${recipe.id}-ingredients") {
                     Column(
@@ -112,14 +115,15 @@ internal fun RecipeScreen(
                             text = buildAnnotatedString {
                                 recipe.ingredients.forEach { ingredient ->
                                     val scaledMeasure = ingredient.measures * scale
+                                    val description = stringResource(
+                                        Res.string.ingredient_format,
+                                        scaledMeasure.toString().removeSuffix(".0"),
+                                        ingredient.unit,
+                                        ingredient.name,
+                                    )
                                     withStyle(bulletItemParagraphStyle) {
                                         append(
-                                            stringResource(
-                                                Res.string.ingredient_format,
-                                                scaledMeasure.toString().removeSuffix(".0"),
-                                                ingredient.unit,
-                                                ingredient.name,
-                                            ),
+                                            description,
                                         )
                                     }
                                 }
@@ -151,8 +155,9 @@ internal fun RecipeScreen(
                         val width = constraints.maxWidth
                         Text(
                             text = buildAnnotatedString {
+                                val stepDescription = stringResource(Res.string.step_format, index + 1, step)
                                 withStyle(numberedItemParagraphStyle) {
-                                    append(stringResource(Res.string.step_format, index + 1, step))
+                                    append(stepDescription)
                                 }
                             },
                             style = BringAppTheme.typography.body1,
