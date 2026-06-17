@@ -1,0 +1,405 @@
+package `in`.procyk.savvry.vm
+
+import ai.koog.agents.core.tools.annotations.LLMDescription
+import ai.koog.http.client.ktor.KtorKoogHttpClient
+import ai.koog.prompt.dsl.prompt
+import ai.koog.prompt.executor.clients.google.GoogleLLMClient
+import ai.koog.prompt.executor.clients.google.GoogleModels
+import ai.koog.prompt.executor.llms.MultiLLMPromptExecutor
+import ai.koog.prompt.executor.model.executeStructured
+import ai.koog.prompt.structure.StructuredRequest.Manual
+import ai.koog.prompt.structure.StructuredRequestConfig
+import androidx.lifecycle.viewModelScope
+import savvry.app.generated.resources.Res
+import savvry.app.generated.resources.error_fetching_favorite_elements
+import savvry.app.generated.resources.error_fetching_suggestions
+import savvry.app.generated.resources.list_not_found
+import `in`.procyk.savvry.*
+import `in`.procyk.savvry.ShoppingListItemData.CheckedStatusData.Checked
+import `in`.procyk.savvry.ShoppingListItemData.CheckedStatusData.Unchecked
+import `in`.procyk.savvry.ai.MarkdownWrappedJsonStructuredData.Companion.createMarkdownWrappedJsonStructure
+import `in`.procyk.savvry.service.FavoriteElementService
+import `in`.procyk.savvry.service.ShoppingListService
+import `in`.procyk.savvry.service.ShoppingListService.GetShoppingListError
+import io.ktor.client.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlin.math.max
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.measureTime
+import kotlin.uuid.Uuid
+
+internal class EditListScreenViewModel(
+    context: Context,
+    private val listId: Uuid,
+    fetchSuggestionsAndFavoriteElements: Boolean,
+) : AbstractViewModel(context) {
+
+    private val shoppingListService = durableRpcService<ShoppingListService>(ShoppingListRpcPath)
+    private val favoriteElementService = durableRpcService<FavoriteElementService>(FavoriteElementRpcPath)
+
+    data class SuggestedItem(val name: String, val used: Boolean, val id: Uuid)
+
+    private val _suggestedItems = MutableStateFlow<List<SuggestedItem>>(emptyList())
+    val suggestedItems: StateFlow<List<SuggestedItem>> = _suggestedItems.asStateFlow()
+
+    val useGeminiSettings = storeFlow.map { it.useGeminiLists }.distinctUntilChanged().state(store.useGeminiLists)
+
+    init {
+        if (fetchSuggestionsAndFavoriteElements) viewModelScope.launch {
+            val userId = store.userId
+
+            val suggestions = when {
+                !store.showSuggestions -> CompletableDeferred(value = emptyList())
+                else -> CompletableDeferred<Collection<String>>().also { deferred ->
+                    shoppingListService.durableCall {
+                        getUserShoppingListSuggestions(userId).fold(
+                            ifLeft = { deferred.complete(it.itemsNames) },
+                            ifRight = {
+                                context.showSnackbar(Res.string.error_fetching_suggestions)
+                                deferred.complete(emptyList())
+                            },
+                        )
+                    }
+                }
+            }
+
+            val favoriteElements = when {
+                !store.showFavoriteElements -> CompletableDeferred(value = emptyList())
+                else -> CompletableDeferred<Collection<String>>().also { deferred ->
+                    favoriteElementService.durableCall {
+                        getFavoriteElements(userId).fold(
+                            ifLeft = { deferred.complete(it.elements.map { it.name }) },
+                            ifRight = {
+                                context.showSnackbar(Res.string.error_fetching_favorite_elements)
+                                deferred.complete(emptyList())
+                            },
+                        )
+                    }
+                }
+            }
+
+            _suggestedItems.value = buildSet {
+                addAll(favoriteElements.await())
+                addAll(suggestions.await())
+            }.map { SuggestedItem(it, used = false, id = Uuid.random()) }
+        }
+
+        shoppingListService.durableLaunch {
+            getShoppingList(listId).collectLatest {
+                it.fold(
+                    ifLeft = {
+                        val updatedList = it.copy(items = it.items.sorted())
+                        fetchedList.update { updatedList }
+                    },
+                    ifRight = {
+                        when (it) {
+                            GetShoppingListError.Internal -> {}
+                            GetShoppingListError.UnknownListId -> {
+                                context.showSnackbar(Res.string.list_not_found)
+                                context.navigateCreateList(cleanLastListId = true)
+                            }
+                        }
+                    },
+                )
+            }
+        }
+    }
+
+    private val fetchedList = MutableStateFlow<ShoppingListData?>(null)
+    private val localListItems = MutableStateFlow<List<ShoppingListItemData>>(emptyList())
+
+    init {
+        viewModelScope.launch {
+            combine(
+                fetchedList.mapNotNull { it?.name },
+                storeFlow.map { it.recentShoppingListsCount },
+            ) { a, b -> a to b }
+                .distinctUntilChanged()
+                .collectLatest { (listName, count) ->
+                    updateConfig { config ->
+                        config.copy(
+                            recentShoppingLists = sequence {
+                                yield(RecentShoppingList(listName, listId))
+                                config.recentShoppingLists.forEach { if (it.listId != listId) yield(it) }
+                            }.take(count).toSet()
+                        )
+                    }
+                }
+        }
+        viewModelScope.launch {
+            fetchedList.mapNotNull { it?.items }
+                .distinctUntilChanged()
+                .debounceSameIds(delay = 1.seconds)
+                .collectLatest { localListItems.value = it }
+        }
+        viewModelScope.launch {
+            fetchedList.mapNotNull { it?.name }.distinctUntilChanged().collectLatest {
+                context.updateListName(it)
+            }
+        }
+    }
+
+    val showSuggestions: StateFlow<Boolean> = storeFlow.map { it.showSuggestions }.state(store.showSuggestions)
+
+    val showFavoriteElements: StateFlow<Boolean> =
+        storeFlow.map { it.showFavoriteElements }.state(store.showFavoriteElements)
+
+    val items: StateFlow<List<ShoppingListItemData>> =
+        combine(localListItems, storeFlow.map { it.showUncheckedFirst }) { items, showUncheckedFirst ->
+            when {
+                showUncheckedFirst -> items.filter { !it.status.isChecked } + items.filter { it.status.isChecked }
+                else -> items
+            }
+        }.state(emptyList())
+
+    val itemsProgress: StateFlow<Float> = items.map { items ->
+        items.takeIf { it.isNotEmpty() }?.let { it.count { it.status.isChecked }.toFloat() / it.size.toFloat() } ?: 0f
+    }.state(0f)
+
+    private val _newItemName: MutableStateFlow<String> = MutableStateFlow("")
+    val newItemName: StateFlow<String> = _newItemName.asStateFlow()
+
+    private val _newItemLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val newItemLoading: StateFlow<Boolean> = _newItemLoading.asStateFlow()
+
+    private val _refreshingCount: MutableStateFlow<Int> = MutableStateFlow(0)
+    val isRefreshing: StateFlow<Boolean> = _refreshingCount.map { it > 0 }.state(false)
+
+    val enableEditMode: StateFlow<Boolean> =
+        storeFlow.map { it.enableShoppingListEditMode }.state(store.enableShoppingListEditMode)
+
+    private val _showFab: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val showFab: StateFlow<Boolean> =
+        combine(_showFab, enableEditMode) { state, setting -> state && setting }.state(false)
+
+    val isFavorite: StateFlow<Boolean> =
+        combine(storeFlow.map { it.favoriteShoppingLists }, fetchedList) { favorites, list ->
+            favorites.any { it -> it.listId == list?.id }
+        }.state(false)
+
+    fun onNewItemNameChange(name: String) {
+        _newItemName.update { name }
+    }
+
+    fun onCreateNewItem(useGemini: Boolean = false) {
+        val name = _newItemName.value
+        _newItemName.update { "" }
+        viewModelScope.launch {
+            try {
+                _newItemLoading.getAndUpdate { true }
+                val items = when {
+                    name.isNotBlank()
+                            && useGemini
+                            && useGeminiSettings.value
+                            && store.geminiKey.isNotEmpty() ->
+                        httpClient.getSuggestionsFromGemini(store.geminiKey, name)
+                            ?.items
+                            ?.map { it.name to it.count }
+                            ?.takeUnless { it.isEmpty() }
+                            ?: listOf(name to 1)
+
+                    else -> listOf(name to 1)
+                }
+                items.forEach { (item, count) ->
+                    shoppingListService.durableCall {
+                        addEntryToShoppingList(store.userId, listId, item, count)
+                    }
+                }
+            } finally {
+                _newItemLoading.update { false }
+            }
+        }
+    }
+
+    fun onCreateNewItemFromSuggestion(name: String) {
+        _suggestedItems.update { items -> items.map { if (it.name == name) it.copy(used = true) else it } }
+        viewModelScope.launch {
+            shoppingListService.durableCall {
+                addEntryToShoppingList(store.userId, listId, name)
+            }
+        }
+    }
+
+    fun onToggleListFavorite() {
+        val list = fetchedList.value ?: return
+        val favoriteShoppingList = FavoriteShoppingList(list.name, list.id)
+        launchUpdateConfig {
+            it.run {
+                when {
+                    favoriteShoppingList !in favoriteShoppingLists -> copy(favoriteShoppingLists = favoriteShoppingLists + favoriteShoppingList)
+                    else -> copy(favoriteShoppingLists = favoriteShoppingLists - favoriteShoppingList)
+                }
+            }
+        }
+    }
+
+    fun onShareList() {
+        viewModelScope.launch {
+            onShareList(listId.toHexDashString(), context)
+        }
+    }
+
+    fun onExtractUncheckedList() {
+        viewModelScope.launch {
+            shoppingListService.durableCall {
+                extractUncheckedShoppingList(userId = store.userId, listId = listId)
+            }.fold(
+                ifLeft = {
+                    context.navigateEditList(it, fetchSuggestions = false)
+                },
+                ifRight = { /* TODO: handle errors */ },
+            )
+        }
+    }
+
+    fun onRefresh() {
+        viewModelScope.launch {
+            _refreshingCount.update { it + 1 }
+            try {
+                val spent = measureTime {
+                    shoppingListService.durableCall { refreshShoppingList(listId) }
+                }
+                delay(1.seconds - spent)
+            } finally {
+                _refreshingCount.update { it - 1 }
+            }
+        }
+    }
+
+    fun onChecked(itemId: Uuid, checked: Boolean) {
+        val localStatus = if (checked) Checked(Clock.System.now(), store.userId) else Unchecked
+        localListItems.update { list ->
+            list.map { if (it.id == itemId) it.copy(status = localStatus) else it }.sorted()
+        }
+        viewModelScope.launch {
+            when {
+                checked -> shoppingListService.durableCall { markItemAsChecked(store.userId, itemId) }
+                else -> shoppingListService.durableCall { markItemAsUnchecked(itemId) }
+            }
+        }
+    }
+
+    fun onRemoved(itemId: Uuid) {
+        localListItems.update { list ->
+            list.filter { it.id != itemId }
+        }
+        viewModelScope.launch {
+            shoppingListService.durableCall {
+                removeShoppingListItem(itemId)
+            }
+        }
+    }
+
+    fun onIncreaseItemCount(itemId: Uuid) {
+        localListItems.update { list ->
+            list.map { if (it.id == itemId) it.copy(count = it.count + 1) else it }
+        }
+        viewModelScope.launch {
+            shoppingListService.durableCall {
+                increaseItemCount(itemId)
+            }
+        }
+    }
+
+    fun onDecreaseItemCount(itemId: Uuid) {
+        localListItems.update { list ->
+            list.map { if (it.id == itemId) it.copy(count = max(it.count - 1, 1)) else it }
+        }
+        viewModelScope.launch {
+            shoppingListService.durableCall {
+                decreaseItemCount(itemId)
+            }
+        }
+    }
+
+    fun onUpdatedItemOrder(fromKey: Uuid, toKey: Uuid, items: List<ShoppingListItemData>) {
+        onUpdatedItemOrder(fromKey, toKey, items) { from, updatedOrder ->
+            localListItems.update { list ->
+                list.map { if (it.id == from.id) it.copy(order = updatedOrder) else it }.sorted()
+            }
+            viewModelScope.launch {
+                shoppingListService.durableCall {
+                    updateItemOrder(from.id, updatedOrder)
+                }
+            }
+        }
+    }
+
+    fun onShowFab(show: Boolean) {
+        _showFab.update { show }
+    }
+}
+
+private suspend fun HttpClient.getSuggestionsFromGemini(
+    apiKey: String,
+    description: String,
+): SuggestedShoppingList? {
+    val httpClientFactory = KtorKoogHttpClient.Factory(baseClient = this)
+    val googleClient = GoogleLLMClient(apiKey, httpClientFactory = httpClientFactory)
+    val promptExecutor = MultiLLMPromptExecutor(googleClient)
+    val structuredResponse = promptExecutor.executeStructured(
+        prompt = prompt("shopping-list-suggestion") {
+            system(
+                """
+                You are a shopping list extraction assistant.
+                Extract specific shopping list items from the user input.
+                Items must be concrete products available at local shops.
+                Avoid general categories and do not specify brand names.
+                Use the same language as the you're given in the user context.
+                """.trimIndent()
+            )
+            user(description)
+        },
+        model = GoogleModels.Gemini3_Flash_Preview,
+        config = StructuredRequestConfig(
+            default = Manual(shoppingListStructure),
+        )
+    )
+    return structuredResponse.getOrNull()?.data
+}
+
+@Serializable
+@SerialName("ShoppingList")
+@LLMDescription("Suggested shopping list containing items with their count")
+private data class SuggestedShoppingList(
+    @property:LLMDescription("List of suggested items")
+    val items: List<SuggestedShoppingListItem>,
+)
+
+@Serializable
+@SerialName("ShoppingListItem")
+@LLMDescription("Shopping list item with its count")
+private data class SuggestedShoppingListItem(
+    @property:LLMDescription("Shopping list item count")
+    val count: Int,
+    @property:LLMDescription("Shopping list item name")
+    val name: String,
+)
+
+private val examples = listOf(
+    SuggestedShoppingList(
+        items = listOf(
+            SuggestedShoppingListItem(1, "bread"),
+            SuggestedShoppingListItem(2, "milk"),
+            SuggestedShoppingListItem(10, "eggs"),
+            SuggestedShoppingListItem(1, "cheese"),
+        )
+    ),
+    SuggestedShoppingList(
+        items = listOf(
+            SuggestedShoppingListItem(1, "cup"),
+            SuggestedShoppingListItem(5, "water filter"),
+            SuggestedShoppingListItem(3, "tea"),
+        )
+    )
+)
+
+private val shoppingListStructure =
+    createMarkdownWrappedJsonStructure<SuggestedShoppingList>(examples = examples)
+

@@ -58,7 +58,7 @@ deploy_to_device() {
     return 1
   fi
 
-  APP_PATH="$BUILT_PRODUCTS_DIR/Bring!.app"
+  APP_PATH="$BUILT_PRODUCTS_DIR/Savvry.app"
 
   if [ ! -d "$APP_PATH" ]; then
     echo "❌ Directory $APP_PATH does not exist for device $DEVICE_ID"

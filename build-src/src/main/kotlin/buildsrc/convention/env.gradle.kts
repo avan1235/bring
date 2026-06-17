@@ -2,9 +2,9 @@ package buildsrc.convention
 
 object Env {
 
-    val BringVersion: String
+    val SavvryVersion: String
         get() = System.getenv("VERSION") ?: "1.0.0"
 
-    val BringPackageName: String
-        get() = "in.procyk.bring"
+    val SavvryPackageName: String
+        get() = "in.procyk.savvry"
 }

@@ -58,7 +58,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/bring:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/savvry:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
           build-args: VERSION=${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
 
   publish-northflank:
@@ -81,5 +81,5 @@ jobs:
           northflank-api-key: ${{ secrets.NORTHFLANK_API_KEY }}
           project-id: ${{ secrets.NORTHFLANK_PROJECT_ID }}
           service-id: ${{ secrets.NORTHFLANK_SERVICE_ID }}
-          image-path: ${{ secrets.DOCKER_USERNAME }}/bring:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
+          image-path: ${{ secrets.DOCKER_USERNAME }}/savvry:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
           credentials-id: ${{ secrets.NORTHFLANK_CREDENTIALS_ID }}

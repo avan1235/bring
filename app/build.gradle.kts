@@ -1,5 +1,5 @@
-import buildsrc.convention.Env_gradle.Env.BringPackageName
-import buildsrc.convention.Env_gradle.Env.BringVersion
+import buildsrc.convention.Env_gradle.Env.SavvryPackageName
+import buildsrc.convention.Env_gradle.Env.SavvryVersion
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -153,15 +153,15 @@ kotlin {
 }
 
 android {
-    namespace = "in.procyk.bring"
+    namespace = "in.procyk.savvry"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "in.procyk.bring"
+        applicationId = "in.procyk.savvry"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = libsVersionCode
-        versionName = BringVersion
+        versionName = SavvryVersion
     }
     testOptions {
         unitTests {
@@ -205,18 +205,18 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "in.procyk.bring.MainKt"
+        mainClass = "in.procyk.savvry.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = BringPackageName
-            packageVersion = BringVersion
+            packageName = SavvryPackageName
+            packageVersion = SavvryVersion
         }
     }
 }
 
 buildkonfig {
-    packageName = BringPackageName
+    packageName = SavvryPackageName
     objectName = "AppConfig"
 
     defaultConfigs {
@@ -226,7 +226,7 @@ buildkonfig {
         buildConfigField(Type.STRING, "CLIENT_WS_PROTOCOL", env.CLIENT_WS_PROTOCOL.value)
         buildConfigField(Type.STRING, "VERSION", version.toString())
         buildConfigField(Type.STRING, "PACKAGE", packageName)
-        buildConfigField(Type.STRING, "APP_NAME", "Bring!")
+        buildConfigField(Type.STRING, "APP_NAME", "Savvry")
         buildConfigField(Type.STRING, "AUTHOR", "Macie.j Procyk")
     }
 }

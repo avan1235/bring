@@ -1,4 +1,4 @@
-rootProject.name = "Bring"
+rootProject.name = "Savvry"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

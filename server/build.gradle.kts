@@ -1,5 +1,5 @@
-import buildsrc.convention.Env_gradle.Env.BringPackageName
-import buildsrc.convention.Env_gradle.Env.BringVersion
+import buildsrc.convention.Env_gradle.Env.SavvryPackageName
+import buildsrc.convention.Env_gradle.Env.SavvryVersion
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem as currentOS
 
 plugins {
@@ -13,11 +13,11 @@ plugins {
     id("buildsrc.convention.env")
 }
 
-group = BringPackageName
-version = BringVersion
+group = SavvryPackageName
+version = SavvryVersion
 
 application {
-    mainClass = "in.procyk.bring.ApplicationKt"
+    mainClass = "in.procyk.savvry.ApplicationKt"
 }
 
 dependencies {
@@ -77,7 +77,7 @@ kotlin {
 }
 
 buildConfig {
-    buildConfigField("VERSION", BringVersion)
+    buildConfigField("VERSION", SavvryVersion)
 }
 
 graalvmNative {

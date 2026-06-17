@@ -1,5 +1,5 @@
 services:
-  bring-dev-postgres:
+  savvry-dev-postgres:
     image: postgres:alpine3.14
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
@@ -16,14 +16,14 @@ services:
       timeout: 5s
       retries: 5
 
-  bring-dev-server:
+  savvry-dev-server:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - VERSION=${VERSION}
     environment:
-      - POSTGRES_HOST=bring-dev-postgres
+      - POSTGRES_HOST=savvry-dev-postgres
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_SSL_MODE=${POSTGRES_SSL_MODE}
@@ -39,7 +39,7 @@ services:
     networks:
       - backend
     depends_on:
-      bring-dev-postgres:
+      savvry-dev-postgres:
         condition: service_healthy
     restart: always
 

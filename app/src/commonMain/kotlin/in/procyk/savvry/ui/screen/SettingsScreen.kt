@@ -1,0 +1,323 @@
+package `in`.procyk.savvry.ui.screen
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.OpenInNew
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.input.KeyboardType.Companion.Password
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
+import savvry.app.generated.resources.*
+import `in`.procyk.savvry.LocalUseHaptics
+import `in`.procyk.savvry.onClickWithHaptics
+import `in`.procyk.savvry.onToggleWithHaptics
+import `in`.procyk.savvry.ui.SavvryAppTheme
+import `in`.procyk.savvry.ui.Theme
+import `in`.procyk.savvry.ui.components.*
+import `in`.procyk.savvry.ui.components.card.OutlinedCard
+import `in`.procyk.savvry.ui.components.liquid.LiquidBottomTabsSpacer
+import `in`.procyk.savvry.ui.components.textfield.OutlinedTextField
+import `in`.procyk.savvry.ui.icons.SavvryIcons
+import `in`.procyk.savvry.ui.icons.GitHub
+import `in`.procyk.savvry.ui.icons.Html
+import `in`.procyk.savvry.ui.icons.LinkedIn
+import `in`.procyk.savvry.vm.SettingsViewModel
+import kotlinx.coroutines.flow.StateFlow
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+
+@Composable
+internal fun SettingsScreen(
+    padding: PaddingValues,
+    vm: SettingsViewModel,
+) = AppScreen("screen-settings", padding) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.Top,
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        SettingsCategoryName(Res.string.gemini)
+        SettingSwitchRow(Res.string.use_gemini_lists, vm.useGeminiLists, vm::onUseGeminiListsChanged)
+        SettingSwitchRow(Res.string.use_gemini_recipes, vm.useGeminiRecipes, vm::onUseGeminiRecipesChanged)
+        AnimatedVisibility(vm.useGeminiLists.value || vm.useGeminiRecipes.value) {
+            SettingStringRow(
+                Res.string.gemini_key,
+                vm.geminiKey,
+                vm::onGeminiKeyChanged,
+                reference = "https://aistudio.google.com/app/apikey",
+                isSecure = true,
+            )
+        }
+        SettingsCategoryName(Res.string.shopping_lists)
+        SettingSwitchRow(Res.string.enable_edit_mode, vm.enableShoppingListEditMode, vm::onShoppingListEditModeChanged)
+        SettingSwitchRow(Res.string.show_unchecked_first, vm.showUncheckedFirst, vm::onShowUncheckedFirstChanged)
+        SettingSwitchRow(Res.string.show_favorite_elements, vm.showFavoriteElements, vm::onShowFavoriteElementsChanged)
+        SettingSwitchRow(Res.string.show_suggestions, vm.showSuggestions, vm::onShowSuggestionsChanged)
+        SettingNumberRow(
+            Res.string.store_recent_shopping_lists,
+            vm.recentShoppingListsCount,
+            vm::onRecentShoppingListsCountChanged,
+        )
+        SettingsCategoryName(Res.string.cooking_recipes)
+        SettingSwitchRow(Res.string.enable_edit_mode, vm.enableRecipesEditMode, vm::onRecipesEditModeChanged)
+        SettingSwitchRow(Res.string.show_color_labels, vm.showRecipesLabels, vm::onShowRecipesLabelsChanged)
+        SettingSwitchRow(Res.string.use_cached_data, vm.useRecipesCache, vm::onUseRecipesCacheChanged)
+        SettingsCategoryName(Res.string.loyalty_cards)
+        SettingSwitchRow(Res.string.enable_edit_mode, vm.enableCardsEditMode, vm::onCardsEditModeChanged)
+        SettingSwitchRow(Res.string.show_color_labels, vm.showCardsLabels, vm::onShowCardsLabelsChanged)
+        SettingSwitchRow(Res.string.use_cached_data, vm.useCardsCache, vm::onUseCardsCacheChanged)
+        SettingsCategoryName(Res.string.theme)
+        SettingSelectionRow(
+            Res.string.dark_mode, vm.theme, vm::onThemeChanged, Theme.entries,
+            optionLabel = {
+                when (it) {
+                    Theme.System -> Res.string.system_theme
+                    Theme.Light -> Res.string.light_theme
+                    Theme.Dark -> Res.string.dark_theme
+                }
+            },
+        )
+        SettingColorPickerRow(Res.string.theme_color, vm.themeColor, vm::onThemeColorChanged)
+        SettingsCategoryName(Res.string.miscellaneous)
+        SettingSwitchRow(Res.string.use_haptics, vm.useHaptics, vm::onUseHapticsChanged)
+        SettingSwitchRow(Res.string.use_bottom_navigation, vm.useBottomNavigation, vm::onUseBottomNavigationChanged)
+        AnimatedVisibility(vm.useBottomNavigation.value) {
+            SettingSwitchRow(
+                Res.string.use_liquid_navigation,
+                vm.useLiquidGlassNavigation,
+                vm::onUseLiquidGlassNavigation,
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(16.dp))
+        BottomBanner(
+            title = Res.string.find_me_on,
+            BottomBannerItem("https://github.com/avan1235/", SavvryIcons.GitHub),
+            BottomBannerItem("https://www.linkedin.com/in/maciej-procyk/", SavvryIcons.LinkedIn),
+            BottomBannerItem("https://procyk.in", SavvryIcons.Html),
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        LiquidBottomTabsSpacer(vm)
+    }
+}
+
+@Composable
+private inline fun <T : Any> SettingSelectionRow(
+    label: StringResource,
+    selected: StateFlow<T>,
+    crossinline onSelectedChange: (T) -> Unit,
+    entries: List<T>,
+    crossinline optionLabel: (T) -> StringResource,
+) {
+    OutlinedCard(
+        modifier = Modifier.padding(16.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+        ) {
+            Text(
+                text = stringResource(label), style = SavvryAppTheme.typography.h4,
+            )
+        }
+
+        HorizontalDivider()
+
+        val selectedOption by selected.collectAsState()
+        Column(
+            modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth(),
+        ) {
+            entries.forEach { option ->
+                Row(
+                    modifier = Modifier.padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    RadioButton(
+                        selected = selectedOption == option,
+                        onClick = LocalUseHaptics.onClickWithHaptics(
+                            onClick = {
+                                onSelectedChange(option)
+                            },
+                        ),
+                        content = {
+                            Text(
+                                text = stringResource(optionLabel(option)),
+                                modifier = Modifier.padding(start = 8.dp),
+                            )
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SettingsCategoryName(
+    label: StringResource,
+) {
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            text = stringResource(label),
+            style = SavvryAppTheme.typography.h4,
+        )
+        HorizontalDivider(color = DividerDefaults.color.copy(alpha = 0.2f))
+    }
+}
+
+@Composable
+private inline fun SettingSwitchRow(
+    label: StringResource,
+    isChecked: StateFlow<Boolean>,
+    crossinline onCheckedChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val interactionSource = remember { MutableInteractionSource() }
+        val onClick = LocalUseHaptics.onToggleWithHaptics(onCheckedChange)
+        val isChecked by isChecked.collectAsState()
+        Text(
+            text = stringResource(label),
+            modifier = Modifier.clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = { onClick(!isChecked) },
+            ).weight(1f),
+        )
+        Switch(
+            checked = isChecked,
+            onCheckedChange = {
+                onCheckedChange(it)
+            },
+        )
+    }
+}
+
+@Composable
+private inline fun SettingNumberRow(
+    label: StringResource,
+    value: StateFlow<Int>,
+    crossinline onValueChange: (Int) -> Unit,
+) {
+    val value by value.collectAsState()
+    NumberRow(value, onValueChange, modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth()) {
+        Text(
+            text = stringResource(label),
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+@Composable
+private inline fun SettingStringRow(
+    label: StringResource,
+    value: StateFlow<String>,
+    crossinline onValueChange: (String) -> Unit,
+    reference: String? = null,
+    isSecure: Boolean = false,
+) {
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        val value by value.collectAsState()
+        var show by remember { mutableStateOf(false) }
+        OutlinedTextField(
+            value = value,
+            onValueChange = { onValueChange(it) },
+            singleLine = true,
+            placeholder = { Text(stringResource(label)) },
+            modifier = Modifier.weight(1f),
+            keyboardOptions = when {
+                isSecure -> KeyboardOptions(autoCorrectEnabled = false, keyboardType = Password)
+                else -> KeyboardOptions.Default
+            },
+            visualTransformation = when {
+                isSecure && !show -> PasswordVisualTransformation()
+                else -> VisualTransformation.None
+            },
+            trailingIcon = when {
+                isSecure -> {
+                    @Composable {
+                        IconButton(
+                            onClick = { show = !show },
+                            variant = IconButtonVariant.Ghost,
+                        ) {
+                            Icon(if (show) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff)
+                        }
+                    }
+                }
+
+                else -> null
+            },
+        )
+        reference?.let {
+            val uriHandler = LocalUriHandler.current
+            IconButton(
+                onClick = { uriHandler.openUri(reference) },
+                variant = IconButtonVariant.PrimaryGhost,
+            ) {
+                Icon(Icons.AutoMirrored.Outlined.OpenInNew)
+            }
+        }
+    }
+}
+
+@Composable
+private inline fun SettingColorPickerRow(
+    label: StringResource,
+    selectedColor: StateFlow<Color>,
+    crossinline onColorChanged: (Color) -> Unit,
+) {
+    val selectedColor by selectedColor.collectAsState()
+    val previousColor = remember { mutableStateOf<Color?>(null) }
+
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val interactionSource = remember { MutableInteractionSource() }
+        Text(
+            text = stringResource(label),
+            modifier = Modifier.clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = { previousColor.value = selectedColor },
+            )
+                .weight(1f),
+        )
+        IconButton(
+            variant = IconButtonVariant.PrimaryGhost,
+            onClick = { previousColor.value = selectedColor },
+            interactionSource = interactionSource,
+        ) {
+            Icon(Icons.Filled.Palette)
+        }
+    }
+
+    SelectColorDialog(selectedColor, previousColor, showBrightnessSlider = false) { onColorChanged(it) }
+}
+

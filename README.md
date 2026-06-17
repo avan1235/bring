@@ -1,17 +1,17 @@
-# 🛒 Bring! - A Multiplatform Shopping List App
+# 🛒 Savvry - A Multiplatform Shopping List App
 
-[![Platforms](https://img.shields.io/badge/web-WebAssembly-blue)](https://bring.procyk.in)
-[![Platforms](https://img.shields.io/badge/mobile-Android%20%7C%20iOS-blue)](https://github.com/avan1235/bring/releases/latest)
-[![Platforms](https://img.shields.io/badge/desktop-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/avan1235/bring/releases/latest)
+[![Platforms](https://img.shields.io/badge/web-WebAssembly-blue)](https://savvry.procyk.in)
+[![Platforms](https://img.shields.io/badge/mobile-Android%20%7C%20iOS-blue)](https://github.com/avan1235/savvry/releases/latest)
+[![Platforms](https://img.shields.io/badge/desktop-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/avan1235/savvry/releases/latest)
 
-[![Build](https://img.shields.io/github/actions/workflow/status/avan1235/bring/client.yml?label=Build&color=green)](https://github.com/avan1235/bring/actions/workflows/client.yml)
-[![Latest Release](https://img.shields.io/github/v/release/avan1235/bring?label=Release&color=green)](https://github.com/avan1235/bring/releases/latest)
-[![Google Play](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Din.procyk.bring%26l%3DGoogle%2520Play%26m%3D%24version)](https://play.google.com/store/apps/details?id=in.procyk.bring)
-[![Docker](https://img.shields.io/docker/v/avan1235/bring?label=Docker%20Hub&color=green)](https://hub.docker.com/repository/docker/avan1235/bring/tags?ordering=last_updated)
+[![Build](https://img.shields.io/github/actions/workflow/status/avan1235/savvry/client.yml?label=Build&color=green)](https://github.com/avan1235/savvry/actions/workflows/client.yml)
+[![Latest Release](https://img.shields.io/github/v/release/avan1235/savvry?label=Release&color=green)](https://github.com/avan1235/savvry/releases/latest)
+[![Google Play](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Din.procyk.savvry%26l%3DGoogle%2520Play%26m%3D%24version)](https://play.google.com/store/apps/details?id=in.procyk.savvry)
+[![Docker](https://img.shields.io/docker/v/avan1235/savvry?label=Docker%20Hub&color=green)](https://hub.docker.com/repository/docker/avan1235/savvry/tags?ordering=last_updated)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](./LICENSE.md)
-[![GitHub Repo stars](https://img.shields.io/github/stars/avan1235/bring?style=social)](https://github.com/avan1235/bring/stargazers)
-[![Fork Mini Games](https://img.shields.io/github/forks/avan1235/bring?logo=github&style=social)](https://github.com/avan1235/bring/fork)
+[![GitHub Repo stars](https://img.shields.io/github/stars/avan1235/savvry?style=social)](https://github.com/avan1235/savvry/stargazers)
+[![Fork Mini Games](https://img.shields.io/github/forks/avan1235/savvry?logo=github&style=social)](https://github.com/avan1235/savvry/fork)
 
 ## 📱 Overview
 
@@ -19,9 +19,9 @@
   <img src="app/src/androidMain/res/mipmap-xxxhdpi/ic_launcher.webp" style="width: 32%;">
 </div>
 
-Bring! is a modern, feature-rich shopping list application built with Kotlin Multiplatform (KMP) and Compose Multiplatform (CMP). It allows users to create, manage, and share shopping lists across multiple platforms with a seamless, native-like experience.
+Savvry is a modern, feature-rich shopping list application built with Kotlin Multiplatform (KMP) and Compose Multiplatform (CMP). It allows users to create, manage, and share shopping lists across multiple platforms with a seamless, native-like experience.
 
-Web version is publicly available at https://bring.procyk.in.
+Web version is publicly available at https://savvry.procyk.in.
 
 If you like the project, consider supporting it by leaving ⭐.
 
@@ -76,7 +76,7 @@ If you like the project, consider supporting it by leaving ⭐.
 ## 💻 Supported Platforms
 
 The client application supports:
-- 📱 Android <a href="https://play.google.com/store/apps/details?id=in.procyk.bring"><img alt="Get it on Google Play" height="32" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"/></a>
+- 📱 Android <a href="https://play.google.com/store/apps/details?id=in.procyk.savvry"><img alt="Get it on Google Play" height="32" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"/></a>
 - 🍎 iOS (requires macOS for building)
 - 🖥️ Desktop (Windows, macOS, Linux via JVM)
 - 🌐 Web (via WebAssembly and JavaScript)
@@ -84,7 +84,7 @@ The client application supports:
 ## 🏗️ Project Structure
 
 ```
-bring
+savvry
 ├─ app           # Client application code
 │  └─ src
 │     ├─ androidMain    # Android-specific code

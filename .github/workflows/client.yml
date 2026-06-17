@@ -87,7 +87,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./app/build/dist/wasmJs/productionExecutable
           force_orphan: true
-          cname: bring.procyk.in
+          cname: savvry.procyk.in
 
   build-android:
     name: Build android release
@@ -114,7 +114,7 @@ jobs:
         id: decode_keystore
         uses: timheuer/base64-to-file@v1.2
         with:
-          fileName: 'bring.jks'
+          fileName: 'savvry.jks'
           encodedString: ${{ secrets.KEYSTORE }}
 
       - name: Build APK file
@@ -139,19 +139,19 @@ jobs:
       - name: Upload debug artifact file to workflow run results
         uses: actions/upload-artifact@v4
         with:
-          name: Bring-Debug-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
+          name: Savvry-Debug-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
           path: app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload release artifact file to workflow run results
         uses: actions/upload-artifact@v4
         with:
-          name: Bring-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
+          name: Savvry-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
           path: app/build/outputs/apk/release/app-release.apk
 
       - name: Upload release bundle file to workflow run results
         uses: actions/upload-artifact@v4
         with:
-          name: Bring-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.aab
+          name: Savvry-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.aab
           path: app/build/outputs/bundle/release/app-release.aab
 
       - name: Upload debug artifact file to release
@@ -161,7 +161,7 @@ jobs:
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: ./app/build/outputs/apk/debug/app-debug.apk
-          asset_name: Bring-Debug-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
+          asset_name: Savvry-Debug-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
           asset_content_type: application/vnd.android.package-archive
 
       - name: Upload release artifact file to release
@@ -171,7 +171,7 @@ jobs:
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: ./app/build/outputs/apk/release/app-release.apk
-          asset_name: Bring-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
+          asset_name: Savvry-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
           asset_content_type: application/vnd.android.package-archive
 
       - name: Upload release bundle file to release
@@ -181,7 +181,7 @@ jobs:
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: ./app/build/outputs/bundle/release/app-release.aab
-          asset_name: Bring-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.aab
+          asset_name: Savvry-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.aab
           asset_content_type: application/x-authorware-bin
 
       - name: Upload release bundle file to Google Play
@@ -189,7 +189,7 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-          packageName: in.procyk.bring
+          packageName: in.procyk.savvry
           releaseFiles: ./app/build/outputs/bundle/release/app-release.aab
           track: production
           releaseName: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}

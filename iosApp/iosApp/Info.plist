@@ -51,7 +51,7 @@
         <dict>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>bring</string>
+                <string>savvry</string>
             </array>
             <key>CFBundleURLName</key>
             <string>Shopping List URL</string>

@@ -4,8 +4,8 @@ all:
 	@# do nothing by default
 
 db:
-	docker compose --file docker-compose.yml --env-file .env build bring-dev-postgres
-	docker compose --file docker-compose.yml --env-file .env up bring-dev-postgres
+	docker compose --file docker-compose.yml --env-file .env build savvry-dev-postgres
+	docker compose --file docker-compose.yml --env-file .env up savvry-dev-postgres
 
 server:
 	docker compose --file docker-compose.yml --env-file .env build

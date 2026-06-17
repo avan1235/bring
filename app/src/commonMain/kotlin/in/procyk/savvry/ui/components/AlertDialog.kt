@@ -1,0 +1,453 @@
+package `in`.procyk.savvry.ui.components
+
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import savvry.app.generated.resources.Res
+import savvry.app.generated.resources.cancel
+import savvry.app.generated.resources.ok
+import `in`.procyk.savvry.runIf
+import `in`.procyk.savvry.ui.SavvryAppTheme
+import `in`.procyk.savvry.ui.LocalContentColor
+import `in`.procyk.savvry.ui.components.AlertDialogDefaults.ButtonsCrossAxisSpacing
+import `in`.procyk.savvry.ui.components.AlertDialogDefaults.ButtonsMainAxisSpacing
+import `in`.procyk.savvry.ui.components.AlertDialogDefaults.DialogElevation
+import `in`.procyk.savvry.ui.components.AlertDialogDefaults.DialogMaxWidth
+import `in`.procyk.savvry.ui.components.AlertDialogDefaults.DialogMinWidth
+import `in`.procyk.savvry.ui.components.AlertDialogDefaults.DialogPadding
+import `in`.procyk.savvry.ui.components.AlertDialogDefaults.DialogShape
+import `in`.procyk.savvry.ui.components.AlertDialogDefaults.IconPadding
+import `in`.procyk.savvry.ui.components.AlertDialogDefaults.TextPadding
+import `in`.procyk.savvry.ui.components.AlertDialogDefaults.TitlePadding
+import `in`.procyk.savvry.ui.foundation.ProvideContentColorTextStyle
+import org.jetbrains.compose.resources.stringResource
+import kotlin.math.max
+
+@Composable
+internal fun AlertDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmClick: () -> Unit,
+    title: String,
+    text: String,
+    confirmButtonText: String = stringResource(Res.string.ok),
+    dismissButtonText: String? = stringResource(Res.string.cancel),
+    icon: (@Composable () -> Unit)? = null,
+    shape: Shape = DialogShape,
+    containerColor: Color = SavvryAppTheme.colors.surface,
+    iconContentColor: Color = SavvryAppTheme.colors.primary,
+    titleContentColor: Color = SavvryAppTheme.colors.primary,
+    textContentColor: Color = SavvryAppTheme.colors.primary,
+    elevation: Dp = DialogElevation,
+    properties: DialogProperties = DialogProperties(),
+    content: @Composable (() -> Unit)? = null,
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        onConfirmClick = onConfirmClick,
+        title = title,
+        text = { Text(text = text) },
+        confirmButtonText = confirmButtonText,
+        dismissButtonText = dismissButtonText,
+        icon = icon,
+        shape = shape,
+        containerColor = containerColor,
+        iconContentColor = iconContentColor,
+        titleContentColor = titleContentColor,
+        textContentColor = textContentColor,
+        elevation = elevation,
+        properties = properties,
+        content = content,
+    )
+}
+
+@Composable
+internal fun AlertDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmClick: () -> Unit,
+    title: String,
+    text: @Composable (() -> Unit)?,
+    confirmButtonText: String = stringResource(Res.string.ok),
+    dismissButtonText: String? = stringResource(Res.string.cancel),
+    icon: (@Composable () -> Unit)? = null,
+    shape: Shape = DialogShape,
+    containerColor: Color = SavvryAppTheme.colors.surface,
+    iconContentColor: Color = SavvryAppTheme.colors.primary,
+    titleContentColor: Color = SavvryAppTheme.colors.primary,
+    textContentColor: Color = SavvryAppTheme.colors.primary,
+    elevation: Dp = DialogElevation,
+    properties: DialogProperties = DialogProperties(),
+    content: @Composable (() -> Unit)? = null,
+) {
+    AlertDialogComponent(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            Button(variant = ButtonVariant.PrimaryOutlined, text = confirmButtonText, onClick = onConfirmClick)
+        },
+        modifier = Modifier,
+        dismissButton =
+            if (dismissButtonText != null) {
+                {
+                    Button(variant = ButtonVariant.Ghost, text = dismissButtonText, onClick = onDismissRequest)
+                }
+            } else {
+                null
+            },
+        icon = icon,
+        title = { Text(text = title) },
+        text = text,
+        shape = shape,
+        containerColor = containerColor,
+        iconContentColor = iconContentColor,
+        titleContentColor = titleContentColor,
+        textContentColor = textContentColor,
+        elevation = elevation,
+        properties = properties,
+        content = content,
+    )
+}
+
+private enum class DialogPosition(val targetValue: Float) {
+    Start(-1f), Center(0f), End(1f);
+
+    fun change(change: Float): DialogPosition = when {
+        change > 0f -> when (this) {
+            Start -> Center
+            Center -> End
+            End -> End
+        }
+
+        change < 0f -> when (this) {
+            Start -> Start
+            Center -> Start
+            End -> Center
+        }
+
+        else -> this
+    }
+}
+
+@Composable
+internal fun BasicAlertDialog(
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    enableDragGesture: Boolean = false,
+    properties: DialogProperties = DialogProperties(),
+    content: @Composable () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = properties,
+    ) {
+        val dialogPaneDescription = "dialog"
+        var targetY by remember { mutableStateOf(DialogPosition.Center) }
+        val biasY by animateFloatAsState(
+            targetValue = targetY.targetValue,
+            label = "alignmentY"
+        )
+        val alignment = BiasAlignment(horizontalBias = 0f, verticalBias = biasY)
+        var dragSum by remember { mutableStateOf(Offset.Zero) }
+
+        Box(
+            modifier = Modifier
+                .runIf(enableDragGesture) {
+                    pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragStart = {
+                                dragSum = Offset.Zero
+                            },
+                            onDrag = { change, dragAmount ->
+                                change.consume()
+                                dragSum += dragAmount
+                            },
+                            onDragEnd = {
+                                targetY = targetY.change(dragSum.y)
+                            }
+                        )
+                    }
+                }
+                .fillMaxSize(),
+            contentAlignment = alignment,
+        ) {
+            Box(
+                modifier =
+                    modifier
+                        .padding(WindowInsets.statusBars.asPaddingValues())
+                        .sizeIn(minWidth = DialogMinWidth, maxWidth = DialogMaxWidth)
+                        .wrapContentHeight()
+                        .then(Modifier.semantics { paneTitle = dialogPaneDescription }),
+                propagateMinConstraints = true,
+            ) {
+                content()
+            }
+        }
+    }
+}
+
+@Composable
+internal fun AlertDialogComponent(
+    onDismissRequest: () -> Unit,
+    confirmButton: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    dismissButton: @Composable (() -> Unit)?,
+    icon: @Composable (() -> Unit)? = null,
+    title: @Composable (() -> Unit)?,
+    text: @Composable (() -> Unit)?,
+    shape: Shape = DialogShape,
+    containerColor: Color = SavvryAppTheme.colors.surface,
+    iconContentColor: Color = SavvryAppTheme.colors.primary,
+    titleContentColor: Color = SavvryAppTheme.colors.primary,
+    textContentColor: Color = SavvryAppTheme.colors.primary,
+    elevation: Dp = DialogElevation,
+    enableDragGesture: Boolean = false,
+    properties: DialogProperties = DialogProperties(),
+    content: @Composable (() -> Unit)? = null,
+) {
+    BasicAlertDialog(
+        onDismissRequest = onDismissRequest,
+        enableDragGesture = enableDragGesture,
+        properties = properties,
+    ) {
+        val dialogPaneDescription = "Dialog"
+
+        Box(
+            modifier =
+                modifier
+                    .sizeIn(minWidth = DialogMinWidth, maxWidth = DialogMaxWidth)
+                    .then(Modifier.semantics { paneTitle = dialogPaneDescription }),
+            propagateMinConstraints = true,
+        ) {
+            if (content != null) {
+                content()
+            } else {
+                AlertDialogContent(
+                    buttons = {
+                        AlertDialogFlowRow(
+                            mainAxisSpacing = ButtonsMainAxisSpacing,
+                            crossAxisSpacing = ButtonsCrossAxisSpacing,
+                        ) {
+                            dismissButton?.invoke()
+                            confirmButton()
+                        }
+                    },
+                    icon = icon,
+                    title = title,
+                    text = text,
+                    shape = shape,
+                    containerColor = containerColor,
+                    elevation = elevation,
+                    buttonContentColor = iconContentColor,
+                    iconContentColor = iconContentColor,
+                    titleContentColor = titleContentColor,
+                    textContentColor = textContentColor,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun AlertDialogContent(
+    buttons: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: (@Composable () -> Unit)?,
+    title: (@Composable () -> Unit)?,
+    text: @Composable (() -> Unit)?,
+    shape: Shape,
+    containerColor: Color,
+    elevation: Dp,
+    buttonContentColor: Color,
+    iconContentColor: Color,
+    titleContentColor: Color,
+    textContentColor: Color,
+) {
+    Surface(
+        modifier = modifier,
+        shape = shape,
+        color = containerColor,
+        shadowElevation = elevation,
+    ) {
+        Column(modifier = Modifier.padding(DialogPadding)) {
+            icon?.let {
+                CompositionLocalProvider(LocalContentColor provides iconContentColor) {
+                    Box(
+                        Modifier
+                            .padding(IconPadding)
+                            .align(Alignment.CenterHorizontally),
+                    ) {
+                        icon()
+                    }
+                }
+            }
+            title?.let {
+                ProvideContentColorTextStyle(
+                    contentColor = titleContentColor,
+                    textStyle = SavvryAppTheme.typography.h3,
+                ) {
+                    Box(
+                        Modifier
+                            .padding(TitlePadding)
+                            .align(
+                                if (icon == null) {
+                                    Alignment.Start
+                                } else {
+                                    Alignment.CenterHorizontally
+                                },
+                            ),
+                    ) {
+                        title()
+                    }
+                }
+            }
+            text?.let {
+                val textStyle = SavvryAppTheme.typography.body1
+                ProvideContentColorTextStyle(
+                    contentColor = textContentColor,
+                    textStyle = textStyle,
+                ) {
+                    Box(
+                        Modifier
+                            .weight(weight = 1f, fill = false)
+                            .padding(TextPadding)
+                            .align(Alignment.Start),
+                    ) {
+                        text()
+                    }
+                }
+            }
+            Box(modifier = Modifier.align(Alignment.End)) {
+                val textStyle = SavvryAppTheme.typography.body2
+                ProvideContentColorTextStyle(
+                    contentColor = buttonContentColor,
+                    textStyle = textStyle,
+                    content = buttons,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun AlertDialogFlowRow(
+    mainAxisSpacing: Dp,
+    crossAxisSpacing: Dp,
+    content: @Composable () -> Unit,
+) {
+    Layout(content) { measurables, constraints ->
+        val sequences = mutableListOf<List<Placeable>>()
+        val crossAxisSizes = mutableListOf<Int>()
+        val crossAxisPositions = mutableListOf<Int>()
+
+        var mainAxisSpace = 0
+        var crossAxisSpace = 0
+
+        val currentSequence = mutableListOf<Placeable>()
+        var currentMainAxisSize = 0
+        var currentCrossAxisSize = 0
+
+        // Return whether the placeable can be added to the current sequence.
+        fun canAddToCurrentSequence(placeable: Placeable) =
+            currentSequence.isEmpty() || currentMainAxisSize + mainAxisSpacing.roundToPx() + placeable.width <= constraints.maxWidth
+
+        // Store current sequence information and start a new sequence.
+        fun startNewSequence() {
+            if (sequences.isNotEmpty()) {
+                crossAxisSpace += crossAxisSpacing.roundToPx()
+            }
+            // Ensures that confirming actions appear above dismissive actions.
+            @Suppress("ListIterator")
+            sequences.add(0, currentSequence.toList())
+            crossAxisSizes += currentCrossAxisSize
+            crossAxisPositions += crossAxisSpace
+
+            crossAxisSpace += currentCrossAxisSize
+            mainAxisSpace = max(mainAxisSpace, currentMainAxisSize)
+
+            currentSequence.clear()
+            currentMainAxisSize = 0
+            currentCrossAxisSize = 0
+        }
+
+        measurables.fastForEach { measurable ->
+            // Ask the child for its preferred size.
+            val placeable = measurable.measure(constraints)
+
+            // Start a new sequence if there is not enough space.
+            if (!canAddToCurrentSequence(placeable)) startNewSequence()
+
+            // Add the child to the current sequence.
+            if (currentSequence.isNotEmpty()) {
+                currentMainAxisSize += mainAxisSpacing.roundToPx()
+            }
+            currentSequence.add(placeable)
+            currentMainAxisSize += placeable.width
+            currentCrossAxisSize = max(currentCrossAxisSize, placeable.height)
+        }
+
+        if (currentSequence.isNotEmpty()) startNewSequence()
+
+        val mainAxisLayoutSize = max(mainAxisSpace, constraints.minWidth)
+
+        val crossAxisLayoutSize = max(crossAxisSpace, constraints.minHeight)
+
+        val layoutWidth = mainAxisLayoutSize
+
+        val layoutHeight = crossAxisLayoutSize
+
+        layout(layoutWidth, layoutHeight) {
+            sequences.fastForEachIndexed { i, placeables ->
+                val childrenMainAxisSizes =
+                    IntArray(placeables.size) { j ->
+                        placeables[j].width + if (j < placeables.lastIndex) mainAxisSpacing.roundToPx() else 0
+                    }
+                val arrangement = Arrangement.End
+                val mainAxisPositions = IntArray(childrenMainAxisSizes.size)
+                with(arrangement) {
+                    arrange(
+                        mainAxisLayoutSize,
+                        childrenMainAxisSizes,
+                        layoutDirection,
+                        mainAxisPositions,
+                    )
+                }
+                placeables.fastForEachIndexed { j, placeable ->
+                    placeable.place(x = mainAxisPositions[j], y = crossAxisPositions[i])
+                }
+            }
+        }
+    }
+}
+
+internal object AlertDialogDefaults {
+    val DialogMinWidth = 280.dp
+    val DialogMaxWidth = 560.dp
+
+    val ButtonsMainAxisSpacing = 8.dp
+    val ButtonsCrossAxisSpacing = 12.dp
+
+    val DialogPadding = PaddingValues(all = 24.dp)
+    val IconPadding = PaddingValues(bottom = 16.dp)
+    val TitlePadding = PaddingValues(bottom = 16.dp)
+    val TextPadding = PaddingValues(bottom = 24.dp)
+
+    val DialogShape = RoundedCornerShape(16.dp)
+    val DialogElevation = 4.dp
+}

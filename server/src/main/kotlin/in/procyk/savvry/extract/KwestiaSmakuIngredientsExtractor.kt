@@ -1,0 +1,19 @@
+package `in`.procyk.savvry.extract
+
+import com.fleeksoft.ksoup.nodes.Document
+
+internal data object KwestiaSmakuIngredientsExtractor : KsoupIngredientsExtractor() {
+
+    override suspend fun supports(input: String): Boolean {
+        return input.startsWith("https://www.kwestiasmaku.com/")
+    }
+
+    override suspend fun extractIngredients(document: Document): List<Ingredient> {
+        return document.body()
+            .select("div[class=\"field field-name-field-skladniki field-type-text-long field-label-hidden\"]")
+            .firstOrNull()
+            ?.select("li")
+            ?.map { Ingredient(it.text()) }
+            .orEmpty()
+    }
+}

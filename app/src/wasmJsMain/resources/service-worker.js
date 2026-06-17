@@ -1,5 +1,5 @@
 const CACHE_VERSION = '{{OVERRIDE THIS IN DEPLOYMENT}}';
-const CACHE_NAME = `bring-app-cache-${CACHE_VERSION}`;
+const CACHE_NAME = `savvry-app-cache-${CACHE_VERSION}`;
 const CACHED_EXTENSIONS = ['.wasm', '.png', '.ttf', '.cvr', '.js', '.css'];
 
 self.addEventListener('install', event => {
@@ -11,7 +11,7 @@ self.addEventListener('activate', event => {
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
-                    if (cacheName.startsWith('bring-app-cache-') && cacheName !== CACHE_NAME) {
+                    if (cacheName.startsWith('savvry-app-cache-') && cacheName !== CACHE_NAME) {
                         return caches.delete(cacheName);
                     }
                 })

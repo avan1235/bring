@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2025 Bring by Maciej Procyk
+Copyright (c) 2025 Savvry by Maciej Procyk
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

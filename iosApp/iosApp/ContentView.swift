@@ -31,7 +31,7 @@ struct ContentView: View {
     }
 
     private func handleIncomingURL(_ url: URL) {
-        guard url.scheme == "bring" else {
+        guard url.scheme == "savvry" else {
             return
         }
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
