@@ -35,10 +35,12 @@ internal fun Application.plugins(
 
 private fun Application.installCors(dotenv: Dotenv) {
     val corsPort = dotenv.env<String>("CORS_PORT")
-    val corsHost = dotenv.env<String>("CORS_HOST")
+    val corsHosts = dotenv.env<String>("CORS_HOST").split(',')
     val corsScheme = dotenv.env<String>("CORS_SCHEME")
     install(CORS) {
-        allowHost("$corsHost:$corsPort", schemes = corsScheme.split(','))
+        corsHosts.forEach { corsHost ->
+            allowHost("$corsHost:$corsPort", schemes = corsScheme.split(','))
+        }
         allowMethod(HttpMethod.Post)
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.ContentLength)
