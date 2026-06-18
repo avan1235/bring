@@ -18,8 +18,8 @@ COPY settings.gradle.kts build.gradle.kts gradle.properties ./
 COPY gradle ./gradle
 COPY build-src ./build-src
 COPY server/build.gradle.kts ./server/
-COPY shared/build.gradle.kts ./shared/
-COPY shared-client/build.gradle.kts ./shared-client/
+COPY rpc-client/build.gradle.kts ./rpc-client/
+COPY core/build.gradle.kts ./core/
 COPY app/build.gradle.kts ./app/
 
 RUN --mount=type=cache,target=/home/gradle/.gradle \

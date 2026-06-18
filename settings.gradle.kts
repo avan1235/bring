@@ -35,5 +35,5 @@ plugins {
 
 include(":app")
 include(":server")
-include(":shared")
+include(":core")
 include(":shared-client")

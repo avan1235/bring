@@ -42,7 +42,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.shared)
+            implementation(projects.core)
 
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
