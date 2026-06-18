@@ -79,7 +79,7 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 android {
-    namespace = "$SavvryPackageName.sharedClient"
+    namespace = "$SavvryPackageName.rpcClient"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21

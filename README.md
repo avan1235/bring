@@ -99,7 +99,7 @@ savvry
 ├─ shared               # Shared code between client and server
 │  └─ src
 │     └─ commonMain     # Data models, API definitions
-└─ shared-client        # Client-specific shared code
+└─ rpc-client        # Client-specific shared code
    └─ src
       ├─ commonMain     # API clients, network communication
       └─ ...            # Platform-specific code

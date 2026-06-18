@@ -102,7 +102,7 @@ kotlin {
             implementation(libs.filekit.dialogs)
 
             implementation(projects.core)
-            implementation(projects.sharedClient)
+            implementation(projects.rpcClient)
 
             implementation(libs.kotlinx.rpc.core)
 

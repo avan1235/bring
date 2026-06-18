@@ -36,4 +36,4 @@ plugins {
 include(":app")
 include(":server")
 include(":core")
-include(":shared-client")
+include(":rpc-client")
