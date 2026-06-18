@@ -123,6 +123,7 @@ jobs:
           export GRADLE_USER_HOME=$(pwd)/.gradle
           export CLIENT_HOST=${{ secrets.CLIENT_HOST }}
           export CLIENT_PORT=${{ secrets.CLIENT_PORT }}
+          export APPLICATION_ID=${{ secrets.APPLICATION_ID }}
           export CLIENT_HTTP_PROTOCOL=https
           export CLIENT_WS_PROTOCOL=wss
           chmod +x ./gradlew
