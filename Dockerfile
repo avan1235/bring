@@ -20,7 +20,10 @@ COPY build-src ./build-src
 COPY server/build.gradle.kts ./server/
 COPY rpc-client/build.gradle.kts ./rpc-client/
 COPY core/build.gradle.kts ./core/
-COPY app/build.gradle.kts ./app/
+COPY app/shared/build.gradle.kts ./app/shared/
+COPY app/androidApp/build.gradle.kts ./app/androidApp/
+COPY app/desktopApp/build.gradle.kts ./app/desktopApp/
+COPY app/webApp/build.gradle.kts ./app/webApp/
 
 RUN --mount=type=cache,target=/home/gradle/.gradle \
     --mount=type=cache,target=/root/.gradle \

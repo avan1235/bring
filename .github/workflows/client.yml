@@ -68,14 +68,14 @@ jobs:
           export CLIENT_HTTP_PROTOCOL=https
           export CLIENT_WS_PROTOCOL=wss
           chmod +x ./gradlew
-          ./gradlew app:wasmJsBrowserDistribution
+          ./gradlew :app:webApp:wasmJsBrowserDistribution
         env:
           VERSION: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
 
       - name: Inject Cache Version into Service Worker
         if: job.status == 'success'
         run: |
-          SW_PATH="./app/build/dist/wasmJs/productionExecutable/service-worker.js"
+          SW_PATH="./app/webApp/build/dist/wasmJs/productionExecutable/service-worker.js"
           NEW_VERSION="v${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}"
           
           echo "Replacing placeholder with $NEW_VERSION in $SW_PATH"
@@ -85,7 +85,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./app/build/dist/wasmJs/productionExecutable
+          publish_dir: ./app/webApp/build/dist/wasmJs/productionExecutable
           force_orphan: true
           cname: savvry.procyk.in
 
@@ -126,9 +126,9 @@ jobs:
           export CLIENT_HTTP_PROTOCOL=https
           export CLIENT_WS_PROTOCOL=wss
           chmod +x ./gradlew
-          ./gradlew app:assembleDebug
+          ./gradlew :app:androidApp:assembleDebug
           export BUMP_FILE_VERSION_CODE=true
-          ./gradlew app:assembleRelease app:bundleRelease -Pandroid.injected.signing.store.file=$SIGNING_STORE_FILE -Pandroid.injected.signing.store.password=$SIGNING_STORE_PASSWORD -Pandroid.injected.signing.key.alias=$SIGNING_KEY_ALIAS -Pandroid.injected.signing.key.password=$SIGNING_KEY_PASSWORD
+          ./gradlew :app:androidApp:assembleRelease :app:androidApp:bundleRelease -Pandroid.injected.signing.store.file=$SIGNING_STORE_FILE -Pandroid.injected.signing.store.password=$SIGNING_STORE_PASSWORD -Pandroid.injected.signing.key.alias=$SIGNING_KEY_ALIAS -Pandroid.injected.signing.key.password=$SIGNING_KEY_PASSWORD
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
@@ -140,19 +140,19 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Savvry-Debug-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app/androidApp/build/outputs/apk/debug/androidApp-debug.apk
 
       - name: Upload release artifact file to workflow run results
         uses: actions/upload-artifact@v4
         with:
           name: Savvry-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
-          path: app/build/outputs/apk/release/app-release.apk
+          path: app/androidApp/build/outputs/apk/release/androidApp-release.apk
 
       - name: Upload release bundle file to workflow run results
         uses: actions/upload-artifact@v4
         with:
           name: Savvry-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.aab
-          path: app/build/outputs/bundle/release/app-release.aab
+          path: app/androidApp/build/outputs/bundle/release/androidApp-release.aab
 
       - name: Upload debug artifact file to release
         uses: actions/upload-release-asset@v1
@@ -160,7 +160,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./app/build/outputs/apk/debug/app-debug.apk
+          asset_path: ./app/androidApp/build/outputs/apk/debug/androidApp-debug.apk
           asset_name: Savvry-Debug-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
           asset_content_type: application/vnd.android.package-archive
 
@@ -170,7 +170,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./app/build/outputs/apk/release/app-release.apk
+          asset_path: ./app/androidApp/build/outputs/apk/release/androidApp-release.apk
           asset_name: Savvry-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
           asset_content_type: application/vnd.android.package-archive
 
@@ -180,7 +180,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./app/build/outputs/bundle/release/app-release.aab
+          asset_path: ./app/androidApp/build/outputs/bundle/release/androidApp-release.aab
           asset_name: Savvry-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.aab
           asset_content_type: application/x-authorware-bin
 
@@ -190,7 +190,7 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: in.procyk.savvry
-          releaseFiles: ./app/build/outputs/bundle/release/app-release.aab
+          releaseFiles: ./app/androidApp/build/outputs/bundle/release/androidApp-release.aab
           track: production
           releaseName: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
         env:

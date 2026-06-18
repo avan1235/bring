@@ -1,24 +1,17 @@
 import buildsrc.convention.Env_gradle.Env.SavvryPackageName
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem as currentOS
 
 plugins {
     id("buildsrc.convention.env")
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.kotlinxRpc)
     alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
-    androidTarget {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_11
-        }
-    }
-
     if (currentOS().isMacOsX) {
         iosArm64()
         iosSimulatorArm64()
@@ -36,8 +29,14 @@ kotlin {
         browser()
     }
 
-    js {
-        browser()
+    androidLibrary {
+        namespace = "$SavvryPackageName.core"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
     }
 
     sourceSets {
@@ -57,23 +56,5 @@ kotlin {
             implementation(libs.arrow.core)
             implementation(libs.arrow.core.serialization)
         }
-    }
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions {
-        jvmTarget = JvmTarget.JVM_21
-    }
-}
-
-android {
-    namespace = "$SavvryPackageName.shared"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
     }
 }

@@ -26,18 +26,18 @@ Web version is publicly available at https://savvry.procyk.in.
 If you like the project, consider supporting it by leaving ⭐.
 
 <div style="display: flex; justify-content: center; flex-wrap: nowrap;">
-  <img src="app/screenshots/create-list-screen-custom-name.png" style="width: 32%;" />
-  <img src="app/screenshots/create-list-screen-join-list.png" style="width: 32%;" />
-  <img src="app/screenshots/favorites-screen-collections.png" style="width: 32%;" />
+  <img src="app/shared/screenshots/create-list-screen-custom-name.png" style="width: 32%;" />
+  <img src="app/shared/screenshots/create-list-screen-join-list.png" style="width: 32%;" />
+  <img src="app/shared/screenshots/favorites-screen-collections.png" style="width: 32%;" />
 </div>
 <div style="display: flex; justify-content: center; flex-wrap: nowrap;">
-  <img src="app/screenshots/edit-list-screen-options.png" style="width: 32%;" />
-  <img src="app/screenshots/settings-screen-options.png" style="width: 32%;" />
+  <img src="app/shared/screenshots/edit-list-screen-options.png" style="width: 32%;" />
+  <img src="app/shared/screenshots/settings-screen-options.png" style="width: 32%;" />
 </div>
 <div style="display: flex; justify-content: center; flex-wrap: nowrap;">
-  <img src="app/screenshots/recipes-screen.png" style="width: 32%;" />
-  <img src="app/screenshots/loyalty-cards-screen.png" style="width: 32%;" />
-  <img src="app/screenshots/recipe-screen.png" style="width: 32%;" />
+  <img src="app/shared/screenshots/recipes-screen.png" style="width: 32%;" />
+  <img src="app/shared/screenshots/loyalty-cards-screen.png" style="width: 32%;" />
+  <img src="app/shared/screenshots/recipe-screen.png" style="width: 32%;" />
 </div>
 
 

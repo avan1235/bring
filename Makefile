@@ -18,13 +18,13 @@ server-local: .executable
 	./gradlew server:runShadow
 
 desktop: .executable
-	./gradlew app:runReleaseDistributable
+	./gradlew :app:desktopApp:runReleaseDistributable
 
 wasm: .executable
-	./gradlew app:wasmJsBrowserProductionRun
+	./gradlew :app:webApp:wasmJsBrowserProductionRun
 
 screenshots: .executable
-	./gradlew app:testDebugUnitTest
+	./gradlew :app:shared:testAndroidHostTest
 
 .clean-docker:
 	docker compose --file docker-compose.yml --env-file .env down

@@ -29,7 +29,7 @@ deploy_to_device() {
   echo "🔨 Building app with xcodebuild for device $DEVICE_ID..."
 
   CMD='xcodebuild \
-    -project iosApp/iosApp.xcodeproj \
+    -project app/iosApp/iosApp.xcodeproj \
     -scheme "Release iosApp" \
     -configuration "Release" \
     -destination "id='$DEVICE_ID'" \
