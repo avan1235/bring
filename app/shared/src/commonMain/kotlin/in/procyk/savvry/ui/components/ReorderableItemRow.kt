@@ -1,11 +1,8 @@
 package `in`.procyk.savvry.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DragHandle
@@ -44,14 +41,17 @@ internal fun LazyItemScope.ReorderableItemRow(
         Row(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.background(SavvryAppTheme.colors.surface).fillMaxWidth()
+            modifier = Modifier.background(SavvryAppTheme.colors.surface).fillMaxWidth(),
         ) {
-            if (enabled) IconButton(
-                modifier = Modifier.draggableHandle().compactButtonMinSize(),
-                variant = IconButtonVariant.Ghost,
-                contentPadding = CompactButtonPadding,
-            ) {
-                Icon(Icons.Rounded.DragHandle)
+            AnimatedVisibility(enabled) {
+                IconButton(
+                    modifier = Modifier.draggableHandle().compactButtonMinSize(),
+                    variant = IconButtonVariant.Ghost,
+                    contentPadding = CompactButtonPadding,
+                ) {
+                    Icon(Icons.Rounded.DragHandle)
+                }
+
             }
             content(isDragging)
         }
