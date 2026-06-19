@@ -73,4 +73,11 @@
     <string name="ingredients">Ingrédients</string>
     <string name="steps">Étapes</string>
     <string name="step_format">%1$d. %2$s</string>
+    <string name="error_creating_list">Erreur lors de la création de la liste de courses</string>
+    <string name="error_extracting_list">Erreur lors de l'extraction des articles non cochés</string>
+    <string name="error_updating_favorites">Erreur lors de la mise à jour des favoris</string>
+    <string name="error_internal">Une erreur interne s'est produite</string>
+    <string name="error_removing_item">Erreur lors de la suppression de l'élément</string>
+    <string name="error_creating_card">Erreur lors de la création de la carte de fidélité</string>
+    <string name="error_removing_recipe">Erreur lors de la suppression de la recette</string>
 </resources>

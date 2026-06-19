@@ -73,4 +73,11 @@
     <string name="ingredients">材料</string>
     <string name="steps">手順</string>
     <string name="step_format">%1$d. %2$s</string>
+    <string name="error_creating_list">ショッピングリストの作成中にエラーが発生しました</string>
+    <string name="error_extracting_list">未チェック項目の抽出中にエラーが発生しました</string>
+    <string name="error_updating_favorites">お気に入りの更新中にエラーが発生しました</string>
+    <string name="error_internal">内部エラーが発生しました</string>
+    <string name="error_removing_item">項目の削除中にエラーが発生しました</string>
+    <string name="error_creating_card">ポイントカードの作成中にエラーが発生しました</string>
+    <string name="error_removing_recipe">レシピの削除中にエラーが発生しました</string>
 </resources>

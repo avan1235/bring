@@ -73,4 +73,11 @@
     <string name="ingredients">Ingredienti</string>
     <string name="steps">Passaggi</string>
     <string name="step_format">%1$d. %2$s</string>
+    <string name="error_creating_list">Errore durante la creazione della lista della spesa</string>
+    <string name="error_extracting_list">Errore durante l'estrazione degli articoli non selezionati</string>
+    <string name="error_updating_favorites">Errore durante l'aggiornamento dei preferiti</string>
+    <string name="error_internal">Si è verificato un errore interno</string>
+    <string name="error_removing_item">Errore durante la rimozione dell'elemento</string>
+    <string name="error_creating_card">Errore durante la creazione della carta fedeltà</string>
+    <string name="error_removing_recipe">Errore durante la rimozione della ricetta</string>
 </resources>

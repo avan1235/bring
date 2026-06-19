@@ -11,6 +11,7 @@ import ai.koog.prompt.structure.StructuredRequest.Manual
 import ai.koog.prompt.structure.StructuredRequestConfig
 import androidx.lifecycle.viewModelScope
 import savvry.app.generated.resources.Res
+import savvry.app.generated.resources.error_extracting_list
 import savvry.app.generated.resources.error_fetching_favorite_elements
 import savvry.app.generated.resources.error_fetching_suggestions
 import savvry.app.generated.resources.list_not_found
@@ -253,7 +254,7 @@ internal class EditListScreenViewModel(
                 ifLeft = {
                     context.navigateEditList(it, fetchSuggestions = false)
                 },
-                ifRight = { /* TODO: handle errors */ },
+                ifRight = { context.showSnackbar(Res.string.error_extracting_list) },
             )
         }
     }

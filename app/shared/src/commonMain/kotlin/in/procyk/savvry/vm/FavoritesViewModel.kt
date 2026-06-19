@@ -2,6 +2,8 @@ package `in`.procyk.savvry.vm
 
 import androidx.lifecycle.viewModelScope
 import arrow.core.Either
+import savvry.app.generated.resources.Res
+import savvry.app.generated.resources.error_updating_favorites
 import `in`.procyk.savvry.FavoriteElement
 import `in`.procyk.savvry.FavoriteElementRpcPath
 import `in`.procyk.savvry.FavoriteShoppingList
@@ -82,7 +84,7 @@ internal class FavoritesViewModel(context: Context) : AbstractViewModel(context)
     private fun <E> Either<UserFavoriteElementsData, E>.updateFavoriteElements() {
         fold(
             ifLeft = { _favoriteElements.value = it.elements },
-            ifRight = { /* TODO: handle errors */ },
+            ifRight = { context.showSnackbar(Res.string.error_updating_favorites) },
         )
     }
 }

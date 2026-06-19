@@ -12,8 +12,7 @@ import `in`.procyk.savvry.SavvryStore
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
-import savvry.app.generated.resources.Res
-import savvry.app.generated.resources.loading_importing
+import savvry.app.generated.resources.*
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.uuid.Uuid
@@ -119,7 +118,8 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
                                 ifLeft = { it },
                                 ifRight = { err ->
                                     when (err) {
-                                        FetchError.Internal -> { /* TODO: handle errors */
+                                        FetchError.Internal -> {
+                                            context.showSnackbar(Res.string.error_internal)
                                         }
 
                                         FetchError.UnknownId -> launchUpdateConfig { st ->
@@ -176,7 +176,7 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
     fun removeItem(item: TItem) {
         launchUpdateConfig { it.withStoredItems(it.storedItems().filter { stored -> stored.id != item.id }) }
         viewModelScope.launch {
-            removeRemote(item).onRight { /* TODO: handle errors */ }
+            removeRemote(item).onRight { context.showSnackbar(Res.string.error_removing_item) }
         }
     }
 

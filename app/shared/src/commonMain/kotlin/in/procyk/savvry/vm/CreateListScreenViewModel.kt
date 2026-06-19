@@ -2,6 +2,7 @@ package `in`.procyk.savvry.vm
 
 import androidx.lifecycle.viewModelScope
 import savvry.app.generated.resources.Res
+import savvry.app.generated.resources.error_creating_list
 import savvry.app.generated.resources.list_not_found
 import `in`.procyk.savvry.ListIdRegex
 import `in`.procyk.savvry.ShoppingListRpcPath
@@ -52,7 +53,7 @@ internal class CreateListScreenViewModel(
             shoppingListService.durableCall {
                 createNewShoppingList(userId, name).fold(
                     ifLeft = { this@CreateListScreenViewModel.context.navigateEditList(it, fetchSuggestions = true) },
-                    ifRight = { /* TODO: handle errors */ }
+                    ifRight = { context.showSnackbar(Res.string.error_creating_list) }
                 )
             }
         }

@@ -74,4 +74,11 @@
     <string name="ingredients">Ingredients</string>
     <string name="steps">Steps</string>
     <string name="step_format">%1$d. %2$s</string>
+    <string name="error_creating_list">Error creating shopping list</string>
+    <string name="error_extracting_list">Error extracting unchecked items</string>
+    <string name="error_updating_favorites">Error updating favorite elements</string>
+    <string name="error_internal">Internal error occurred</string>
+    <string name="error_removing_item">Error removing item</string>
+    <string name="error_creating_card">Error creating loyalty card</string>
+    <string name="error_removing_recipe">Error removing recipe</string>
 </resources>

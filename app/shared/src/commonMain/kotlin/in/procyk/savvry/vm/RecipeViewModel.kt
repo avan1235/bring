@@ -1,8 +1,7 @@
 package `in`.procyk.savvry.vm
 
 import androidx.lifecycle.viewModelScope
-import savvry.app.generated.resources.Res
-import savvry.app.generated.resources.recipe_removed
+import savvry.app.generated.resources.*
 import `in`.procyk.savvry.CookingRecipeData
 import `in`.procyk.savvry.CookingRecipeRpcPath
 import `in`.procyk.savvry.ShoppingListRpcPath
@@ -68,7 +67,7 @@ internal class RecipeViewModel(
             shoppingListService.durableCall {
                 createNewShoppingListFromRecipe(userId, parsedRecipeId, scale).fold(
                     ifLeft = { context.navigateEditList(it, fetchSuggestions = false) },
-                    ifRight = { /* TODO: handle errors */ }
+                    ifRight = { context.showSnackbar(Res.string.error_creating_list) }
                 )
             }
         }
@@ -92,7 +91,7 @@ internal class RecipeViewModel(
                         context.navigateRecipes()
                     },
                     ifRight = {
-                        /* TODO: handle errors */
+                        context.showSnackbar(Res.string.error_removing_recipe)
                         context.navigateRecipes()
                     }
                 )

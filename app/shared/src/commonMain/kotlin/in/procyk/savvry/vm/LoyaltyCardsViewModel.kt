@@ -2,8 +2,7 @@ package `in`.procyk.savvry.vm
 
 import androidx.compose.ui.graphics.Color
 import arrow.core.Either
-import savvry.app.generated.resources.Res
-import savvry.app.generated.resources.loading_scanning
+import savvry.app.generated.resources.*
 import `in`.procyk.savvry.*
 import `in`.procyk.savvry.service.LoyaltyCardService
 import `in`.procyk.savvry.service.LoyaltyCardService.GetLoyaltyCardError
@@ -109,7 +108,13 @@ internal class LoyaltyCardsViewModel(
         updateDialogActionLoading(getString(Res.string.loading_scanning))
         return loyaltyCardService
             .durableCall { createLoyaltyCard(input, image, userId) }
-            .fold(ifLeft = { listOf(it) }, ifRight = { /* TODO: handle errors */ emptyList() })
+            .fold(
+                ifLeft = { listOf(it) },
+                ifRight = {
+                    context.showSnackbar(Res.string.error_creating_card)
+                    emptyList()
+                },
+            )
     }
 
     override suspend fun removeRemote(item: Card): Either<Unit, RemoveError> =

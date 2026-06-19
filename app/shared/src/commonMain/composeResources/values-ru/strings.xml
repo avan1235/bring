@@ -73,4 +73,11 @@
     <string name="ingredients">Ингредиенты</string>
     <string name="steps">Шаги</string>
     <string name="step_format">%1$d. %2$s</string>
+    <string name="error_creating_list">Ошибка при создании списка покупок</string>
+    <string name="error_extracting_list">Ошибка при извлечении невыполненных пунктов</string>
+    <string name="error_updating_favorites">Ошибка при обновлении избранного</string>
+    <string name="error_internal">Произошла внутренняя ошибка</string>
+    <string name="error_removing_item">Ошибка при удалении элемента</string>
+    <string name="error_creating_card">Ошибка при создании карты лояльности</string>
+    <string name="error_removing_recipe">Ошибка при удалении рецепта</string>
 </resources>

@@ -73,4 +73,11 @@
     <string name="ingredients">配料</string>
     <string name="steps">步骤</string>
     <string name="step_format">%1$d. %2$s</string>
+    <string name="error_creating_list">创建购物清单时出错</string>
+    <string name="error_extracting_list">提取未选中项目时出错</string>
+    <string name="error_updating_favorites">更新最爱项目时出错</string>
+    <string name="error_internal">发生内部错误</string>
+    <string name="error_removing_item">删除项目时出错</string>
+    <string name="error_creating_card">创建会员卡时出错</string>
+    <string name="error_removing_recipe">删除食谱时出错</string>
 </resources>
