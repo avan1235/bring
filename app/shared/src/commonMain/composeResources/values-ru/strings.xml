@@ -56,6 +56,7 @@
     <string name="ok">ОК</string>
     <string name="find_me_on">Найти меня:</string>
     <string name="show_color_labels">Показывать цветовые метки</string>
+    <string name="sort_by_color">Сортировать по цвету</string>
     <string name="use_cached_data">Кэшировать данные</string>
     <string name="recipes">Рецепты</string>
     <string name="cooking_recipes">Кулинарные рецепты</string>

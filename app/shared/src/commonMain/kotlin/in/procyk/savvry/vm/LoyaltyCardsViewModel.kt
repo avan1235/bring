@@ -67,6 +67,7 @@ internal class LoyaltyCardsViewModel(
     override val useCacheStored: SavvryStore.() -> Boolean = { useCardsCache }
     override val enableEditModeStored: SavvryStore.() -> Boolean = { enableCardsEditMode }
     override val showLabelsStored: SavvryStore.() -> Boolean = { showCardsLabels }
+    override val sortByColorStored: SavvryStore.() -> Boolean = { sortByColorCards }
     override val enabledScanButtonStored: SavvryStore.() -> Boolean = { true }
 
     override suspend fun fetchData(stored: LoyaltyCard): Either<LoyaltyCardData, FetchError> =

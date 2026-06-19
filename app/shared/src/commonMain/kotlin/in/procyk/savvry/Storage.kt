@@ -45,6 +45,8 @@ data class SavvryStore(
     @CborLabel(26) val showRecipesLabels: Boolean = true,
     @CborLabel(27) val useRecipesCache: Boolean = true,
     @CborLabel(28) val useGeminiRecipes: Boolean = true,
+    @CborLabel(29) val sortByColorCards: Boolean = false,
+    @CborLabel(30) val sortByColorRecipes: Boolean = false,
 ) {
     companion object {
         val Default: SavvryStore = SavvryStore()

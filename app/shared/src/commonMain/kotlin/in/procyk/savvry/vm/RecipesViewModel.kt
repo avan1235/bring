@@ -62,6 +62,7 @@ internal class RecipesViewModel(
     override val useCacheStored: SavvryStore.() -> Boolean = { useRecipesCache }
     override val enableEditModeStored: SavvryStore.() -> Boolean = { enableRecipesEditMode }
     override val showLabelsStored: SavvryStore.() -> Boolean = { showRecipesLabels }
+    override val sortByColorStored: SavvryStore.() -> Boolean = { sortByColorRecipes }
     override val enabledScanButtonStored: SavvryStore.() -> Boolean = { useGeminiRecipes && geminiKey.isNotBlank() }
 
     override suspend fun fetchData(stored: CookingRecipe): Either<CookingRecipeData, FetchError> =

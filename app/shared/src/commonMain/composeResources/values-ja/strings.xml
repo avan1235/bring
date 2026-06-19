@@ -56,6 +56,7 @@
     <string name="ok">OK</string>
     <string name="find_me_on">リンク:</string>
     <string name="show_color_labels">カラーラベルを表示</string>
+    <string name="sort_by_color">色で並べ替え</string>
     <string name="use_cached_data">データをキャッシュする</string>
     <string name="recipes">レシピ</string>
     <string name="cooking_recipes">料理のレシピ</string>

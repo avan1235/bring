@@ -56,6 +56,7 @@
     <string name="ok">OK</string>
     <string name="find_me_on">Encontre-me em</string>
     <string name="show_color_labels">Mostrar etiquetas de cores</string>
+    <string name="sort_by_color">Ordenar por cor</string>
     <string name="use_cached_data">Cache de dados</string>
     <string name="recipes">Receitas</string>
     <string name="cooking_recipes">Receitas de cozinha</string>

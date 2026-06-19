@@ -17,6 +17,9 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
     val showRecipesLabels: StateFlow<Boolean> =
         storeFlow.map { it.showRecipesLabels }.state(storeFlow.value.showRecipesLabels)
 
+    val sortByColorRecipes: StateFlow<Boolean> =
+        storeFlow.map { it.sortByColorRecipes }.state(storeFlow.value.sortByColorRecipes)
+
     val useRecipesCache: StateFlow<Boolean> =
         storeFlow.map { it.useRecipesCache }.state(storeFlow.value.useRecipesCache)
 
@@ -25,6 +28,9 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
 
     val showCardsLabels: StateFlow<Boolean> =
         storeFlow.map { it.showCardsLabels }.state(storeFlow.value.showCardsLabels)
+
+    val sortByColorCards: StateFlow<Boolean> =
+        storeFlow.map { it.sortByColorCards }.state(storeFlow.value.sortByColorCards)
 
     val useCardsCache: StateFlow<Boolean> =
         storeFlow.map { it.useCardsCache }.state(storeFlow.value.useCardsCache)
@@ -77,6 +83,10 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
         launchUpdateConfig { it.copy(showRecipesLabels = value) }
     }
 
+    fun onSortByColorRecipesChanged(value: Boolean) {
+        launchUpdateConfig { it.copy(sortByColorRecipes = value) }
+    }
+
     fun onUseRecipesCacheChanged(value: Boolean) {
         launchUpdateConfig { it.copy(useRecipesCache = value) }
     }
@@ -87,6 +97,10 @@ internal class SettingsViewModel(context: Context) : AbstractViewModel(context) 
 
     fun onShowCardsLabelsChanged(value: Boolean) {
         launchUpdateConfig { it.copy(showCardsLabels = value) }
+    }
+
+    fun onSortByColorCardsChanged(value: Boolean) {
+        launchUpdateConfig { it.copy(sortByColorCards = value) }
     }
 
     fun onUseCardsCacheChanged(value: Boolean) {

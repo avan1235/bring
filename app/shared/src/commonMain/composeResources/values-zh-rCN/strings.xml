@@ -56,6 +56,7 @@
     <string name="ok">确定</string>
     <string name="find_me_on">在这里找到我</string>
     <string name="show_color_labels">显示颜色标签</string>
+    <string name="sort_by_color">按颜色排序</string>
     <string name="use_cached_data">缓存数据</string>
     <string name="recipes">食谱</string>
     <string name="cooking_recipes">烹饪食谱</string>

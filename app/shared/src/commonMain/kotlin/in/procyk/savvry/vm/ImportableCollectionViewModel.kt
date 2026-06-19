@@ -6,14 +6,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.viewModelScope
 import arrow.core.Either
-import savvry.app.generated.resources.Res
-import savvry.app.generated.resources.loading_importing
-import `in`.procyk.savvry.SavvryStore
 import `in`.procyk.savvry.Identifiable
 import `in`.procyk.savvry.Orderable
+import `in`.procyk.savvry.SavvryStore
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
+import savvry.app.generated.resources.Res
+import savvry.app.generated.resources.loading_importing
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.uuid.Uuid
@@ -51,6 +51,8 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
     protected abstract val enableEditModeStored: SavvryStore.() -> Boolean
 
     protected abstract val showLabelsStored: SavvryStore.() -> Boolean
+
+    protected abstract val sortByColorStored: SavvryStore.() -> Boolean
 
     protected abstract val enabledScanButtonStored: SavvryStore.() -> Boolean
 
@@ -137,7 +139,14 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
                             buildItem(entry, data)
                         }?.also { inMemoryCache[key] = it }
                     }
-                    val sorted = postProcessItems(resolved).sortedBy { it as Orderable }
+                    val sorted = postProcessItems(resolved).let { items ->
+                        if (store.sortByColorStored()) {
+                            val colorMap = stored.associate { it.id to color(it)?.let(::Color)?.toHsv() }
+                            items.sortedWith(compareBy(HcvColorComparator, { colorMap[it.id] }))
+                        } else {
+                            items.sorted()
+                        }
+                    }
                     _items.value = sorted
                     resetUserInput()
                 } finally {
@@ -262,4 +271,37 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
             )
         }
     }
+}
+
+private typealias HsvColor = FloatArray
+
+private object HcvColorComparator : Comparator<HsvColor?> {
+
+    override fun compare(a: HsvColor?, b: HsvColor?): Int = when {
+        a.contentEquals(b) -> 0
+        a == null -> 1
+        b == null -> -1
+        else -> {
+            for (i in 0..2) {
+                val cmp = a[i].compareTo(b[i])
+                if (cmp != 0) return cmp
+            }
+            0
+        }
+    }
+}
+
+private fun Color.toHsv(): HsvColor {
+    val cmax = maxOf(red, green, blue)
+    val cmin = minOf(red, green, blue)
+    val diff = cmax - cmin
+
+    val h = when {
+        diff == 0f -> 0.0f
+        cmax == red -> (60 * ((green - blue) / diff) + 360f) % 360f
+        cmax == green -> (60 * ((blue - red) / diff) + 120f) % 360f
+        else -> (60 * ((red - green) / diff) + 240f) % 360f // if (cmax == blue)
+    }
+    val s = if (cmax == 0f) 0f else diff / cmax
+    return floatArrayOf(h, s, cmax)
 }
