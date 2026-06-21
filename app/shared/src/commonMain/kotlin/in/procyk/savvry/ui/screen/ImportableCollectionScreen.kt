@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.currentStateAsState
-import savvry.app.generated.resources.*
 import `in`.procyk.savvry.Identifiable
 import `in`.procyk.savvry.Orderable
 import `in`.procyk.savvry.ui.components.*
@@ -34,6 +33,7 @@ import `in`.procyk.savvry.vm.ImportableCollectionViewModel
 import `in`.procyk.savvry.vm.ImportableCollectionViewModel.InputDialogAction.*
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import savvry.app.generated.resources.*
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.uuid.Uuid
 
@@ -116,14 +116,18 @@ internal fun <V, I> ImportableCollectionScreen(
                     variant = IconButtonVariant.PrimaryGhost,
                     onClick = vm::shareAll,
                 )
-                val enabledScanButton by vm.enabledScanButton.collectAsState()
+                val disableScanButtonReason by vm.disableScanButtonReason.collectAsState()
                 ActionButton(
                     icon = Icons.Outlined.QrCodeScanner,
                     text = stringResource(Res.string.scan),
                     variant = IconButtonVariant.Primary,
-                    onClick = vm::openAddFromFileDialog,
+                    onClick = {
+                        when (val disableScanButtonReason = disableScanButtonReason) {
+                            null -> vm.openAddFromFileDialog()
+                            else -> vm.context.showSnackbar(disableScanButtonReason)
+                        }
+                    },
                     testTag = scanButtonTestTag,
-                    enabled = enabledScanButton,
                 )
                 ActionButton(
                     icon = Icons.Outlined.EditNote,

@@ -13,9 +13,6 @@ import ai.koog.prompt.structure.StructuredRequest.Manual
 import ai.koog.prompt.structure.StructuredRequestConfig
 import androidx.compose.ui.graphics.Color
 import arrow.core.Either
-import savvry.app.generated.resources.Res
-import savvry.app.generated.resources.loading_saving
-import savvry.app.generated.resources.loading_scanning
 import `in`.procyk.savvry.*
 import `in`.procyk.savvry.ai.MarkdownWrappedJsonStructuredData.Companion.createMarkdownWrappedJsonStructure
 import `in`.procyk.savvry.service.CookingRecipeService
@@ -31,9 +28,12 @@ import io.ktor.client.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
+import savvry.app.generated.resources.*
 import kotlin.uuid.Uuid
 
 internal class RecipesViewModel(
@@ -63,7 +63,14 @@ internal class RecipesViewModel(
     override val enableEditModeStored: SavvryStore.() -> Boolean = { enableRecipesEditMode }
     override val showLabelsStored: SavvryStore.() -> Boolean = { showRecipesLabels }
     override val sortByColorStored: SavvryStore.() -> Boolean = { sortByColorRecipes }
-    override val enabledScanButtonStored: SavvryStore.() -> Boolean = { useGeminiRecipes && geminiKey.isNotBlank() }
+
+    override val disableScanButtonReason: StateFlow<StringResource?> = storeState {
+        when {
+            useGeminiRecipes -> Res.string.recipes_extraction_disabled
+            geminiKey.isBlank() -> Res.string.gemini_not_configured
+            else -> null
+        }
+    }
 
     override suspend fun fetchData(stored: CookingRecipe): Either<CookingRecipeData, FetchError> =
         cookingRecipeService.durableCall { getCookingRecipe(stored.recipeId) }.mapRight { err ->

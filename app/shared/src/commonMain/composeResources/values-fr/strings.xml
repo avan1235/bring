@@ -71,6 +71,8 @@
     <string name="loading_importing">Importation des données…</string>
     <string name="scale">Échelle :</string>
     <string name="ingredients">Ingrédients</string>
+    <string name="recipes_extraction_disabled">L\'extraction de recettes n\'est disponible qu\'avec Gemini. Configurez-le d\'abord dans les paramètres.</string>
+    <string name="gemini_not_configured">Configurez d\'abord la clé Gemini dans les paramètres</string>
     <string name="steps">Étapes</string>
     <string name="step_format">%1$d. %2$s</string>
     <string name="error_creating_list">Erreur lors de la création de la liste de courses</string>

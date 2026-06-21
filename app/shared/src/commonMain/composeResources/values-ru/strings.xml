@@ -71,6 +71,8 @@
     <string name="loading_importing">Импорт данных…</string>
     <string name="scale">Масштаб:</string>
     <string name="ingredients">Ингредиенты</string>
+    <string name="recipes_extraction_disabled">Извлечение рецептов доступно только с Gemini. Сначала настройте его в параметрах.</string>
+    <string name="gemini_not_configured">Сначала настройте ключ Gemini в параметрах</string>
     <string name="steps">Шаги</string>
     <string name="step_format">%1$d. %2$s</string>
     <string name="error_creating_list">Ошибка при создании списка покупок</string>

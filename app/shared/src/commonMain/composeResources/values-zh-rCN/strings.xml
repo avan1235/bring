@@ -71,6 +71,8 @@
     <string name="loading_importing">正在导入数据…</string>
     <string name="scale">比例:</string>
     <string name="ingredients">配料</string>
+    <string name="recipes_extraction_disabled">食谱提取仅适用于 Gemini。请先在设置中配置。</string>
+    <string name="gemini_not_configured">请先在设置中配置 Gemini 密钥</string>
     <string name="steps">步骤</string>
     <string name="step_format">%1$d. %2$s</string>
     <string name="error_creating_list">创建购物清单时出错</string>

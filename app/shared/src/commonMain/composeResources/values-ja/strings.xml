@@ -71,6 +71,8 @@
     <string name="loading_importing">データをインポートしています…</string>
     <string name="scale">スケール:</string>
     <string name="ingredients">材料</string>
+    <string name="recipes_extraction_disabled">レシピの抽出はGeminiでのみ利用可能です。まず設定で構成してください。</string>
+    <string name="gemini_not_configured">まず設定でGeminiキーを構成してください</string>
     <string name="steps">手順</string>
     <string name="step_format">%1$d. %2$s</string>
     <string name="error_creating_list">ショッピングリストの作成中にエラーが発生しました</string>

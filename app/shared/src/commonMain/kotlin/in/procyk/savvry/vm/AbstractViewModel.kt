@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
-import savvry.app.generated.resources.*
 import `in`.procyk.savvry.*
 import `in`.procyk.savvry.AppConfig.CLIENT_HOST
 import `in`.procyk.savvry.AppConfig.CLIENT_HTTP_PROTOCOL
@@ -21,6 +20,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.rpc.annotations.Rpc
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
+import savvry.app.generated.resources.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
@@ -218,6 +218,11 @@ internal abstract class AbstractViewModel(
         initialValue: T,
         started: SharingStarted = SharingStarted.WhileSubscribed(stopTimeoutMillis = 1_000),
     ): StateFlow<T> = stateIn(viewModelScope, started, initialValue)
+
+    protected fun <T> storeState(
+        started: SharingStarted = SharingStarted.WhileSubscribed(stopTimeoutMillis = 1_000),
+        f: SavvryStore.() -> T,
+    ): StateFlow<T> = storeFlow.map(f).state(store.f(), started)
 
     protected fun <T> Flow<T>.eagerState(
         initialValue: T,

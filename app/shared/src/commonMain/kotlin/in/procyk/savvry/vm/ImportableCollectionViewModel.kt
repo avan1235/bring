@@ -11,6 +11,7 @@ import `in`.procyk.savvry.Orderable
 import `in`.procyk.savvry.SavvryStore
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import savvry.app.generated.resources.*
 import kotlin.concurrent.atomics.AtomicBoolean
@@ -53,8 +54,6 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
 
     protected abstract val sortByColorStored: SavvryStore.() -> Boolean
 
-    protected abstract val enabledScanButtonStored: SavvryStore.() -> Boolean
-
     protected open val idSeparator: String get() = ";"
 
     protected abstract fun newStored(id: Uuid, order: Double): TStored
@@ -95,9 +94,7 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
         storeFlow.map { it.showLabelsStored() }.state(store.showLabelsStored())
     }
 
-    val enabledScanButton: StateFlow<Boolean> by lazy {
-        storeFlow.map { it.enabledScanButtonStored() }.state(store.enabledScanButtonStored())
-    }
+    abstract val disableScanButtonReason: StateFlow<StringResource?>
 
     private val launchedUpdateStoredItemsInBackground = AtomicBoolean(false)
 

@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import kotlin.uuid.Uuid
 
@@ -67,7 +68,7 @@ internal class LoyaltyCardsViewModel(
     override val enableEditModeStored: SavvryStore.() -> Boolean = { enableCardsEditMode }
     override val showLabelsStored: SavvryStore.() -> Boolean = { showCardsLabels }
     override val sortByColorStored: SavvryStore.() -> Boolean = { sortByColorCards }
-    override val enabledScanButtonStored: SavvryStore.() -> Boolean = { true }
+    override val disableScanButtonReason: StateFlow<StringResource?> = MutableStateFlow(null)
 
     override suspend fun fetchData(stored: LoyaltyCard): Either<LoyaltyCardData, FetchError> =
         loyaltyCardService.durableCall { getLoyaltyCard(stored.cardId) }.mapRight { err ->

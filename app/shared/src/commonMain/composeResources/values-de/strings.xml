@@ -71,6 +71,8 @@
     <string name="loading_importing">Daten werden importiert…</string>
     <string name="scale">Maßstab:</string>
     <string name="ingredients">Zutaten</string>
+    <string name="recipes_extraction_disabled">Die Rezept-Extraktion ist nur mit Gemini verfügbar. Konfiguriere es zuerst in den Einstellungen.</string>
+    <string name="gemini_not_configured">Konfiguriere zuerst den Gemini-Schlüssel in den Einstellungen</string>
     <string name="steps">Schritte</string>
     <string name="step_format">%1$d. %2$s</string>
     <string name="error_creating_list">Fehler beim Erstellen der Einkaufsliste</string>

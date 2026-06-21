@@ -72,6 +72,8 @@
     <string name="loading_importing">Importing data…</string>
     <string name="scale">Scale:</string>
     <string name="ingredients">Ingredients</string>
+    <string name="recipes_extraction_disabled">Recipes extraction is available only with Gemini. Configure first in settings.</string>
+    <string name="gemini_not_configured">Configure first Gemini Key in Settings</string>
     <string name="steps">Steps</string>
     <string name="step_format">%1$d. %2$s</string>
     <string name="error_creating_list">Error creating shopping list</string>
