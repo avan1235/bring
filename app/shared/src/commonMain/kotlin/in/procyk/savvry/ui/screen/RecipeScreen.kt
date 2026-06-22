@@ -10,6 +10,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DeleteOutline
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -29,7 +31,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import savvry.app.generated.resources.*
+import androidx.compose.ui.util.fastRoundToInt
 import `in`.procyk.savvry.runIf
 import `in`.procyk.savvry.ui.SavvryAppTheme
 import `in`.procyk.savvry.ui.components.*
@@ -38,6 +40,7 @@ import `in`.procyk.savvry.ui.components.progressindicators.LinearProgressIndicat
 import `in`.procyk.savvry.ui.contentColorFor
 import `in`.procyk.savvry.vm.RecipeViewModel
 import org.jetbrains.compose.resources.stringResource
+import savvry.app.generated.resources.*
 
 @Composable
 internal fun RecipeScreen(
@@ -54,11 +57,22 @@ internal fun RecipeScreen(
             LinearProgressIndicator()
         }
 
-        else -> {
+        else -> BoxWithConstraints(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            val height = maxHeight
             val doneStep by vm.doneStep.collectAsState()
+            val listState = rememberLazyListState()
+            val density = LocalDensity.current
+            LaunchedEffect(doneStep, density, height) {
+                if (doneStep < 0) return@LaunchedEffect
+
+                listState.animateScrollToItem(5 + doneStep, -with(density) { (height / 2).toPx() }.fastRoundToInt())
+            }
             LazyColumn(
                 modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
                 contentPadding = PaddingValues(bottom = 16.dp, top = 16.dp),
+                state = listState,
             ) {
                 item("${recipe.id}-name") {
                     Row(
@@ -131,7 +145,7 @@ internal fun RecipeScreen(
                                         style = ParagraphStyle(
                                             textIndent = TextIndent(firstLine = 0.sp, restLine = 13.sp),
                                             lineHeight = 24.sp,
-                                        )
+                                        ),
                                     ) {
                                         if (idx < recipe.ingredients.lastIndex) appendLine(description)
                                         else append(description)
@@ -169,7 +183,7 @@ internal fun RecipeScreen(
                                 withStyle(
                                     style = ParagraphStyle(
                                         textIndent = TextIndent(firstLine = 0.sp, restLine = 18.sp),
-                                    )
+                                    ),
                                 ) {
                                     append(stepDescription)
                                 }
