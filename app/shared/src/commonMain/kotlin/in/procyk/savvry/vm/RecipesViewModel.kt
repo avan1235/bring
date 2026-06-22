@@ -66,7 +66,7 @@ internal class RecipesViewModel(
 
     override val disableScanButtonReason: StateFlow<StringResource?> = storeState {
         when {
-            useGeminiRecipes -> Res.string.recipes_extraction_disabled
+            !useGeminiRecipes -> Res.string.recipes_extraction_disabled
             geminiKey.isBlank() -> Res.string.gemini_not_configured
             else -> null
         }
