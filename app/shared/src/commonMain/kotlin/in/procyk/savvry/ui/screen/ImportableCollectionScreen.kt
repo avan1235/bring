@@ -10,10 +10,7 @@ import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.outlined.NewLabel
 import androidx.compose.material.icons.outlined.QrCodeScanner
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -53,7 +50,9 @@ internal fun <V, I> ImportableCollectionScreen(
     val dialogAction by vm.dialogAction.collectAsState()
     val items by vm.items.collectAsState()
     val isLoading by vm.isLoading.collectAsState()
-    val enableEditMode by vm.enableEditMode.collectAsState()
+    val enableEditModeSettings by vm.enableEditMode.collectAsState()
+    val sortByColors by vm.sortByColors.collectAsState()
+    val enableEditMode by remember { derivedStateOf { enableEditModeSettings && !sortByColors } }
     val listState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->
         vm.onUpdatedItemOrder(from.key as Uuid, to.key as Uuid, items)

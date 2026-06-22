@@ -94,6 +94,10 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
         storeFlow.map { it.showLabelsStored() }.state(store.showLabelsStored())
     }
 
+    val sortByColors: StateFlow<Boolean> by lazy {
+        storeFlow.map { it.sortByColorStored() }.state(store.sortByColorStored())
+    }
+
     abstract val disableScanButtonReason: StateFlow<StringResource?>
 
     private val launchedUpdateStoredItemsInBackground = AtomicBoolean(false)
