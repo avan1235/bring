@@ -100,7 +100,6 @@ internal fun <V, I> ImportableCollectionScreen(
                 ) {
                     ActionButton(
                         icon = Icons.Outlined.IosShare,
-                        text = stringResource(Res.string.share_all),
                         variant = IconButtonVariant.PrimaryOutlined,
                         onClick = vm::shareAll,
                         modifier = Modifier.align(Alignment.CenterStart),
@@ -121,7 +120,6 @@ internal fun <V, I> ImportableCollectionScreen(
                     )
                     ActionButton(
                         icon = Icons.Outlined.FileUpload,
-                        text = stringResource(Res.string.import_action),
                         variant = IconButtonVariant.PrimaryOutlined,
                         onClick = vm::openImportByIdDialog,
                         iconModifier = Modifier.rotate(180f),
