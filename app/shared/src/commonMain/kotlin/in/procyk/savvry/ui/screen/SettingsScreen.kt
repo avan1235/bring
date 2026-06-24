@@ -75,12 +75,10 @@ internal fun SettingsScreen(
             vm::onRecentShoppingListsCountChanged,
         )
         SettingsCategoryName(Res.string.cooking_recipes)
-        SettingSwitchRow(Res.string.enable_edit_mode, vm.enableRecipesEditMode, vm::onRecipesEditModeChanged)
         SettingSwitchRow(Res.string.show_color_labels, vm.showRecipesLabels, vm::onShowRecipesLabelsChanged)
         SettingSwitchRow(Res.string.sort_by_color, vm.sortByColorRecipes, vm::onSortByColorRecipesChanged)
         SettingSwitchRow(Res.string.use_cached_data, vm.useRecipesCache, vm::onUseRecipesCacheChanged)
         SettingsCategoryName(Res.string.loyalty_cards)
-        SettingSwitchRow(Res.string.enable_edit_mode, vm.enableCardsEditMode, vm::onCardsEditModeChanged)
         SettingSwitchRow(Res.string.show_color_labels, vm.showCardsLabels, vm::onShowCardsLabelsChanged)
         SettingSwitchRow(Res.string.sort_by_color, vm.sortByColorCards, vm::onSortByColorCardsChanged)
         SettingSwitchRow(Res.string.use_cached_data, vm.useCardsCache, vm::onUseCardsCacheChanged)

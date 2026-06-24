@@ -13,7 +13,10 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
-import savvry.app.generated.resources.*
+import savvry.app.generated.resources.Res
+import savvry.app.generated.resources.error_internal
+import savvry.app.generated.resources.error_removing_item
+import savvry.app.generated.resources.loading_importing
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.uuid.Uuid
@@ -48,8 +51,6 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
 
     protected abstract val useCacheStored: SavvryStore.() -> Boolean
 
-    protected abstract val enableEditModeStored: SavvryStore.() -> Boolean
-
     protected abstract val showLabelsStored: SavvryStore.() -> Boolean
 
     protected abstract val sortByColorStored: SavvryStore.() -> Boolean
@@ -74,8 +75,8 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
     private val _dialogAction: MutableStateFlow<InputDialogAction?> = MutableStateFlow(null)
     val dialogAction: StateFlow<InputDialogAction?> = _dialogAction.asStateFlow()
 
-    private val _items: MutableStateFlow<List<TItem>> = MutableStateFlow(emptyList())
-    val items: StateFlow<List<TItem>> = _items.asStateFlow()
+    private val _items: MutableStateFlow<List<TItem>?> = MutableStateFlow(null)
+    val items: StateFlow<List<TItem>?> = _items.asStateFlow()
 
     private val _userInput: MutableStateFlow<String> = MutableStateFlow("")
     val userInput: StateFlow<String> = _userInput.asStateFlow()
@@ -86,9 +87,8 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    val enableEditMode: StateFlow<Boolean> by lazy {
-        storeFlow.map { it.enableEditModeStored() }.state(store.enableEditModeStored())
-    }
+    private val _enableEditMode = MutableStateFlow(false)
+    val enableEditMode: StateFlow<Boolean> = _enableEditMode.asStateFlow()
 
     val showLabels: StateFlow<Boolean> by lazy {
         storeFlow.map { it.showLabelsStored() }.state(store.showLabelsStored())
@@ -187,15 +187,15 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
 
     fun shareAll() {
         viewModelScope.launch {
-            val ids = items.value.joinToString(separator = idSeparator) { it.id.toHexDashString() }
+            val ids = items.value.orEmpty().joinToString(separator = idSeparator) { it.id.toHexDashString() }
             share(ids)
         }
     }
 
-    fun onUpdatedItemOrder(fromKey: Uuid, toKey: Uuid, current: List<TItem>) {
-        onUpdatedItemOrder(fromKey, toKey, current) { from, updatedOrder ->
+    fun onUpdatedItemOrder(fromKey: Uuid, toKey: Uuid) {
+        onUpdatedItemOrder(fromKey, toKey, items.value.orEmpty()) { from, updatedOrder ->
             _items.update { existing ->
-                existing.map { if (it.id == from.id) replaceOrder(it, updatedOrder) else it }.sorted()
+                existing?.map { if (it.id == from.id) replaceOrder(it, updatedOrder) else it }?.sorted()
             }
             launchUpdateConfig { st ->
                 st.withStoredItems(
@@ -249,6 +249,14 @@ internal abstract class ImportableCollectionViewModel<TStored, TData, TItem, TIn
 
     fun closeDialogAction() {
         _dialogAction.update { null }
+    }
+
+    fun enableEditMode() {
+        _enableEditMode.update { true }
+    }
+
+    fun disableEditMode() {
+        _enableEditMode.update { false }
     }
 
     private fun validateUserInputContext(isValid: (TInputContext) -> Boolean): TInputContext? {

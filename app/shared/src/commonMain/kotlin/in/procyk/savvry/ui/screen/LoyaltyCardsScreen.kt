@@ -2,6 +2,7 @@ package `in`.procyk.savvry.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Label
@@ -14,16 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import savvry.app.generated.resources.*
-import `in`.procyk.savvry.ui.SavvryAppTheme
 import `in`.procyk.savvry.ui.LocalColors
 import `in`.procyk.savvry.ui.LocalContentColor
+import `in`.procyk.savvry.ui.SavvryAppTheme
 import `in`.procyk.savvry.ui.components.*
 import `in`.procyk.savvry.vm.LoyaltyCardsViewModel
 import `in`.procyk.savvry.vm.LoyaltyCardsViewModel.Card
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import savvry.app.generated.resources.*
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -54,7 +55,10 @@ private fun LoyaltyCardRow(
     val previousColor = remember { mutableStateOf<Color?>(null) }
     Row(
         modifier = Modifier
-            .clickable { vm.selectCard(card) }
+            .combinedClickable(
+                onClick = { vm.selectCard(card) },
+                onLongClick = vm::enableEditMode,
+            )
             .padding(8.dp)
             .fillMaxWidth()
             .testTag("loyalty-card"),

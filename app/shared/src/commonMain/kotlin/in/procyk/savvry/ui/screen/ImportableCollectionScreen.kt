@@ -1,18 +1,20 @@
 package `in`.procyk.savvry.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.EditNote
-import androidx.compose.material.icons.outlined.IosShare
-import androidx.compose.material.icons.outlined.NewLabel
-import androidx.compose.material.icons.outlined.QrCodeScanner
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -50,12 +52,12 @@ internal fun <V, I> ImportableCollectionScreen(
     val dialogAction by vm.dialogAction.collectAsState()
     val items by vm.items.collectAsState()
     val isLoading by vm.isLoading.collectAsState()
-    val enableEditModeSettings by vm.enableEditMode.collectAsState()
+    val enableEditMode by vm.enableEditMode.collectAsState()
     val sortByColors by vm.sortByColors.collectAsState()
-    val enableEditMode by remember { derivedStateOf { enableEditModeSettings && !sortByColors } }
+    val allowReorderItems by remember { derivedStateOf { enableEditMode && !sortByColors } }
     val listState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->
-        vm.onUpdatedItemOrder(from.key as Uuid, to.key as Uuid, items)
+        vm.onUpdatedItemOrder(from.key as Uuid, to.key as Uuid)
     }
 
     val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
@@ -64,78 +66,111 @@ internal fun <V, I> ImportableCollectionScreen(
             vm.updateStoredItemsInBackground()
         }
     }
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp, end = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        state = listState,
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
     ) {
-        if (isLoading) item(key = "$testTag-loading-indicator") {
-            Row(
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .fillParentMaxWidth()
-                    .animateItem(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                CircularProgressIndicator(modifier = Modifier.size(32.dp))
-            }
-        }
-        items(items, key = { it.id }) { item ->
-            ReorderableItemRow(
-                state = reorderableLazyListState,
-                key = item.id,
-                enabled = enableEditMode,
-                modifier = Modifier
-                    .padding(start = if (enableEditMode) 4.dp else 16.dp)
-                    .fillParentMaxWidth()
-                    .animateItem(),
-            ) {
-                if (enableEditMode) Spacer(Modifier.width(4.dp))
-                ElevatedCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp, end = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            state = listState,
+        ) {
+            if (isLoading) item(key = "$testTag-loading-indicator") {
+                Row(
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .fillParentMaxWidth()
+                        .animateItem(),
+                    horizontalArrangement = Arrangement.Center,
                 ) {
-                    itemContent(item)
+                    CircularProgressIndicator(modifier = Modifier.size(32.dp))
                 }
             }
-        }
-        if (enableEditMode) item(key = "$testTag-actions") {
-            Row(
-                modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        top = if (isLoading || items.isNotEmpty()) 8.dp else 0.dp,
+            if (enableEditMode || (!isLoading && items?.isEmpty() == true)) item(key = "$testTag-actions") {
+                Box(
+                    modifier = Modifier
+                        .padding(
+                            start = 16.dp,
+                            top = if (isLoading) 8.dp else 0.dp,
+                            bottom = if (items?.isNotEmpty() == true) 8.dp else 0.dp,
+                        )
+                        .fillMaxWidth()
+                        .animateItem(),
+                ) {
+                    ActionButton(
+                        icon = Icons.Outlined.IosShare,
+                        text = stringResource(Res.string.share_all),
+                        variant = IconButtonVariant.PrimaryOutlined,
+                        onClick = vm::shareAll,
+                        modifier = Modifier.align(Alignment.CenterStart),
                     )
-                    .fillParentMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                ActionButton(
-                    icon = Icons.Outlined.IosShare,
-                    variant = IconButtonVariant.PrimaryGhost,
-                    onClick = vm::shareAll,
-                )
-                val disableScanButtonReason by vm.disableScanButtonReason.collectAsState()
-                ActionButton(
-                    icon = Icons.Outlined.QrCodeScanner,
-                    text = stringResource(Res.string.scan),
-                    variant = IconButtonVariant.Primary,
-                    onClick = {
-                        when (val disableScanButtonReason = disableScanButtonReason) {
-                            null -> vm.openAddFromFileDialog()
-                            else -> vm.context.showSnackbar(disableScanButtonReason)
+                    val disableScanButtonReason by vm.disableScanButtonReason.collectAsState()
+                    ActionButton(
+                        icon = Icons.Outlined.QrCodeScanner,
+                        text = stringResource(Res.string.scan),
+                        variant = IconButtonVariant.Primary,
+                        onClick = {
+                            when (val disableScanButtonReason = disableScanButtonReason) {
+                                null -> vm.openAddFromFileDialog()
+                                else -> vm.context.showSnackbar(disableScanButtonReason)
+                            }
+                        },
+                        testTag = scanButtonTestTag,
+                        modifier = Modifier.align(Alignment.Center),
+                    )
+                    ActionButton(
+                        icon = Icons.Outlined.FileUpload,
+                        text = stringResource(Res.string.import_action),
+                        variant = IconButtonVariant.PrimaryOutlined,
+                        onClick = vm::openImportByIdDialog,
+                        iconModifier = Modifier.rotate(180f),
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                    )
+                }
+            }
+            items?.let { items ->
+                items(items, key = { it.id }) { item ->
+                    ReorderableItemRow(
+                        state = reorderableLazyListState,
+                        key = item.id,
+                        enabled = allowReorderItems,
+                        modifier = Modifier
+                            .padding(start = if (allowReorderItems) 4.dp else 16.dp)
+                            .fillParentMaxWidth()
+                            .animateItem(),
+                    ) {
+                        if (allowReorderItems) Spacer(Modifier.width(4.dp))
+                        ElevatedCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp),
+                        ) {
+                            itemContent(item)
                         }
-                    },
-                    testTag = scanButtonTestTag,
-                )
-                ActionButton(
-                    icon = Icons.Outlined.EditNote,
-                    variant = IconButtonVariant.PrimaryGhost,
-                    onClick = vm::openImportByIdDialog,
-                )
+                    }
+                }
+
+            }
+            item(key = "$testTag-liquid-spacer") {
+                LiquidBottomTabsSpacer(vm)
             }
         }
-        item(key = "$testTag-liquid-spacer") {
+        Column(
+            modifier = Modifier.padding(FabPadding).fillMaxSize(),
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.Bottom,
+        ) {
+            AnimatedVisibility(
+                visible = enableEditMode,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                ActionButton(
+                    icon = Icons.Default.Check,
+                    variant = IconButtonVariant.PrimaryElevated,
+                    onClick = vm::disableEditMode,
+                )
+            }
             LiquidBottomTabsSpacer(vm)
         }
     }
@@ -223,6 +258,8 @@ internal fun <V, I> ImportableCollectionScreen(
     overlay()
 }
 
+private val FabPadding = 16.dp
+
 @Composable
 private fun ActionButton(
     icon: ImageVector,
@@ -231,6 +268,8 @@ private fun ActionButton(
     enabled: Boolean = true,
     text: String? = null,
     testTag: String? = null,
+    modifier: Modifier = Modifier,
+    iconModifier: Modifier = Modifier,
 ) {
     IconButton(
         content = {
@@ -239,13 +278,13 @@ private fun ActionButton(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(horizontal = 8.dp),
             ) {
-                Icon(icon)
+                Icon(icon, modifier = iconModifier)
                 if (text != null) Text(text)
             }
         },
         variant = variant,
         onClick = onClick,
-        modifier = if (testTag != null) Modifier.testTag(testTag) else Modifier,
+        modifier = if (testTag != null) modifier.testTag(testTag) else modifier,
         enabled = enabled,
     )
 }

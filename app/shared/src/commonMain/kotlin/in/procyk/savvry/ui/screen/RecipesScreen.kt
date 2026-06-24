@@ -1,25 +1,24 @@
 package `in`.procyk.savvry.ui.screen
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.automirrored.twotone.Label
-import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import savvry.app.generated.resources.Res
-import savvry.app.generated.resources.add_recipe
-import savvry.app.generated.resources.import_recipe
-import `in`.procyk.savvry.ui.SavvryAppTheme
 import `in`.procyk.savvry.ui.LocalContentColor
+import `in`.procyk.savvry.ui.SavvryAppTheme
 import `in`.procyk.savvry.ui.components.*
 import `in`.procyk.savvry.vm.RecipesViewModel
 import `in`.procyk.savvry.vm.RecipesViewModel.Recipe
+import savvry.app.generated.resources.Res
+import savvry.app.generated.resources.add_recipe
+import savvry.app.generated.resources.import_recipe
 
 @Composable
 internal fun RecipesScreen(
@@ -48,7 +47,10 @@ private fun RecipeRow(
     val previousColor = remember { mutableStateOf<Color?>(null) }
     Row(
         modifier = Modifier
-            .clickable { vm.context.navigateRecipe(recipe.id.toString()) }
+            .combinedClickable(
+                onClick = { vm.context.navigateRecipe(recipe.id.toString()) },
+                onLongClick = { vm.enableEditMode() },
+            )
             .padding(8.dp)
             .fillMaxWidth()
             .testTag("recipe"),

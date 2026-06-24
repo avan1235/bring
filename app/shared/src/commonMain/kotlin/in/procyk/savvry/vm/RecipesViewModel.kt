@@ -60,7 +60,6 @@ internal class RecipesViewModel(
     override fun withColor(stored: CookingRecipe, color: Int?): CookingRecipe = stored.copy(color = color)
 
     override val useCacheStored: SavvryStore.() -> Boolean = { useRecipesCache }
-    override val enableEditModeStored: SavvryStore.() -> Boolean = { enableRecipesEditMode }
     override val showLabelsStored: SavvryStore.() -> Boolean = { showRecipesLabels }
     override val sortByColorStored: SavvryStore.() -> Boolean = { sortByColorRecipes }
 

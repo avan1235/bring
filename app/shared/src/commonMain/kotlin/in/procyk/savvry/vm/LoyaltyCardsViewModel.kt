@@ -44,8 +44,6 @@ internal class LoyaltyCardsViewModel(
         _selectedCard.update { null }
     }
 
-    val cards: StateFlow<List<Card>> get() = items
-
     fun removeCard(card: Card) {
         unselectCard()
         removeItem(card)
@@ -65,7 +63,6 @@ internal class LoyaltyCardsViewModel(
     override fun withColor(stored: LoyaltyCard, color: Int?): LoyaltyCard = stored.copy(color = color)
 
     override val useCacheStored: SavvryStore.() -> Boolean = { useCardsCache }
-    override val enableEditModeStored: SavvryStore.() -> Boolean = { enableCardsEditMode }
     override val showLabelsStored: SavvryStore.() -> Boolean = { showCardsLabels }
     override val sortByColorStored: SavvryStore.() -> Boolean = { sortByColorCards }
     override val disableScanButtonReason: StateFlow<StringResource?> = MutableStateFlow(null)

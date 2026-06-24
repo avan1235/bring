@@ -42,6 +42,7 @@ internal fun Card(
 @Composable
 internal fun Card(
     onClick: () -> Unit,
+    onLongClick: () -> Unit = onClick,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     shape: Shape = CardDefaults.Shape,
@@ -53,6 +54,7 @@ internal fun Card(
 ) {
     Surface(
         onClick = onClick,
+        onLongClick = onLongClick,
         modifier = modifier,
         enabled = enabled,
         shape = shape,
@@ -84,7 +86,8 @@ internal fun ElevatedCard(
 
 @Composable
 internal fun ElevatedCard(
-    onClick: () -> Unit,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = onClick,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     shape: Shape = CardDefaults.ElevatedShape,
@@ -94,6 +97,7 @@ internal fun ElevatedCard(
     content: @Composable ColumnScope.() -> Unit,
 ) = Card(
     onClick = onClick,
+    onLongClick = onLongClick,
     modifier = modifier,
     enabled = enabled,
     shape = shape,
