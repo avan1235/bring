@@ -178,7 +178,7 @@ buildkonfig {
         buildConfigField(Type.STRING, "VERSION", version.toString())
         buildConfigField(Type.STRING, "PACKAGE", packageName)
         buildConfigField(Type.STRING, "APP_NAME", "Savvry")
-        buildConfigField(Type.STRING, "AUTHOR", "Macie.j Procyk")
+        buildConfigField(Type.STRING, "AUTHOR", "Maciej Procyk")
     }
 }
 
