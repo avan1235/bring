@@ -35,6 +35,19 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = SavvryPackageName
             packageVersion = SavvryVersion
+
+            linux {
+                iconFile.set(project.layout.projectDirectory.file("src/main/resources/icon.png"))
+            }
+            windows {
+                iconFile.set(project.layout.projectDirectory.file("src/main/resources/icon.png"))
+            }
+            macOS {
+                iconFile.set(project.layout.projectDirectory.file("src/main/resources/icon.png"))
+            }
+        }
+        buildTypes.release.proguard {
+            configurationFiles.from("proguard-rules.pro")
         }
     }
 }
